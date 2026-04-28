@@ -1,4 +1,4 @@
-import { Code2, Gauge, Palette, Rocket, Search, Smartphone } from "lucide-react";
+import { Code2, Gauge, LifeBuoy, Palette, Search, Smartphone } from "lucide-react";
 
 const services = [
   {
@@ -27,9 +27,9 @@ const services = [
     description: "Structure optimisée pour Google. Indexation rapide, balises propres.",
   },
   {
-    icon: Rocket,
-    title: "Mise en ligne rapide",
-    description: "De la maquette au déploiement en quelques semaines, sans compromis.",
+    icon: LifeBuoy,
+    title: "Gestion & modifications",
+    description: "Votre site reste à votre nom. Nous gérons les mises à jour et modifications dès que vous le demandez.",
   },
 ];
 
