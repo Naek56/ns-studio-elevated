@@ -14,8 +14,8 @@ const Hero = () => {
       {/* Background layers */}
       <div className="absolute inset-0 grid-pattern opacity-40" />
       <div className="absolute inset-0 bg-radial-glow" />
-      <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-primary/20 blur-[120px] animate-glow-pulse" />
-      <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] rounded-full bg-primary/15 blur-[140px] animate-glow-pulse" style={{ animationDelay: "2s" }} />
+      <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-primary/10 blur-[120px] animate-glow-pulse" />
+      <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[140px] animate-glow-pulse" style={{ animationDelay: "2s" }} />
 
       <div className="container relative z-10 text-center max-w-5xl">
         <div
