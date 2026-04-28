@@ -14,8 +14,8 @@ const Hero = () => {
       {/* Background layers */}
       <div className="absolute inset-0 grid-pattern opacity-40" />
       <div className="absolute inset-0 bg-radial-glow" />
-      <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-primary/20 blur-[120px] animate-glow-pulse" />
-      <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] rounded-full bg-primary/15 blur-[140px] animate-glow-pulse" style={{ animationDelay: "2s" }} />
+      <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-primary/10 blur-[120px] animate-glow-pulse" />
+      <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[140px] animate-glow-pulse" style={{ animationDelay: "2s" }} />
 
       <div className="container relative z-10 text-center max-w-5xl">
         <div
@@ -30,16 +30,17 @@ const Hero = () => {
           className="font-display text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-6 opacity-0 animate-fade-in-up"
           style={{ animationDelay: "0.25s" }}
         >
-          <span className="text-gradient">Des sites web</span>
+          <span className="text-gradient">Votre vision,</span>
           <br />
-          <span className="text-gradient-primary">qui convertissent.</span>
+          <span className="text-gradient">notre </span>
+          <span className="text-gradient-primary">expertise.</span>
         </h1>
 
         <p
           className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 opacity-0 animate-fade-in-up"
           style={{ animationDelay: "0.4s" }}
         >
-          NS Studio conçoit des expériences web rapides, élégantes et taillées pour la performance. Du concept au lancement, en quelques semaines.
+          NS Studio conçoit et gère des sites web premium pour vous. Votre site reste à votre nom, et nous nous occupons des modifications dès que vous en avez besoin.
         </p>
 
         <div
@@ -50,8 +51,8 @@ const Hero = () => {
             Réserver un appel
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Button>
-          <Button variant="ghost-bordered" size="xl" onClick={() => scrollTo("work")}>
-            Voir les réalisations
+          <Button variant="ghost-bordered" size="xl" onClick={() => scrollTo("services")}>
+            Découvrir nos services
           </Button>
         </div>
 
