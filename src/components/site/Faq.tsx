@@ -11,7 +11,7 @@ const faqs = [
   },
   {
     q: "Puis-je modifier mon site après la livraison ?",
-    a: "Oui, c'est moi qui m'occupe directement de toutes les modifications. Vous m'envoyez votre demande et elle est appliquée en moins de 48h, sans que vous ayez à toucher à quoi que ce soit.",
+    a: "Oui, c'est nous qui nous occupons directement de toutes les modifications. Vous nous envoyez votre demande et elle est appliquée en moins de 48h, sans que vous ayez à toucher à quoi que ce soit.",
   },
   {
     q: "Mon site sera-t-il optimisé pour le SEO ?",
