@@ -21,6 +21,10 @@ const faqs = [
     q: "L'hébergement est-il inclus ?",
     a: "Oui, l'hébergement est inclus dans le service. Après le paiement initial du site, un abonnement mensuel couvre l'hébergement, la maintenance et les modifications à la demande.",
   },
+  {
+    q: "Puis-je vous faire confiance ?",
+    a: "Absolument. Chaque collaboration est encadrée par un contrat clair qui détaille les prestations, les délais, les tarifs et vos droits. Le site reste à votre nom et vous en êtes pleinement propriétaire. Nous travaillons en toute transparence : devis détaillé en amont, validations à chaque étape, et aucune somme engagée sans votre accord. Vous pouvez aussi consulter nos précédentes réalisations et échanger avec nous lors d'un appel sans engagement avant de décider.",
+  },
 ];
 
 const Faq = () => {
