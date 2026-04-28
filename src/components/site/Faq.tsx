@@ -11,7 +11,7 @@ const faqs = [
   },
   {
     q: "Puis-je modifier mon site après la livraison ?",
-    a: "Absolument. Nous formons à l'utilisation et restons disponibles pour les évolutions futures.",
+    a: "Oui, c'est moi qui m'occupe directement de toutes les modifications. Vous m'envoyez votre demande et elle est appliquée en moins de 48h, sans que vous ayez à toucher à quoi que ce soit.",
   },
   {
     q: "Mon site sera-t-il optimisé pour le SEO ?",
@@ -19,7 +19,7 @@ const faqs = [
   },
   {
     q: "L'hébergement est-il inclus ?",
-    a: "Nous vous accompagnons dans le choix de l'hébergement le plus adapté et nous occupons du déploiement technique.",
+    a: "Oui, l'hébergement est inclus dans le service. Après le paiement initial du site, un abonnement mensuel couvre l'hébergement, la maintenance et les modifications à la demande.",
   },
 ];
 
