@@ -13,9 +13,9 @@
     --popover: 0 0% 6%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 263 85% 60%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 263 95% 70%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 4%;
+    --primary-glow: 0 0% 100%;
 
     --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 98%;
@@ -23,36 +23,36 @@
     --muted: 0 0% 12%;
     --muted-foreground: 0 0% 60%;
 
-    --accent: 263 85% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 0 0% 100%;
+    --accent-foreground: 0 0% 4%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 0 0% 14%;
     --input: 0 0% 12%;
-    --ring: 263 85% 60%;
+    --ring: 0 0% 100%;
 
     --radius: 0.75rem;
 
-    --gradient-primary: linear-gradient(135deg, hsl(263 70% 62%), hsl(263 60% 75%));
-    --gradient-radial: radial-gradient(ellipse at top, hsl(263 70% 60% / 0.07), transparent 60%);
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 85%));
+    --gradient-radial: radial-gradient(ellipse at top, hsl(0 0% 100% / 0.08), transparent 60%);
     --gradient-text: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 70%));
 
-    --shadow-glow: 0 0 60px hsl(263 70% 60% / 0.18);
-    --shadow-glow-sm: 0 0 30px hsl(263 70% 60% / 0.15);
-    --shadow-elegant: 0 20px 60px -20px hsl(263 70% 60% / 0.25);
+    --shadow-glow: 0 0 60px hsl(0 0% 100% / 0.35);
+    --shadow-glow-sm: 0 0 30px hsl(0 0% 100% / 0.25);
+    --shadow-elegant: 0 20px 60px -20px hsl(0 0% 100% / 0.3);
 
     --transition-smooth: cubic-bezier(0.65, 0, 0.35, 1);
 
     --sidebar-background: 0 0% 4%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 263 85% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 0 0% 4%;
     --sidebar-accent: 0 0% 10%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 0 0% 14%;
-    --sidebar-ring: 263 85% 60%;
+    --sidebar-ring: 0 0% 100%;
   }
 }
 
