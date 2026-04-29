@@ -5,7 +5,7 @@ const plans = [
   {
     icon: Sparkles,
     name: "Vitrine",
-    price: "490€",
+    price: "350€",
     tagline: "Site one-page élégant",
     description: "Idéal pour présenter votre activité, freelance ou petit business.",
     features: [
@@ -20,7 +20,7 @@ const plans = [
   {
     icon: Rocket,
     name: "Pro",
-    price: "990€",
+    price: "750€",
     tagline: "Site multi-pages complet",
     description: "Pour les entreprises qui veulent une vraie présence en ligne.",
     features: [
