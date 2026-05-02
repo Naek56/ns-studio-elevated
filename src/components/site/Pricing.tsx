@@ -112,7 +112,7 @@ const Pricing = () => {
                 <Button
                   variant={plan.highlighted ? "hero" : "outline"}
                   className="w-full"
-                  onClick={scrollToBooking}
+                  onClick={() => scrollToBooking(plan.name)}
                 >
                   Choisir cette offre
                 </Button>
