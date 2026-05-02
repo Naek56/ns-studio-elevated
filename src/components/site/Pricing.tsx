@@ -52,7 +52,9 @@ const plans = [
 ];
 
 const Pricing = () => {
-  const scrollToBooking = () => {
+  const scrollToBooking = (planName: string) => {
+    sessionStorage.setItem("selectedPlan", planName);
+    window.dispatchEvent(new CustomEvent("plan-selected", { detail: planName }));
     document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
   };
 
