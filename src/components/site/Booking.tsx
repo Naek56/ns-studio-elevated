@@ -128,6 +128,23 @@ const Booking = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="glass rounded-3xl p-6 md:p-10 space-y-6">
+          {selectedPlan && (
+            <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-primary/10 border border-primary/30 animate-fade-in">
+              <div className="flex items-center gap-2 text-sm">
+                <Tag className="w-4 h-4 text-primary" />
+                <span className="text-muted-foreground">Plan choisi :</span>
+                <span className="font-semibold text-foreground">{selectedPlan}</span>
+              </div>
+              <button
+                type="button"
+                onClick={clearPlan}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Retirer le plan"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="name" className="flex items-center gap-2 text-sm">
