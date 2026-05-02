@@ -30,10 +30,10 @@ const Hero = () => {
           className="font-display text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-6 opacity-0 animate-fade-in-up"
           style={{ animationDelay: "0.25s" }}
         >
-          <span className="text-gradient">Votre vision,</span>
+          <span className="text-gradient">On crée,</span>
           <br />
-          <span className="text-gradient">notre </span>
-          <span className="text-gradient-primary">expertise.</span>
+          <span className="text-gradient">on gère, vous </span>
+          <span className="text-gradient-primary">brillez.</span>
         </h1>
 
         <p
