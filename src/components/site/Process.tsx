@@ -16,8 +16,8 @@ const steps = [
   },
   {
     num: "04",
-    title: "Lancement",
-    description: "Mise en ligne, formation, et accompagnement post-lancement pour assurer le succès.",
+    title: "Lancement & suivi",
+    description: "Mise en ligne, puis on s'occupe de tout : modifications, mises à jour, sécurité et support en continu. Vous n'avez à toucher à rien.",
   },
 ];
 
