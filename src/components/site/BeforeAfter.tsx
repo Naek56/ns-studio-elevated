@@ -40,9 +40,11 @@ const BeforeAfter = () => {
                       <div className="bg-red-600 text-yellow-300 text-center py-1 font-bold border-2 border-blue-700 mb-2 animate-pulse">
                         ★ BIENVENUE SUR MON SITE ★
                       </div>
-                      <marquee className="text-blue-800 underline mb-2 block">
-                        🔥 PROMO !!! CLIQUEZ ICI !!! 🔥
-                      </marquee>
+                      <div className="text-blue-800 underline mb-2 overflow-hidden whitespace-nowrap">
+                        <span className="inline-block" style={{ animation: "scroll-text 6s linear infinite" }}>
+                          🔥 PROMO !!! CLIQUEZ ICI !!! 🔥 GRATUIT !!! 🔥 PROMO !!!
+                        </span>
+                      </div>
                       <div className="flex gap-1 mb-2">
                         <div className="bg-lime-400 px-1 border border-black">Accueil</div>
                         <div className="bg-pink-400 px-1 border border-black">Produit</div>
@@ -162,6 +164,10 @@ const BeforeAfter = () => {
           50% { top: 80%; left: 80%; }
           75% { top: 20%; left: 40%; }
           100% { top: 70%; left: 20%; }
+        }
+        @keyframes scroll-text {
+          0% { transform: translateX(100%); }
+          100% { transform: translateX(-100%); }
         }
       `}</style>
     </section>
