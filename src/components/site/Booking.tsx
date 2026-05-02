@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Calendar as CalendarIcon, Check, Clock, Loader2, Mail, Phone, User } from "lucide-react";
+import { Calendar as CalendarIcon, Check, Clock, Loader2, Mail, Phone, Tag, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,6 +31,20 @@ const Booking = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem("selectedPlan");
+    if (stored) setSelectedPlan(stored);
+    const handler = (e: Event) => setSelectedPlan((e as CustomEvent<string>).detail);
+    window.addEventListener("plan-selected", handler);
+    return () => window.removeEventListener("plan-selected", handler);
+  }, []);
+
+  const clearPlan = () => {
+    sessionStorage.removeItem("selectedPlan");
+    setSelectedPlan(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,6 +128,23 @@ const Booking = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="glass rounded-3xl p-6 md:p-10 space-y-6">
+          {selectedPlan && (
+            <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-primary/10 border border-primary/30 animate-fade-in">
+              <div className="flex items-center gap-2 text-sm">
+                <Tag className="w-4 h-4 text-primary" />
+                <span className="text-muted-foreground">Plan choisi :</span>
+                <span className="font-semibold text-foreground">{selectedPlan}</span>
+              </div>
+              <button
+                type="button"
+                onClick={clearPlan}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Retirer le plan"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="name" className="flex items-center gap-2 text-sm">

@@ -52,7 +52,9 @@ const plans = [
 ];
 
 const Pricing = () => {
-  const scrollToBooking = () => {
+  const scrollToBooking = (planName: string) => {
+    sessionStorage.setItem("selectedPlan", planName);
+    window.dispatchEvent(new CustomEvent("plan-selected", { detail: planName }));
     document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -110,7 +112,7 @@ const Pricing = () => {
                 <Button
                   variant={plan.highlighted ? "hero" : "outline"}
                   className="w-full"
-                  onClick={scrollToBooking}
+                  onClick={() => scrollToBooking(plan.name)}
                 >
                   Choisir cette offre
                 </Button>
