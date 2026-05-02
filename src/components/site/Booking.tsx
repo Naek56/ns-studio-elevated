@@ -31,6 +31,20 @@ const Booking = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem("selectedPlan");
+    if (stored) setSelectedPlan(stored);
+    const handler = (e: Event) => setSelectedPlan((e as CustomEvent<string>).detail);
+    window.addEventListener("plan-selected", handler);
+    return () => window.removeEventListener("plan-selected", handler);
+  }, []);
+
+  const clearPlan = () => {
+    sessionStorage.removeItem("selectedPlan");
+    setSelectedPlan(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
