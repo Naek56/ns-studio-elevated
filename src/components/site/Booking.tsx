@@ -113,6 +113,8 @@ const Booking = () => {
   return (
     <section id="booking" className="relative py-24 md:py-32 overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-primary/15 blur-[120px]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
 
       <div className="container relative z-10 max-w-3xl">
         <div className="text-center max-w-2xl mx-auto mb-12">

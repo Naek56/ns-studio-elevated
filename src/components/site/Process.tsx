@@ -25,6 +25,8 @@ const Process = () => {
   return (
     <section id="process" className="relative py-24 md:py-32 overflow-hidden">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
 
       <div className="container relative z-10 max-w-6xl">
         <div className="text-center max-w-2xl mx-auto mb-20">

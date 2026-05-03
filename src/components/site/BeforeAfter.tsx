@@ -11,6 +11,9 @@ const BeforeAfter = () => {
           style={{ animationDelay: "1s" }}
         />
       </div>
+      {/* Soft edge fades to avoid hard light cut-off lines */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-background to-transparent z-0" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent z-0" />
 
       <div className="container">
         <div className="text-center max-w-2xl mx-auto mb-16">
