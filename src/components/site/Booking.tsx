@@ -7,13 +7,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const TIME_SLOTS = ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"];
+
+const getNextDates = (count = 10) => {
+  const dates: Date[] = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let i = 1;
+  while (dates.length < count) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    if (d.getDay() !== 0) dates.push(d);
+    i++;
+  }
+  return dates;
+};
 
 const bookingSchema = z.object({
   name: z.string().trim().min(2, "Nom trop court").max(100),
@@ -195,43 +207,45 @@ const Booking = () => {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-2">
               <Label className="flex items-center gap-2 text-sm">
                 <CalendarIcon className="w-3.5 h-3.5 text-primary" /> Date
               </Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal h-11 bg-input/50 border-border/60",
-                      !date && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "d MMMM yyyy", { locale: fr }) : "Choisir une date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 glass" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    disabled={(d) => d < new Date(new Date().setHours(0, 0, 0, 0)) || d.getDay() === 0}
-                    initialFocus
-                    locale={fr}
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
+              <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 snap-x">
+                {getNextDates(10).map((d) => {
+                  const isSelected = date && d.toDateString() === date.toDateString();
+                  return (
+                    <button
+                      key={d.toISOString()}
+                      type="button"
+                      onClick={() => setDate(d)}
+                      className={cn(
+                        "snap-start flex-shrink-0 flex flex-col items-center justify-center w-16 h-20 rounded-xl border transition-all",
+                        isSelected
+                          ? "bg-primary border-primary text-primary-foreground shadow-glow-sm"
+                          : "bg-input/50 border-border/60 hover:border-primary/40 hover:text-primary"
+                      )}
+                    >
+                      <span className="text-[10px] uppercase tracking-wider opacity-80">
+                        {format(d, "EEE", { locale: fr })}
+                      </span>
+                      <span className="text-xl font-semibold leading-none mt-1">
+                        {format(d, "d")}
+                      </span>
+                      <span className="text-[10px] opacity-70 mt-1">
+                        {format(d, "MMM", { locale: fr })}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-2">
               <Label className="flex items-center gap-2 text-sm">
                 <Clock className="w-3.5 h-3.5 text-primary" /> Horaire
               </Label>
-              <div className="grid grid-cols-4 gap-1.5">
+              <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
                 {TIME_SLOTS.map((slot) => (
                   <button
                     key={slot}
