@@ -3,22 +3,18 @@ import { Star } from "lucide-react";
 const testimonials = [
   {
     name: "Camille Laurent",
-    role: "Fondatrice, Atelier Mira",
     text: "Site élégant, rapide, et nos demandes de devis ont doublé en deux mois.",
   },
   {
     name: "Julien Moreau",
-    role: "Gérant, Moreau & Fils",
     text: "Process clair, livraison dans les délais. Ils s'occupent de tout, même après le lancement.",
   },
   {
     name: "Sarah Benali",
-    role: "Coach indépendante",
     text: "Un site magnifique, et chaque modification est appliquée en moins de 48h.",
   },
   {
     name: "Antoine Rivière",
-    role: "Restaurant Le Comptoir",
     text: "Rendu moderne, mobile parfait. Excellent rapport qualité/prix.",
   },
 ];
@@ -44,10 +40,7 @@ const Testimonials = () => {
                 ))}
               </div>
               <p className="text-foreground/90 leading-relaxed mb-4">"{t.text}"</p>
-              <div className="text-sm">
-                <div className="font-medium">{t.name}</div>
-                <div className="text-xs text-muted-foreground">{t.role}</div>
-              </div>
+              <div className="text-sm font-medium">{t.name}</div>
             </article>
           ))}
         </div>
