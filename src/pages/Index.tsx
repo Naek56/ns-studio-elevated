@@ -5,6 +5,7 @@ import BeforeAfter from "@/components/site/BeforeAfter";
 import Process from "@/components/site/Process";
 import Pricing from "@/components/site/Pricing";
 import Booking from "@/components/site/Booking";
+import Testimonials from "@/components/site/Testimonials";
 import Faq from "@/components/site/Faq";
 import Footer from "@/components/site/Footer";
 
@@ -18,6 +19,7 @@ const Index = () => {
         <BeforeAfter />
         <Process />
         <Pricing />
+        <Testimonials />
         <Booking />
         <Faq />
       </main>

@@ -29,6 +29,7 @@ const Navbar = () => {
           <button onClick={() => scrollTo("services")} className="hover:text-foreground transition-colors">Services</button>
           <button onClick={() => scrollTo("process")} className="hover:text-foreground transition-colors">Process</button>
           <button onClick={() => scrollTo("pricing")} className="hover:text-foreground transition-colors">Tarifs</button>
+          <button onClick={() => scrollTo("testimonials")} className="hover:text-foreground transition-colors">Avis</button>
           <button onClick={() => scrollTo("faq")} className="hover:text-foreground transition-colors">FAQ</button>
         </nav>
         <Button variant="hero" size="sm" onClick={() => scrollTo("booking")}>
