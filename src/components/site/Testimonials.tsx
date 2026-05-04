@@ -25,7 +25,7 @@ const Testimonials = () => {
       <div className="container relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-sm uppercase tracking-widest text-muted-foreground">Avis</span>
-          <h2 className="text-3xl md:text-4xl font-semibold mt-3">Ce que disent nos clients</h2>
+          <h2 className="text-3xl md:text-4xl font-semibold mt-3">Ils nous ont fait confiance</h2>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-5 max-w-4xl mx-auto">
