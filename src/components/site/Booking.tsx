@@ -44,6 +44,7 @@ const Booking = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [website, setWebsite] = useState(""); // honeypot anti-spam
 
   useEffect(() => {
     const stored = sessionStorage.getItem("selectedPlan");
@@ -60,6 +61,8 @@ const Booking = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (website) return; // bot detected, silent fail
 
     if (!date || !time) {
       toast.error("Choisissez une date et un horaire");
