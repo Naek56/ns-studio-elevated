@@ -44,6 +44,7 @@ const Booking = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [website, setWebsite] = useState(""); // honeypot anti-spam
 
   useEffect(() => {
     const stored = sessionStorage.getItem("selectedPlan");
@@ -60,6 +61,8 @@ const Booking = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (website) return; // bot detected, silent fail
 
     if (!date || !time) {
       toast.error("Choisissez une date et un horaire");
@@ -142,6 +145,17 @@ const Booking = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="glass rounded-3xl p-6 md:p-10 space-y-6">
+          {/* Honeypot anti-spam — hidden from users */}
+          <input
+            type="text"
+            name="website"
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            className="absolute left-[-9999px] w-px h-px opacity-0"
+          />
           {selectedPlan && (
             <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-primary/10 border border-primary/30 animate-fade-in">
               <div className="flex items-center gap-2 text-sm">
