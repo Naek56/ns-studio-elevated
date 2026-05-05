@@ -109,15 +109,23 @@ const Booking = () => {
             <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 text-gradient">
               C'est confirmé !
             </h2>
-            <p className="text-muted-foreground mb-2">
-              Votre rendez-vous est prévu le
+            <p className="text-muted-foreground mb-4">
+              Votre rendez-vous est prévu
             </p>
-            <p className="text-xl font-display font-semibold mb-6">
-              {date && format(date, "EEEE d MMMM yyyy", { locale: fr })} à {time}
-            </p>
+            <div className="inline-flex flex-col sm:flex-row items-center gap-2 sm:gap-4 px-5 py-3 rounded-2xl bg-primary/10 border border-primary/20 mb-6">
+              <span className="font-display text-lg font-semibold capitalize">
+                {date && format(date, "EEEE d MMMM yyyy", { locale: fr })}
+              </span>
+              <span className="hidden sm:block w-1 h-1 rounded-full bg-primary/60" />
+              <span className="font-display text-lg font-semibold text-primary">
+                {time}
+              </span>
+            </div>
             <p className="text-sm text-muted-foreground">
-              Un email de confirmation vient d'être envoyé à <span className="text-foreground font-medium">{email}</span>.
-              <br />Nous vous appellerons au <span className="text-foreground font-medium">{phone}</span>.
+              Une confirmation a été envoyée à <span className="text-foreground font-medium">{email}</span>.
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Nous vous appellerons au <span className="text-foreground font-medium">{phone}</span>.
             </p>
           </div>
         </div>
