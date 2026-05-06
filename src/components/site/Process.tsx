@@ -42,7 +42,7 @@ const Process = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-3 gap-6">
           {steps.map((step, idx) => (
             <div key={step.num} className="relative group">
               <div className="relative p-7 rounded-2xl glass h-full hover:border-primary/40 transition-all duration-500">
@@ -57,6 +57,13 @@ const Process = () => {
               )}
             </div>
           ))}
+        </div>
+
+        <div className="text-center mt-14">
+          <Button variant="hero" size="xl" onClick={() => scrollTo("booking")} className="group">
+            Démarrer maintenant
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Button>
         </div>
       </div>
     </section>

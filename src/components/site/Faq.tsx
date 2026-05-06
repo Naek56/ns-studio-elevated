@@ -2,28 +2,36 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 const faqs = [
   {
-    q: "Combien de temps prend la création d'un site ?",
-    a: "En général entre 2 et 6 semaines selon la complexité. Nous établissons un planning précis dès le premier appel.",
+    q: "Sous combien de temps vais-je voir des résultats ?",
+    a: "Dès la mise en ligne (2 à 6 semaines après le démarrage), votre site commence à convertir. Les premiers résultats SEO apparaissent en 4 à 8 semaines. Nos clients constatent en moyenne +180% de prospects dans les 3 premiers mois.",
   },
   {
-    q: "Quel est le tarif pour un site ?",
-    a: "Chaque projet est unique. Le tarif dépend du périmètre, du design et des fonctionnalités. Nous établissons un devis sur-mesure après notre premier échange.",
+    q: "Combien ça coûte vraiment ?",
+    a: "Nos formules démarrent à 350€ pour un site vitrine et 750€ pour un site Pro multi-pages. Pas de frais cachés : devis transparent, hébergement et HTTPS inclus. Comparé à une agence classique (3 000–10 000€), vous économisez sans rien sacrifier sur la qualité.",
   },
   {
-    q: "Puis-je modifier mon site après la livraison ?",
-    a: "Oui, c'est nous qui nous occupons directement de toutes les modifications. Vous nous envoyez votre demande et elle est appliquée en moins de 48h, sans que vous ayez à toucher à quoi que ce soit.",
+    q: "Suis-je engagé sur la durée ?",
+    a: "Aucun engagement long. Vous payez le site une fois, puis un abonnement mensuel léger pour l'hébergement et les modifications illimitées. Vous pouvez arrêter quand vous voulez, le site reste à votre nom.",
   },
   {
-    q: "Mon site sera-t-il optimisé pour le SEO ?",
-    a: "Oui. Tous nos sites sont conçus avec les bonnes pratiques SEO : structure sémantique, performance, balises optimisées et mobile-first.",
+    q: "Comment se passe l'onboarding ?",
+    a: "1) Appel découverte de 15 min (gratuit). 2) Brief créatif et validation de la direction. 3) Conception et développement avec validations à chaque étape. 4) Mise en ligne et formation. C'est simple, rapide, transparent.",
   },
   {
-    q: "L'hébergement est-il inclus ?",
-    a: "Oui, l'hébergement est inclus dans le service. Après le paiement initial du site, un abonnement mensuel couvre l'hébergement, la maintenance et les modifications à la demande.",
+    q: "Pourquoi vous plutôt qu'une autre agence ?",
+    a: "Parce qu'on ne livre pas juste un site joli : on livre un site qui convertit. Performance < 2s, SEO intégré, design premium, et surtout : modifications sous 48h à vie. Vous n'avez plus jamais à toucher à rien.",
+  },
+  {
+    q: "Et si je veux modifier mon site après livraison ?",
+    a: "C'est nous qui nous occupons de tout. Vous nous envoyez votre demande, on l'applique en moins de 48h. Pas besoin de compétences techniques, pas de logiciel à apprendre.",
+  },
+  {
+    q: "Mon site sera-t-il bien référencé sur Google ?",
+    a: "Oui. SEO technique intégré dès le départ : structure sémantique, performance, balises optimisées, sitemap, mobile-first. Tous les fondamentaux pour bien se positionner.",
   },
   {
     q: "Puis-je vous faire confiance ?",
-    a: "Absolument. Chaque collaboration est encadrée par un contrat clair qui détaille les prestations, les délais, les tarifs et vos droits. Le site reste à votre nom et vous en êtes pleinement propriétaire. Nous travaillons en toute transparence : devis détaillé en amont, validations à chaque étape, et aucune somme engagée sans votre accord. Vous pouvez aussi consulter nos précédentes réalisations et échanger avec nous lors d'un appel sans engagement avant de décider.",
+    a: "Contrat clair, devis détaillé, validations à chaque étape, site à votre nom. Aucun paiement engagé sans votre accord. Vous pouvez consulter nos réalisations et échanger avec nous lors d'un appel sans engagement avant de décider.",
   },
 ];
 
@@ -33,11 +41,14 @@ const Faq = () => {
       <div className="container max-w-3xl">
         <div className="text-center mb-12">
           <div className="inline-block px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
-            <span className="text-xs font-medium text-primary uppercase tracking-wider">FAQ</span>
+            <span className="text-xs font-medium text-primary uppercase tracking-wider">On répond à vos doutes</span>
           </div>
           <h2 className="font-display text-4xl md:text-5xl font-bold text-gradient">
-            Questions fréquentes
+            Vous hésitez encore ?
           </h2>
+          <p className="text-muted-foreground text-lg mt-4">
+            Voici les réponses aux questions qu'on nous pose le plus souvent.
+          </p>
         </div>
 
         <Accordion type="single" collapsible className="space-y-3">

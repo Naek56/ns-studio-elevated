@@ -63,13 +63,13 @@ const Pricing = () => {
       <div className="container max-w-6xl">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <div className="inline-block px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
-            <span className="text-xs font-medium text-primary uppercase tracking-wider">Tarifs</span>
+            <span className="text-xs font-medium text-primary uppercase tracking-wider">Tarifs transparents</span>
           </div>
           <h2 className="font-display text-4xl md:text-5xl font-bold mb-4 text-gradient">
-            Des prix clairs, sans surprise
+            Investissez une fois. Récupérez à vie.
           </h2>
           <p className="text-muted-foreground text-lg">
-            Choisissez la formule qui correspond à votre projet.
+            Comparez : une agence classique facture 3 000 à 10 000€ pour un site équivalent.
           </p>
         </div>
 
@@ -122,8 +122,17 @@ const Pricing = () => {
         </div>
 
         <p className="text-center text-sm text-muted-foreground mt-10">
-          Tous nos sites incluent l'hébergement, le HTTPS et un design responsive.
+          Tous nos sites incluent l'hébergement, le HTTPS, le responsive et les modifications sous 48h.
         </p>
+
+        <div className="text-center mt-8">
+          <Button variant="hero" size="xl" onClick={() => scrollToBooking("Audit gratuit")} className="group">
+            Obtenir mon audit gratuit
+          </Button>
+          <p className="text-xs text-muted-foreground mt-3">
+            Pas sûr de votre formule ? On en parle en 15 min.
+          </p>
+        </div>
       </div>
     </section>
   );
