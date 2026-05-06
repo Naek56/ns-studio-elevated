@@ -1,27 +1,28 @@
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+
 const steps = [
   {
     num: "01",
-    title: "Découverte",
-    description: "On échange sur votre projet, vos objectifs et votre vision. Sans engagement.",
+    title: "Stratégie",
+    description: "Appel découverte de 15 min. On analyse votre marché, vos concurrents et on définit une stratégie claire pour transformer vos visiteurs en clients.",
   },
   {
     num: "02",
-    title: "Conception",
-    description: "Maquettes haute-fidélité, choix de la direction artistique, validation ensemble.",
+    title: "Exécution",
+    description: "On conçoit et développe votre site premium en 2 à 4 semaines. Design sur-mesure, SEO, performance, conversion : tout est optimisé.",
   },
   {
     num: "03",
-    title: "Développement",
-    description: "Construction du site avec les meilleures technologies. Suivi en temps réel.",
-  },
-  {
-    num: "04",
-    title: "Lancement & suivi",
-    description: "Mise en ligne, puis on s'occupe de tout : modifications, mises à jour, sécurité et support en continu. Vous n'avez à toucher à rien.",
+    title: "Croissance",
+    description: "Mise en ligne, suivi et modifications sous 48h à vie. Vous voyez vos prospects et votre chiffre d'affaires augmenter mois après mois.",
   },
 ];
 
 const Process = () => {
+  const scrollTo = (id: string) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+
   return (
     <section id="process" className="relative py-24 md:py-32 overflow-hidden">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px]" />
@@ -34,14 +35,14 @@ const Process = () => {
             <span className="text-xs font-medium text-primary uppercase tracking-wider">Process</span>
           </div>
           <h2 className="font-display text-4xl md:text-5xl font-bold mb-4 text-gradient">
-            Une méthode éprouvée
+            3 étapes. Zéro prise de tête.
           </h2>
           <p className="text-muted-foreground text-lg">
-            Un process clair, transparent et efficace.
+            Un process simple, transparent, axé résultats.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-3 gap-6">
           {steps.map((step, idx) => (
             <div key={step.num} className="relative group">
               <div className="relative p-7 rounded-2xl glass h-full hover:border-primary/40 transition-all duration-500">
@@ -56,6 +57,13 @@ const Process = () => {
               )}
             </div>
           ))}
+        </div>
+
+        <div className="text-center mt-14">
+          <Button variant="hero" size="xl" onClick={() => scrollTo("booking")} className="group">
+            Démarrer maintenant
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Button>
         </div>
       </div>
     </section>

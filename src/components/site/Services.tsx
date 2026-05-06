@@ -2,50 +2,53 @@ import { Code2, Gauge, LifeBuoy, Palette, Search, Smartphone } from "lucide-reac
 
 const services = [
   {
-    icon: Palette,
-    title: "Design sur-mesure",
-    description: "Identité visuelle unique, interfaces soignées, expérience pensée pour vos visiteurs.",
-  },
-  {
-    icon: Code2,
-    title: "Développement premium",
-    description: "Code propre, modulable et maintenable. Aucune limite technique.",
+    icon: Search,
+    title: "Plus de prospects qualifiés",
+    description: "SEO intégré, structure pensée pour Google. Votre site devient une source régulière de demandes entrantes.",
   },
   {
     icon: Gauge,
-    title: "Performance extrême",
-    description: "Sites optimisés pour la vitesse. Score Lighthouse 95+ garanti.",
+    title: "Conversion maximisée",
+    description: "Chaque pixel est pensé pour transformer vos visiteurs en clients. CTA stratégiques, parcours optimisé.",
   },
   {
     icon: Smartphone,
-    title: "100% Responsive",
-    description: "Une expérience parfaite sur mobile, tablette et desktop.",
+    title: "Crédibilité instantanée",
+    description: "Un site premium qui rassure. Vos visiteurs vous prennent au sérieux dès la première seconde.",
   },
   {
-    icon: Search,
-    title: "SEO intégré",
-    description: "Structure optimisée pour Google. Indexation rapide, balises propres.",
+    icon: Code2,
+    title: "Performance extrême",
+    description: "Chargement < 2s, score Lighthouse 95+. Google adore, vos visiteurs aussi.",
+  },
+  {
+    icon: Palette,
+    title: "Identité unique",
+    description: "Design sur-mesure aligné à votre marque. Vous vous démarquez vraiment de la concurrence.",
   },
   {
     icon: LifeBuoy,
-    title: "Gestion & modifications",
-    description: "Votre site reste à votre nom. Nous gérons les mises à jour et modifications dès que vous le demandez.",
+    title: "Vous ne touchez à rien",
+    description: "On gère hébergement, mises à jour et modifications sous 48h. Vous restez focus sur votre business.",
   },
 ];
 
 const Services = () => {
+  const scrollTo = (id: string) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+
   return (
     <section id="services" className="relative py-24 md:py-32">
       <div className="container max-w-6xl">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <div className="inline-block px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
-            <span className="text-xs font-medium text-primary uppercase tracking-wider">Services</span>
+            <span className="text-xs font-medium text-primary uppercase tracking-wider">Ce que vous gagnez</span>
           </div>
           <h2 className="font-display text-4xl md:text-5xl font-bold mb-4 text-gradient">
-            Tout ce qu'il faut pour briller en ligne
+            Un site qui travaille pour vous, 24h/24
           </h2>
           <p className="text-muted-foreground text-lg">
-            Une approche complète, de la stratégie au pixel près.
+            Pas juste une vitrine. Une vraie machine à clients.
           </p>
         </div>
 

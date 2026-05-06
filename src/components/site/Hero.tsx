@@ -24,24 +24,25 @@ const Hero = () => {
           style={{ animationDelay: "0.1s" }}
         >
           <Sparkles className="w-3.5 h-3.5 text-primary" />
-          <span className="text-xs font-medium text-muted-foreground">Studio de création web premium</span>
+          <span className="text-xs font-medium text-muted-foreground">Sites web premium qui convertissent</span>
         </div>
 
         <h1
           className="font-display text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-6 opacity-0 animate-fade-in-up"
           style={{ animationDelay: "0.25s" }}
         >
-          <span className="text-gradient">On crée,</span>
+          <span className="text-gradient">Pendant que vos</span>
           <br />
-          <span className="text-gradient">on gère, vous </span>
-          <span className="text-gradient-primary">brillez.</span>
+          <span className="text-gradient">concurrents grandissent,</span>
+          <br />
+          <span className="text-gradient-primary">vous perdez des clients.</span>
         </h1>
 
         <p
           className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 opacity-0 animate-fade-in-up"
           style={{ animationDelay: "0.4s" }}
         >
-          NS Studio conçoit et gère des sites web premium pour vous. Votre site reste à votre nom, et nous nous occupons des modifications dès que vous en avez besoin.
+          NS Studio conçoit des sites web premium qui transforment vos visiteurs en clients. Plus de prospects, plus de réservations, plus de chiffre d'affaires — sans que vous ayez à toucher à quoi que ce soit.
         </p>
 
         <div
@@ -49,20 +50,27 @@ const Hero = () => {
           style={{ animationDelay: "0.55s" }}
         >
           <Button variant="hero" size="xl" onClick={() => scrollTo("booking")} className="group">
-            Réserver un appel
+            Réserver mon audit gratuit
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Button>
           <Button variant="ghost-bordered" size="xl" onClick={() => scrollTo("services")}>
-            Découvrir nos services
+            Voir comment on fait
           </Button>
         </div>
+
+        <p
+          className="text-xs text-muted-foreground mt-5 opacity-0 animate-fade-in-up"
+          style={{ animationDelay: "0.65s" }}
+        >
+          ✦ 15 minutes · 100% gratuit · Sans engagement
+        </p>
 
         <div
           className="mt-20 grid grid-cols-3 gap-6 max-w-2xl mx-auto opacity-0 animate-fade-in-up"
           style={{ animationDelay: "0.7s" }}
         >
           {[
-            { value: "100%", label: "Sur-mesure" },
+            { value: "+180%", label: "de prospects en moyenne" },
             { value: "<2s", label: "Temps de chargement" },
             { value: "98+", label: "Score Lighthouse" },
           ].map((stat) => (
