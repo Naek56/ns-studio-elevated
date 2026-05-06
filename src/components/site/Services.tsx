@@ -33,7 +33,7 @@ const services = [
   },
 ];
 
-const ServicesLegacy = () => {
+const Services = () => {
   const scrollTo = (id: string) =>
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
