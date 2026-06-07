@@ -64,8 +64,9 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        display: ['"Space Grotesk"', 'Inter', 'sans-serif'],
+        display: ['Sora', 'Inter', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        serifAccent: ['"Instrument Serif"', 'Georgia', 'serif'],
       },
       keyframes: {
         "accordion-down": {
@@ -104,6 +105,19 @@ export default {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
         },
+        "drift": {
+          "0%, 100%": { transform: "translate3d(0,0,0) scale(1)" },
+          "33%": { transform: "translate3d(6%, -8%, 0) scale(1.08)" },
+          "66%": { transform: "translate3d(-5%, 6%, 0) scale(0.95)" },
+        },
+        "drift-slow": {
+          "0%, 100%": { transform: "translate3d(0,0,0) scale(1.05)" },
+          "50%": { transform: "translate3d(-8%, -6%, 0) scale(1)" },
+        },
+        "spin-slow": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -115,6 +129,9 @@ export default {
         "float": "float 6s ease-in-out infinite",
         "marquee": "marquee 30s linear infinite",
         "shimmer": "shimmer 3s linear infinite",
+        "drift": "drift 22s ease-in-out infinite",
+        "drift-slow": "drift-slow 30s ease-in-out infinite",
+        "spin-slow": "spin-slow 40s linear infinite",
       },
     },
   },

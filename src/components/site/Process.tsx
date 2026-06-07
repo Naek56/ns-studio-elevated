@@ -1,73 +1,35 @@
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import Reveal from "./Reveal";
 
 const steps = [
-  {
-    num: "01",
-    title: "Stratégie",
-    description: "Appel découverte de 15 min. On analyse votre marché, vos concurrents et on définit une stratégie claire pour transformer vos visiteurs en clients.",
-  },
-  {
-    num: "02",
-    title: "Exécution",
-    description: "On conçoit et développe votre site premium en 2 à 4 semaines. Design sur-mesure, SEO, performance, conversion : tout est optimisé.",
-  },
-  {
-    num: "03",
-    title: "Croissance",
-    description: "Mise en ligne, suivi et modifications sous 48h à vie. Vous voyez vos prospects et votre chiffre d'affaires augmenter mois après mois.",
-  },
+  { n: "01", t: "Découverte", d: "On cerne vos objectifs, votre marché et ce qui doit générer du résultat." },
+  { n: "02", t: "Design", d: "Direction artistique premium et maquettes interactives, validées ensemble." },
+  { n: "03", t: "Build & data", d: "Développement haute performance + intégration de la couche analytique." },
+  { n: "04", t: "Optimisation", d: "On lit les données, on itère, on fait grimper vos conversions dans le temps." },
 ];
 
-const Process = () => {
-  const scrollTo = (id: string) =>
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-
+export default function Process() {
   return (
-    <section id="process" className="relative py-24 md:py-32 overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-background to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
+    <section id="process" className="relative mx-auto max-w-6xl px-6 py-28">
+      <Reveal>
+        <p className="text-center text-xs font-semibold uppercase tracking-[0.3em] text-[hsl(var(--primary-glow))]">
+          Notre process
+        </p>
+        <h2 className="mx-auto mt-4 max-w-3xl text-center font-display text-3xl font-bold tracking-tight md:text-5xl">
+          Simple pour vous, <span className="font-serif-accent italic text-gradient-primary">rigoureux chez nous.</span>
+        </h2>
+      </Reveal>
 
-      <div className="container relative z-10 max-w-6xl">
-        <div className="text-center max-w-2xl mx-auto mb-20">
-          <div className="inline-block px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
-            <span className="text-xs font-medium text-primary uppercase tracking-wider">Process</span>
-          </div>
-          <h2 className="font-display text-4xl md:text-5xl font-bold mb-4 text-gradient">
-            3 étapes. Zéro prise de tête.
-          </h2>
-          <p className="text-muted-foreground text-lg">
-            Un process simple, transparent, axé résultats.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {steps.map((step, idx) => (
-            <div key={step.num} className="relative group">
-              <div className="relative p-7 rounded-2xl glass h-full hover:border-primary/40 transition-all duration-500">
-                <div className="font-display text-5xl font-bold text-gradient-primary mb-4 opacity-80">
-                  {step.num}
-                </div>
-                <h3 className="font-display text-xl font-semibold mb-2">{step.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
-              </div>
-              {idx < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-1/2 -right-3 w-6 h-px bg-gradient-to-r from-primary/50 to-transparent" />
-              )}
+      <div className="mt-16 grid gap-5 md:grid-cols-4">
+        {steps.map((s, i) => (
+          <Reveal key={s.n} delay={i * 0.08}>
+            <div className="relative h-full rounded-3xl border border-border/70 bg-card/40 p-7 backdrop-blur-sm">
+              <span className="font-display text-4xl font-bold text-primary/30">{s.n}</span>
+              <h3 className="mt-4 font-display text-lg font-semibold">{s.t}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.d}</p>
             </div>
-          ))}
-        </div>
-
-        <div className="text-center mt-14">
-          <Button variant="hero" size="xl" onClick={() => scrollTo("booking")} className="group">
-            Démarrer maintenant
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-          </Button>
-        </div>
+          </Reveal>
+        ))}
       </div>
     </section>
   );
-};
-
-export default Process;
+}

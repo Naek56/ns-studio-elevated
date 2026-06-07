@@ -1,81 +1,65 @@
-import { Code2, Gauge, LifeBuoy, Palette, Search, Smartphone } from "lucide-react";
+import { Palette, Gauge, LineChart, Search, Smartphone, Sparkles } from "lucide-react";
+import Reveal from "./Reveal";
 
 const services = [
   {
-    icon: Search,
-    title: "Plus de prospects qualifiés",
-    description: "SEO intégré, structure pensée pour Google. Votre site devient une source régulière de demandes entrantes.",
+    icon: Palette,
+    title: "Design sur-mesure",
+    desc: "Une identité visuelle premium, pensée pour votre marque — pas un template recyclé.",
+  },
+  {
+    icon: LineChart,
+    title: "Intelligence intégrée",
+    desc: "Tableau de bord analytique livré avec le site. Vos données, lisibles d'un coup d'œil.",
   },
   {
     icon: Gauge,
-    title: "Conversion maximisée",
-    description: "Chaque pixel est pensé pour transformer vos visiteurs en clients. CTA stratégiques, parcours optimisé.",
+    title: "Performance extrême",
+    desc: "Chargement sous la seconde, score Lighthouse au sommet. La vitesse, c'est de la conversion.",
+  },
+  {
+    icon: Search,
+    title: "SEO technique",
+    desc: "Structure, vitesse et contenu optimisés pour être trouvé par les bons clients.",
   },
   {
     icon: Smartphone,
-    title: "Crédibilité instantanée",
-    description: "Un site premium qui rassure. Vos visiteurs vous prennent au sérieux dès la première seconde.",
+    title: "Responsive absolu",
+    desc: "Une expérience irréprochable du mobile au grand écran, dans le moindre détail.",
   },
   {
-    icon: Code2,
-    title: "Performance extrême",
-    description: "Chargement < 2s, score Lighthouse 95+. Google adore, vos visiteurs aussi.",
-  },
-  {
-    icon: Palette,
-    title: "Identité unique",
-    description: "Design sur-mesure aligné à votre marque. Vous vous démarquez vraiment de la concurrence.",
-  },
-  {
-    icon: LifeBuoy,
-    title: "Vous ne touchez à rien",
-    description: "On gère hébergement, mises à jour et modifications sous 48h. Vous restez focus sur votre business.",
+    icon: Sparkles,
+    title: "Motion & immersion",
+    desc: "Animations 3D et micro-interactions qui marquent les esprits — comme cette porte.",
   },
 ];
 
-const Services = () => {
-  const scrollTo = (id: string) =>
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-
+export default function Services() {
   return (
-    <section id="services" className="relative py-24 md:py-32">
-      <div className="container max-w-6xl">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <div className="inline-block px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
-            <span className="text-xs font-medium text-primary uppercase tracking-wider">Ce que vous gagnez</span>
-          </div>
-          <h2 className="font-display text-4xl md:text-5xl font-bold mb-4 text-gradient">
-            Un site qui travaille pour vous, 24h/24
-          </h2>
-          <p className="text-muted-foreground text-lg">
-            Pas juste une vitrine. Une vraie machine à clients.
-          </p>
-        </div>
+    <section id="services" className="relative mx-auto max-w-6xl px-6 py-28">
+      <Reveal>
+        <p className="text-center text-xs font-semibold uppercase tracking-[0.3em] text-[hsl(var(--primary-glow))]">
+          Ce qu'on fait
+        </p>
+        <h2 className="mx-auto mt-4 max-w-3xl text-center font-display text-3xl font-bold tracking-tight md:text-5xl">
+          Le haut de gamme, <span className="font-serif-accent italic text-gradient-primary">augmenté par la data.</span>
+        </h2>
+      </Reveal>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {services.map((service, idx) => {
-            const Icon = service.icon;
-            return (
-              <div
-                key={service.title}
-                className="group relative p-7 rounded-2xl glass hover:border-primary/40 transition-all duration-500 hover:-translate-y-1"
-                style={{ animationDelay: `${idx * 0.08}s` }}
-              >
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                <div className="relative">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-5 group-hover:bg-primary/20 group-hover:shadow-glow-sm transition-all duration-500">
-                    <Icon className="w-5 h-5 text-primary" />
-                  </div>
-                  <h3 className="font-display text-xl font-semibold mb-2">{service.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{service.description}</p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+      <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {services.map((s, i) => (
+          <Reveal key={s.title} delay={(i % 3) * 0.08}>
+            <div className="group relative h-full overflow-hidden rounded-3xl border border-border/70 bg-card/40 p-7 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40">
+              <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-primary/10 blur-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <span className="inline-flex rounded-2xl bg-primary/12 p-3 text-[hsl(var(--primary-glow))]">
+                <s.icon className="h-6 w-6" />
+              </span>
+              <h3 className="mt-5 font-display text-lg font-semibold">{s.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
+            </div>
+          </Reveal>
+        ))}
       </div>
     </section>
   );
-};
-
-export default Services;
+}
