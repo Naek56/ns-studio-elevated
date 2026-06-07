@@ -1,34 +1,39 @@
+import DoorIntro from "@/components/intro/DoorIntro";
+import SiteBackground from "@/components/site/SiteBackground";
 import Navbar from "@/components/site/Navbar";
 import Hero from "@/components/site/Hero";
-import Problems from "@/components/site/Problems";
+import Marquee from "@/components/site/Marquee";
+import Approche from "@/components/site/Approche";
 import Services from "@/components/site/Services";
-import BeforeAfter from "@/components/site/BeforeAfter";
+import Intelligence from "@/components/site/Intelligence";
+import Realisations from "@/components/site/Realisations";
 import Process from "@/components/site/Process";
-import Pricing from "@/components/site/Pricing";
-import Booking from "@/components/site/Booking";
-import Testimonials from "@/components/site/Testimonials";
-import Faq from "@/components/site/Faq";
 import FinalCta from "@/components/site/FinalCta";
 import Footer from "@/components/site/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Navbar />
-      <main>
-        <Hero />
-        <Problems />
-        <Services />
-        <BeforeAfter />
-        <Testimonials />
-        <Process />
-        <Pricing />
-        <Faq />
-        <Booking />
-        <FinalCta />
-      </main>
-      <Footer />
-    </div>
+    <>
+      {/* Immersive 3D door — scroll to step into the light */}
+      <DoorIntro />
+
+      {/* Homepage */}
+      <div id="home" className="relative">
+        <SiteBackground />
+        <Navbar />
+        <main>
+          <Hero />
+          <Marquee />
+          <Approche />
+          <Services />
+          <Intelligence />
+          <Realisations />
+          <Process />
+          <FinalCta />
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 };
 

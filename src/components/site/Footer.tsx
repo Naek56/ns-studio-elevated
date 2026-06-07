@@ -1,24 +1,48 @@
-import logo from "@/assets/logo-ns-studio.png";
+import Logo from "./Logo";
 
-const Footer = () => {
+export default function Footer() {
+  const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+
   return (
-    <footer className="relative border-t border-border/50 py-12 mt-12">
-      <div className="container">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="NS Studio" className="h-9 w-auto rounded-md" />
-          </div>
-          <p className="text-sm text-muted-foreground text-center">
-            © {new Date().getFullYear()} NS Studio. Conçu avec soin.
+    <footer className="relative border-t border-border/60 px-6 py-14">
+      <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
+        <div>
+          <Logo />
+          <p className="mt-4 max-w-xs text-sm text-muted-foreground">
+            Agence de création de sites web haut de gamme et pilotés par la data.
+            Le design qui séduit, la donnée qui décide.
           </p>
-          <div className="flex gap-6 text-sm text-muted-foreground">
-            <a href="#services" className="hover:text-foreground transition-colors">Services</a>
-            <a href="#booking" className="hover:text-foreground transition-colors">Contact</a>
-          </div>
         </div>
+
+        <div>
+          <h4 className="text-sm font-semibold text-foreground">Navigation</h4>
+          <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+            {[
+              { l: "Approche", id: "approche" },
+              { l: "Services", id: "services" },
+              { l: "Intelligence", id: "intelligence" },
+              { l: "Réalisations", id: "realisations" },
+            ].map((i) => (
+              <li key={i.id}>
+                <button onClick={() => go(i.id)} className="transition-colors hover:text-foreground">{i.l}</button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="text-sm font-semibold text-foreground">Contact</h4>
+          <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+            <li><a href="mailto:hello@nsintelligence.com" className="transition-colors hover:text-foreground">hello@nsintelligence.com</a></li>
+            <li><button onClick={() => go("contact")} className="transition-colors hover:text-foreground">Démarrer un projet</button></li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-12 flex max-w-6xl flex-col items-center justify-between gap-3 border-t border-border/60 pt-6 text-xs text-muted-foreground sm:flex-row">
+        <span>© {new Date().getFullYear()} NS Intelligence (NSI). Tous droits réservés.</span>
+        <span>Conçu &amp; mesuré avec soin.</span>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}
