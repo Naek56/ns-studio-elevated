@@ -1,24 +1,34 @@
-# NS Intelligence (NSI)
+# Kairos
 
-Site vitrine immersif **3D** pour **NS Intelligence** — agence de création de sites web
-haut de gamme et pilotés par la data.
+Site vitrine de **Kairos**, la veille qui travaille pour vous : surveillance de votre
+marché, de vos concurrents et de vos clients, avec un briefing au bon moment.
 
-> « Vos concurrents savent ce qui se passe sur leurs sites. *Et vous ?* »
+## Direction artistique
 
-## L'expérience
+- **Dark theme**, fond noir
+- Palette **noir + orange**, avec touches secondaires **rouge** et **jaune**
+- Police **Inter** (sobre), copy courte
+- Accueil : fond noir et **figure orange animée qui ondule comme des vagues** (canvas 2D, pas de 3D)
 
-- **Intro 3D pilotée au scroll** : le visiteur arrive face à une porte fermée dans une pièce
-  sombre, la lumière s'en échappe. En scrollant, la porte s'ouvre et la caméra s'avance
-  jusqu'à pénétrer dans la lumière — puis débouche sur la page d'accueil.
-- **Page d'accueil** : fond animé orange & noir, boutons *liquid glass*, sections Approche,
-  Services, Intelligence (tableau de bord analytique), Réalisations, Process et contact.
+## Sections (plan du scroll)
+
+1. Ouverture (plein écran) : titre + slogan + vague animée
+2. Le problème
+3. Le chiffre choc (97%)
+4. Les 4 modules (cartes cliquables vers une page dédiée)
+5. Ce que Kairos fait (Analyste, Stratège, Veilleur)
+6. La fréquence (quotidien, hebdo, mensuel)
+7. Les plans (Kairos Local 49 €, Kairos Pro 149 €)
+8. Promesse finale
+
+Chaque module (`/module/:slug`) a sa propre page de détail.
 
 ## Stack technique
 
 - **Vite + React + TypeScript**
 - **Tailwind CSS** + shadcn/ui (Radix)
-- **React Three Fiber** + **drei** + **postprocessing** (Bloom) pour la scène 3D
-- **Framer Motion** pour le scroll et les animations d'interface
+- **Framer Motion** pour les apparitions au scroll
+- Vague animée en **canvas 2D** (aucune dépendance 3D)
 
 ## Développement
 
@@ -28,18 +38,3 @@ npm run dev      # serveur de dev
 npm run build    # build de production
 npm run preview  # prévisualiser le build
 ```
-
-## Structure
-
-```
-src/
-  components/
-    intro/      # DoorIntro — pilotage scroll de l'expérience 3D
-    three/      # DoorScene — scène React Three Fiber (porte, lumière, bloom)
-    site/       # sections de la page d'accueil + fond animé
-    ui/         # composants UI (dont le bouton liquid glass)
-  pages/        # Index (compose l'intro + la home), NotFound
-```
-
-> Note : ce dépôt s'appelle encore `ns-studio-elevated` côté GitHub. Tu peux le renommer
-> en `site-ns-intelligence` (Settings → Rename) — le contenu, lui, est 100 % NSI.

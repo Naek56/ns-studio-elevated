@@ -39,6 +39,8 @@ export default {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        red: "hsl(var(--red))",
+        yellow: "hsl(var(--yellow))",
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
@@ -64,9 +66,8 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        display: ['Sora', 'Inter', 'sans-serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        serifAccent: ['"Instrument Serif"', 'Georgia', 'serif'],
       },
       keyframes: {
         "accordion-down": {
