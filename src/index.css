@@ -4,45 +4,40 @@
 
 @layer base {
   :root {
-    /* NS Intelligence — orange & black */
-    --background: 24 30% 4%;
-    --foreground: 30 20% 97%;
+    /* Kairos — black, orange, with red & yellow accents */
+    --background: 0 0% 3%;
+    --foreground: 40 12% 96%;
 
-    --card: 24 18% 7%;
-    --card-foreground: 30 20% 97%;
+    --card: 0 0% 6%;
+    --card-foreground: 40 12% 96%;
 
-    --popover: 24 22% 6%;
-    --popover-foreground: 30 20% 97%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 40 12% 96%;
 
     --primary: 24 100% 52%;
-    --primary-foreground: 24 40% 6%;
-    --primary-glow: 30 100% 58%;
+    --primary-foreground: 0 0% 5%;
 
-    --secondary: 24 12% 12%;
-    --secondary-foreground: 30 20% 97%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 40 12% 96%;
 
-    --muted: 24 10% 14%;
-    --muted-foreground: 30 8% 64%;
+    --muted: 0 0% 11%;
+    --muted-foreground: 40 5% 62%;
 
-    --accent: 30 100% 56%;
-    --accent-foreground: 24 40% 6%;
+    --accent: 24 100% 52%;
+    --accent-foreground: 0 0% 5%;
+
+    /* secondary brand accents */
+    --red: 4 90% 58%;
+    --yellow: 45 100% 55%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 28 18% 16%;
-    --input: 24 12% 14%;
+    --border: 0 0% 14%;
+    --input: 0 0% 13%;
     --ring: 24 100% 52%;
 
-    --radius: 1rem;
-
-    --gradient-primary: linear-gradient(135deg, hsl(24 100% 56%), hsl(36 100% 52%));
-    --gradient-text: linear-gradient(135deg, hsl(30 30% 99%), hsl(28 20% 78%));
-    --gradient-ember: radial-gradient(ellipse at 50% 0%, hsl(24 100% 50% / 0.22), transparent 60%);
-
-    --shadow-glow: 0 0 80px hsl(24 100% 52% / 0.35);
-    --shadow-glow-sm: 0 0 36px hsl(24 100% 52% / 0.28);
-    --shadow-elegant: 0 30px 80px -28px hsl(24 100% 50% / 0.4);
+    --radius: 0.85rem;
   }
 }
 
@@ -62,100 +57,43 @@
   }
 
   ::selection {
-    background: hsl(var(--primary) / 0.35);
-    color: hsl(var(--foreground));
+    background: hsl(var(--primary) / 0.85);
+    color: hsl(0 0% 5%);
   }
 
-  /* slim warm scrollbar */
-  ::-webkit-scrollbar { width: 10px; }
-  ::-webkit-scrollbar-track { background: hsl(24 30% 4%); }
-  ::-webkit-scrollbar-thumb {
-    background: hsl(24 40% 18%);
-    border-radius: 999px;
-    border: 2px solid hsl(24 30% 4%);
-  }
-  ::-webkit-scrollbar-thumb:hover { background: hsl(24 80% 40%); }
+  ::-webkit-scrollbar { width: 9px; }
+  ::-webkit-scrollbar-track { background: hsl(0 0% 3%); }
+  ::-webkit-scrollbar-thumb { background: hsl(0 0% 18%); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(24 90% 45%); }
 }
 
 @layer utilities {
-  .font-display { font-family: 'Sora', system-ui, sans-serif; }
-  .font-serif-accent { font-family: 'Instrument Serif', Georgia, serif; }
+  .text-orange { color: hsl(var(--primary)); }
+  .text-red { color: hsl(var(--red)); }
+  .text-yellow { color: hsl(var(--yellow)); }
 
-  .text-gradient {
-    background: var(--gradient-text);
+  .text-gradient-warm {
+    background: linear-gradient(100deg, hsl(45 100% 58%), hsl(24 100% 52%) 45%, hsl(4 90% 56%));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  .text-gradient-primary {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .bg-gradient-primary { background: var(--gradient-primary); }
-  .bg-ember-glow { background: var(--gradient-ember); }
-
-  .shadow-glow { box-shadow: var(--shadow-glow); }
-  .shadow-glow-sm { box-shadow: var(--shadow-glow-sm); }
-  .shadow-elegant { box-shadow: var(--shadow-elegant); }
-
-  .grid-pattern {
-    background-image:
-      linear-gradient(hsl(30 60% 60% / 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(30 60% 60% / 0.05) 1px, transparent 1px);
-    background-size: 56px 56px;
-  }
-
-  .grain {
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  .container-tight {
+    width: 100%;
+    max-width: 1120px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
   }
 }
 
 @layer components {
-  .glass {
-    @apply bg-card/40 backdrop-blur-xl border border-white/10;
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.98];
   }
 
-  /* Liquid glass surface — used by buttons & cards */
-  .liquid-glass {
-    position: relative;
-    isolation: isolate;
-    background:
-      linear-gradient(180deg, hsl(0 0% 100% / 0.14), hsl(0 0% 100% / 0.04));
-    backdrop-filter: blur(14px) saturate(160%);
-    -webkit-backdrop-filter: blur(14px) saturate(160%);
-    border: 1px solid hsl(0 0% 100% / 0.16);
-    box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.35),
-      inset 0 -8px 24px hsl(24 100% 50% / 0.08),
-      0 10px 30px -10px hsl(0 0% 0% / 0.6);
-    overflow: hidden;
-  }
-
-  .liquid-glass::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(115deg, transparent 30%, hsl(0 0% 100% / 0.4) 50%, transparent 70%);
-    transform: translateX(-120%);
-    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-    mix-blend-mode: overlay;
-  }
-
-  .liquid-glass:hover::after { transform: translateX(120%); }
-
-  .liquid-glass-primary {
-    background:
-      linear-gradient(180deg, hsl(28 100% 62% / 0.92), hsl(20 100% 48% / 0.92));
-    border: 1px solid hsl(36 100% 75% / 0.55);
-    box-shadow:
-      inset 0 1px 0 hsl(40 100% 90% / 0.7),
-      inset 0 -10px 24px hsl(14 90% 30% / 0.45),
-      0 14px 40px -8px hsl(24 100% 50% / 0.55);
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-border bg-transparent px-6 py-3 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-foreground/40 hover:bg-white/5;
   }
 }
 
