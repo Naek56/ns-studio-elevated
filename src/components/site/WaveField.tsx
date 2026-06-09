@@ -32,10 +32,10 @@ export default function WaveField({ className = "" }: { className?: string }) {
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    // toned down: fewer, dimmer, less saturated lines
     const layers = [
-      { amp: 0.10, freq: 1.1, speed: 1.0, drift: 0.045, width: 2.4, alpha: 1.0, hue: 24 },
-      { amp: 0.07, freq: 1.7, speed: 1.5, drift: 0.060, width: 1.5, alpha: 0.65, hue: 40 },
-      { amp: 0.13, freq: 0.8, speed: 0.7, drift: 0.035, width: 1.1, alpha: 0.5, hue: 6 },
+      { amp: 0.10, freq: 1.1, speed: 1.0, drift: 0.045, width: 1.8, alpha: 0.6, hue: 24 },
+      { amp: 0.07, freq: 1.7, speed: 1.5, drift: 0.060, width: 1.1, alpha: 0.4, hue: 38 },
     ];
 
     const draw = (time: number) => {
@@ -65,8 +65,8 @@ export default function WaveField({ className = "" }: { className?: string }) {
         ctx.strokeStyle = grad;
         ctx.lineWidth = L.width;
         ctx.lineCap = "round";
-        ctx.shadowBlur = 22;
-        ctx.shadowColor = `hsla(${L.hue}, 100%, 55%, 0.9)`;
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = `hsla(${L.hue}, 90%, 52%, 0.7)`;
         ctx.stroke();
       }
 

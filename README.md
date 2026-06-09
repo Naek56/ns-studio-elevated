@@ -1,7 +1,14 @@
-# Kairos
+# NS Intelligence · Kairos
 
-Site vitrine de **Kairos**, la veille qui travaille pour vous : surveillance de votre
-marché, de vos concurrents et de vos clients, avec un briefing au bon moment.
+Site de l'agence **NS Intelligence (NS.I)** présentant son produit **Kairos**, la veille
+qui travaille pour vous : surveillance de votre marché, de vos concurrents et de vos clients,
+avec un briefing au bon moment.
+
+## Intro
+
+À l'arrivée : un **trou noir 3D animé** (accretion disk, anneau de photons, étoiles, bloom)
+avec un chargement de 0 % à 100 %, le logo NS.I, puis un bouton **Entrer** qui déclenche une
+plongée façon portail vers le site.
 
 ## Direction artistique
 

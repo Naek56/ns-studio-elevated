@@ -17,15 +17,22 @@ export default function Header() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
-        scrolled ? "border-b border-border/70 bg-background/80 backdrop-blur-md" : "border-b border-transparent"
+        scrolled ? "border-b border-border/70 bg-background/70 backdrop-blur-md" : "border-b border-transparent"
       )}
     >
       <div className="container-tight flex h-16 items-center justify-between">
-        <a href="/" className="flex items-center gap-2 font-display text-lg font-extrabold tracking-tight">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-primary" />
-          Kairos
+        <a href="/" className="flex items-center gap-2.5">
+          <span className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5">
+            <span
+              className="font-display text-[0.7rem] font-extrabold tracking-tight text-orange"
+              style={{ textShadow: "0 0 14px hsl(24 95% 54% / 0.8)" }}
+            >
+              NS.I
+            </span>
+          </span>
+          <span className="font-display text-base font-bold tracking-tight">NS Intelligence</span>
         </a>
-        <button onClick={() => go("plans")} className="btn-primary h-10 px-5 py-0">
+        <button onClick={() => go("plans")} className="btn-liquid h-10 px-5 py-0 text-sm">
           Commencer
         </button>
       </div>

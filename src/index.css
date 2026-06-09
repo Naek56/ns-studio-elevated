@@ -4,40 +4,39 @@
 
 @layer base {
   :root {
-    /* Kairos — black, orange, with red & yellow accents */
+    /* NS.I — mostly black & white, orange as a restrained accent */
     --background: 0 0% 3%;
-    --foreground: 40 12% 96%;
+    --foreground: 40 8% 96%;
 
     --card: 0 0% 6%;
-    --card-foreground: 40 12% 96%;
+    --card-foreground: 40 8% 96%;
 
     --popover: 0 0% 6%;
-    --popover-foreground: 40 12% 96%;
+    --popover-foreground: 40 8% 96%;
 
-    --primary: 24 100% 52%;
+    --primary: 24 95% 54%;
     --primary-foreground: 0 0% 5%;
 
     --secondary: 0 0% 10%;
-    --secondary-foreground: 40 12% 96%;
+    --secondary-foreground: 40 8% 96%;
 
     --muted: 0 0% 11%;
-    --muted-foreground: 40 5% 62%;
+    --muted-foreground: 40 4% 60%;
 
-    --accent: 24 100% 52%;
+    --accent: 24 95% 54%;
     --accent-foreground: 0 0% 5%;
 
-    /* secondary brand accents */
-    --red: 4 90% 58%;
-    --yellow: 45 100% 55%;
+    --red: 6 85% 56%;
+    --yellow: 42 100% 58%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 14%;
+    --border: 0 0% 13%;
     --input: 0 0% 13%;
-    --ring: 24 100% 52%;
+    --ring: 24 95% 54%;
 
-    --radius: 0.85rem;
+    --radius: 0.9rem;
   }
 }
 
@@ -52,19 +51,19 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Manrope', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
   }
 
   ::selection {
-    background: hsl(var(--primary) / 0.85);
+    background: hsl(var(--primary) / 0.8);
     color: hsl(0 0% 5%);
   }
 
   ::-webkit-scrollbar { width: 9px; }
   ::-webkit-scrollbar-track { background: hsl(0 0% 3%); }
-  ::-webkit-scrollbar-thumb { background: hsl(0 0% 18%); border-radius: 999px; }
-  ::-webkit-scrollbar-thumb:hover { background: hsl(24 90% 45%); }
+  ::-webkit-scrollbar-thumb { background: hsl(0 0% 16%); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(24 80% 45%); }
 }
 
 @layer utilities {
@@ -72,8 +71,9 @@
   .text-red { color: hsl(var(--red)); }
   .text-yellow { color: hsl(var(--yellow)); }
 
+  /* restrained warm gradient, less saturated than before */
   .text-gradient-warm {
-    background: linear-gradient(100deg, hsl(45 100% 58%), hsl(24 100% 52%) 45%, hsl(4 90% 56%));
+    background: linear-gradient(100deg, hsl(40 90% 70%), hsl(24 95% 56%));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -88,13 +88,44 @@
 }
 
 @layer components {
-  .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-110 active:scale-[0.98];
+  /* Liquid glass surface for buttons & chips */
+  .liquid-glass {
+    position: relative;
+    isolation: isolate;
+    background: linear-gradient(180deg, hsl(0 0% 100% / 0.12), hsl(0 0% 100% / 0.03));
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    border: 1px solid hsl(0 0% 100% / 0.14);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.28),
+      inset 0 -6px 18px hsl(0 0% 0% / 0.4),
+      0 10px 30px -12px hsl(0 0% 0% / 0.7);
+    overflow: hidden;
+  }
+  .liquid-glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 35%, hsl(0 0% 100% / 0.35) 50%, transparent 65%);
+    transform: translateX(-130%);
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+  .liquid-glass:hover::after { transform: translateX(130%); }
+
+  .btn-liquid {
+    @apply liquid-glass inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-foreground transition-all duration-200 hover:border-white/25 active:scale-[0.98];
   }
 
-  .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-border bg-transparent px-6 py-3 text-sm font-semibold text-foreground transition-colors duration-200 hover:border-foreground/40 hover:bg-white/5;
+  .btn-liquid-accent {
+    @apply btn-liquid;
+    border-color: hsl(var(--primary) / 0.5);
+    box-shadow:
+      inset 0 1px 0 hsl(36 100% 80% / 0.4),
+      0 10px 30px -12px hsl(24 95% 50% / 0.5);
   }
+  .btn-liquid-accent:hover { border-color: hsl(var(--primary) / 0.8); }
 }
 
 @layer base {

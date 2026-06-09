@@ -63,8 +63,8 @@ export default function Plans() {
                 </ul>
 
                 <a
-                  href="mailto:hello@kairos.app"
-                  className={cn("mt-8", p.highlight ? "btn-primary" : "btn-ghost")}
+                  href="mailto:hello@nsintelligence.com"
+                  className={cn("mt-8", p.highlight ? "btn-liquid-accent" : "btn-liquid")}
                 >
                   Choisir {p.name.replace("Kairos ", "")}
                 </a>
