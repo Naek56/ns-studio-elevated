@@ -17,7 +17,7 @@ export default function ModulePage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-6 text-center">
         <p className="text-2xl font-bold">Module introuvable.</p>
-        <Link to="/" className="btn-ghost">Retour à l'accueil</Link>
+        <Link to="/" className="btn-liquid">Retour à l'accueil</Link>
       </div>
     );
   }
@@ -53,7 +53,7 @@ export default function ModulePage() {
         </ul>
 
         <div className="mt-12">
-          <a href="mailto:hello@kairos.app" className="btn-primary group">
+          <a href="mailto:hello@nsintelligence.com" className="btn-liquid-accent group">
             Activer ce module
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </a>

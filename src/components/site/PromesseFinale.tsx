@@ -25,7 +25,7 @@ export default function PromesseFinale() {
           transition={{ duration: 0.6, delay: 0.15 }}
           className="mt-10"
         >
-          <a href="mailto:hello@kairos.app" className="btn-primary group mx-auto text-base">
+          <a href="mailto:hello@nsintelligence.com" className="btn-liquid-accent group mx-auto text-base">
             Activer ma veille
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </a>
