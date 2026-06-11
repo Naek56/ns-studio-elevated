@@ -1,47 +1,29 @@
-# NS Intelligence · Kairos
+# WAY Agency
 
-Site de l'agence **NS Intelligence (NS.I)** présentant son produit **Kairos**, la veille
-qui travaille pour vous : surveillance de votre marché, de vos concurrents et de vos clients,
-avec un briefing au bon moment.
-
-## Intro
-
-À l'arrivée : un **trou noir 3D animé** (accretion disk, anneau de photons, étoiles, bloom)
-avec un chargement de 0 % à 100 %, le logo NS.I, puis un bouton **Entrer** qui déclenche une
-plongée façon portail vers le site.
+Site de **WAY Agency**, studio créatif (web & expériences digitales) qui a aussi créé
+**Kairos**, une intelligence qui observe et anticipe votre marché. Bien plus qu'une agence.
 
 ## Direction artistique
 
-- **Dark theme**, fond noir
-- Palette **noir + orange**, avec touches secondaires **rouge** et **jaune**
-- Police **Inter** (sobre), copy courte
-- Accueil : fond noir et **figure orange animée qui ondule comme des vagues** (canvas 2D, pas de 3D)
+- **Noir & blanc**, sombre et dramatique, façon expérience (pas un site classique)
+- **Fond 3D** : un symbole fort, une éclipse / planète monochrome au rim lumineux
+  (React Three Fiber + shader + bloom), persistante en arrière plan
+- **Navbar en bas**, narration au scroll, grosses animations
+- Polices Syne (titres) et Inter (texte)
 
-## Sections (plan du scroll)
+## Sections
 
-1. Ouverture (plein écran) : titre + slogan + vague animée
-2. Le problème
-3. Le chiffre choc (97%)
-4. Les 4 modules (cartes cliquables vers une page dédiée)
-5. Ce que Kairos fait (Analyste, Stratège, Veilleur)
-6. La fréquence (quotidien, hebdo, mensuel)
-7. Les plans (Kairos Local 49 €, Kairos Pro 149 €)
-8. Promesse finale
-
-Chaque module (`/module/:slug`) a sa propre page de détail.
-
-## Stack technique
-
-- **Vite + React + TypeScript**
-- **Tailwind CSS** + shadcn/ui (Radix)
-- **Framer Motion** pour les apparitions au scroll
-- Vague animée en **canvas 2D** (aucune dépendance 3D)
+1. Accueil : « Votre concurrent sait ce qui se passe sur son site. Et vous ? »
+2. Le constat (manifeste)
+3. Le studio (bien plus qu'une agence)
+4. Kairos (l'intelligence)
+5. Notre conviction
+6. Contact
 
 ## Développement
 
 ```bash
 npm install
-npm run dev      # serveur de dev
-npm run build    # build de production
-npm run preview  # prévisualiser le build
+npm run dev
+npm run build
 ```
