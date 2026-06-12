@@ -27,7 +27,11 @@ export default function BottomNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  const go = (id: string) => {
+    const lenis = (window as unknown as { lenis?: { scrollTo: (t: string) => void } }).lenis;
+    if (lenis) lenis.scrollTo("#" + id);
+    else document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <nav

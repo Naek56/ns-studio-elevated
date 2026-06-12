@@ -24,7 +24,7 @@ export default function Scene3D() {
       </Suspense>
 
       {/* cinematic grading + dim so text stays readable over the particles */}
-      <div className="pointer-events-none absolute inset-0 bg-background/15" />
+      <div className="pointer-events-none absolute inset-0 bg-background/10" />
       <div
         className="pointer-events-none absolute inset-0"
         style={{ background: "radial-gradient(ellipse at center, transparent 38%, hsl(0 0% 2% / 0.9) 100%)" }}
