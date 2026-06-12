@@ -23,10 +23,11 @@ export default function Scene3D() {
         </Canvas>
       </Suspense>
 
-      {/* cinematic grading */}
+      {/* cinematic grading + dim so text stays readable over the particles */}
+      <div className="pointer-events-none absolute inset-0 bg-background/15" />
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(ellipse at center, transparent 50%, hsl(0 0% 2% / 0.8) 100%)" }}
+        style={{ background: "radial-gradient(ellipse at center, transparent 38%, hsl(0 0% 2% / 0.9) 100%)" }}
       />
       <div className="grain pointer-events-none absolute inset-0 opacity-[0.12] mix-blend-soft-light" />
     </div>

@@ -64,7 +64,7 @@
 }
 
 @layer utilities {
-  .font-display { font-family: 'Syne', system-ui, sans-serif; }
+  .font-display { font-family: 'Bricolage Grotesque', system-ui, sans-serif; }
 
   .container-tight {
     width: 100%;
@@ -75,10 +75,28 @@
 
   /* big editorial heading */
   .display-xl {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Bricolage Grotesque', sans-serif;
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 0.98;
+    text-shadow: 0 2px 34px rgba(0, 0, 0, 0.92), 0 0 12px rgba(0, 0, 0, 0.55);
+  }
+
+  /* keep small text readable over the particle field */
+  .legible { text-shadow: 0 1px 14px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.7); }
+
+  /* dark halo placed behind a text block */
+  .text-scrim::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 150%;
+    height: 130%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse at center, rgba(4, 4, 4, 0.85) 0%, rgba(4, 4, 4, 0.55) 35%, transparent 70%);
+    z-index: -1;
+    pointer-events: none;
   }
 
   .grain {

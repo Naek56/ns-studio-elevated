@@ -21,7 +21,7 @@ export default function Contact() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, ease: [0.16, 0.8, 0.3, 1] }}
-          className="display-xl mt-8 max-w-3xl text-balance text-4xl sm:text-6xl md:text-7xl"
+          className="text-scrim relative display-xl mt-8 max-w-3xl text-balance text-4xl sm:text-6xl md:text-7xl"
         >
           Construisons votre avance.
         </motion.h2>

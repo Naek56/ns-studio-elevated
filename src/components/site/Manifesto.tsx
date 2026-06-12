@@ -25,7 +25,7 @@ export default function Manifesto() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="mt-10 max-w-md text-lg text-muted-foreground"
+          className="legible mt-10 max-w-md text-lg text-muted-foreground"
         >
           La plupart des marques avancent à l'aveugle. Nous, nous regardons. Et nous transformons ce que nous voyons en avance.
         </motion.p>
