@@ -1,27 +1,34 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 
-const EclipseScene = lazy(() => import("@/components/three/EclipseScene"));
+const ParticleBrain = lazy(() => import("@/components/three/ParticleBrain"));
 
 export default function Scene3D() {
+  const [lowPower, setLowPower] = useState(false);
+
+  useEffect(() => {
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    setLowPower(coarse || window.innerWidth < 820);
+  }, []);
+
   return (
     <div className="fixed inset-0 -z-10">
       <Suspense fallback={<div className="absolute inset-0 bg-background" />}>
         <Canvas
-          dpr={[1, 1.8]}
-          gl={{ antialias: true, powerPreference: "high-performance" }}
+          dpr={lowPower ? [1, 1.5] : [1, 2]}
+          gl={{ antialias: !lowPower, powerPreference: "high-performance" }}
           camera={{ fov: 45, position: [0, 0, 6], near: 0.1, far: 100 }}
         >
-          <EclipseScene />
+          <ParticleBrain lowPower={lowPower} />
         </Canvas>
       </Suspense>
 
-      {/* cinematic grading: vignette + grain */}
+      {/* cinematic grading */}
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(ellipse at center, transparent 45%, hsl(0 0% 2% / 0.85) 100%)" }}
+        style={{ background: "radial-gradient(ellipse at center, transparent 50%, hsl(0 0% 2% / 0.8) 100%)" }}
       />
-      <div className="grain pointer-events-none absolute inset-0 opacity-[0.13] mix-blend-soft-light" />
+      <div className="grain pointer-events-none absolute inset-0 opacity-[0.12] mix-blend-soft-light" />
     </div>
   );
 }

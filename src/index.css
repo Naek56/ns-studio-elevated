@@ -102,7 +102,7 @@
   }
 
   .section {
-    @apply relative py-32 md:py-44;
+    @apply relative py-24 md:py-44;
   }
 }
 
