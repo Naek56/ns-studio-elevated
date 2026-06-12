@@ -30,14 +30,17 @@ export default function BottomNav() {
   const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <nav className="fixed inset-x-0 bottom-5 z-50 flex justify-center px-4">
-      <div className="glass-mono flex items-center gap-1 rounded-full p-1.5">
+    <nav
+      className="fixed inset-x-0 bottom-4 z-50 flex justify-center px-3"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+    >
+      <div className="glass-mono flex items-center gap-0.5 rounded-full p-1.5 sm:gap-1">
         {links.map((l) => (
           <button
             key={l.id}
             onClick={() => go(l.id)}
             className={cn(
-              "relative rounded-full px-4 py-2 text-xs font-medium transition-colors duration-300 sm:text-sm",
+              "relative rounded-full px-3 py-2.5 text-xs font-medium transition-colors duration-300 sm:px-4 sm:text-sm",
               active === l.id ? "text-background" : "text-muted-foreground hover:text-foreground"
             )}
           >

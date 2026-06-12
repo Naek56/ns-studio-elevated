@@ -22,7 +22,7 @@ export default function Kairos() {
         </motion.p>
 
         <Reveal>
-          <h2 className="display-xl mx-auto mt-8 max-w-4xl text-balance text-5xl sm:text-6xl md:text-7xl">
+          <h2 className="display-xl mx-auto mt-8 max-w-4xl text-balance text-4xl sm:text-6xl md:text-7xl">
             Nous avons créé <span className="italic">Kairos.</span>
           </h2>
         </Reveal>
