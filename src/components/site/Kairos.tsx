@@ -16,19 +16,19 @@ export default function Kairos() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
-          className="text-xs uppercase tracking-[0.45em] text-muted-foreground"
+          className="legible text-xs uppercase tracking-[0.45em] text-muted-foreground"
         >
           Notre intelligence
         </motion.p>
 
         <Reveal>
-          <h2 className="display-xl mx-auto mt-8 max-w-4xl text-balance text-4xl sm:text-6xl md:text-7xl">
+          <h2 className="text-scrim relative mx-auto display-xl mt-8 max-w-4xl text-balance text-4xl sm:text-6xl md:text-7xl">
             Nous avons créé <span className="italic">Kairos.</span>
           </h2>
         </Reveal>
 
         <Reveal delay={0.1}>
-          <p className="mx-auto mt-8 max-w-xl text-lg text-muted-foreground">
+          <p className="legible mx-auto mt-8 max-w-xl text-lg text-muted-foreground">
             Une intelligence artificielle qui voit ce que vos concurrents voient déjà. Et bien plus encore.
           </p>
         </Reveal>

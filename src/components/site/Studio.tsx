@@ -16,7 +16,7 @@ export default function Studio() {
           <h2 className="display-xl mt-7 max-w-3xl text-balance text-4xl sm:text-5xl md:text-6xl">
             Bien plus qu'une agence.
           </h2>
-          <p className="mt-7 max-w-xl text-lg text-muted-foreground">
+          <p className="legible mt-7 max-w-xl text-lg text-muted-foreground">
             WAY conçoit des expériences web qui marquent les esprits et font la différence. Chaque projet est une signature, pas un modèle.
           </p>
         </Reveal>

@@ -20,15 +20,12 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.3 }}
-          className="mb-7 text-xs uppercase tracking-[0.45em] text-muted-foreground"
+          className="legible mb-7 text-xs uppercase tracking-[0.45em] text-muted-foreground"
         >
           WAY Agency
         </motion.p>
 
-        <h1
-          className="display-xl max-w-4xl text-balance text-4xl sm:text-5xl md:text-6xl lg:text-7xl"
-          style={{ textShadow: "0 2px 40px rgba(0,0,0,0.8), 0 0 12px rgba(0,0,0,0.5)" }}
-        >
+        <h1 className="text-scrim relative display-xl max-w-4xl text-balance text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
           {["Votre concurrent sait", "ce qui se passe sur son site."].map((line, i) => (
             <motion.span
               key={line}
