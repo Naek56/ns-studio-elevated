@@ -144,7 +144,9 @@ const vertexShader = /* glsl */ `
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     gl_Position = projectionMatrix * mv;
     gl_PointSize = (uSize * (0.5 + aRand)) * uPixel / -mv.z;
-    vShade = mix(0.35, 0.82, aRand) * (1.0 - 0.4 * uScatter);
+    // dimmer, with depth shading so the form reads as a textured grey mass
+    float depth = clamp((9.0 - (-mv.z)) / 7.0, 0.15, 1.0);
+    vShade = mix(0.20, 0.58, aRand) * mix(0.55, 1.0, depth) * (1.0 - 0.5 * uScatter);
   }
 `;
 const fragmentShader = /* glsl */ `
@@ -153,7 +155,9 @@ const fragmentShader = /* glsl */ `
     vec2 c = gl_PointCoord - 0.5;
     if (length(c) > 0.5) discard;
     float a = smoothstep(0.5, 0.06, length(c));
-    gl_FragColor = vec4(vec3(vShade), a);
+    // cool grey tint so it differs in hue from the warm-white text
+    vec3 tint = vec3(0.74, 0.82, 1.0);
+    gl_FragColor = vec4(vShade * tint, a);
   }
 `;
 
@@ -223,12 +227,13 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
 
     if (group.current) {
       group.current.rotation.y += delta * 0.04;
-      if (!coarse) {
-        group.current.rotation.x = lerp(group.current.rotation.x, -0.12 - state.pointer.y * 0.22, 0.04);
-        group.current.position.x = lerp(group.current.position.x, state.pointer.x * 0.4, 0.04);
-      } else {
-        group.current.rotation.x = -0.1;
-      }
+      // the form travels as you scroll (protagonist) and frees text zones
+      const driftX = Math.sin(prog * Math.PI * 4) * 0.55;
+      const driftY = Math.cos(prog * Math.PI * 3) * 0.28;
+      const px = coarse ? 0 : state.pointer.x * 0.4;
+      group.current.position.x = lerp(group.current.position.x, px + driftX, 0.05);
+      group.current.position.y = lerp(group.current.position.y, driftY, 0.05);
+      group.current.rotation.x = lerp(group.current.rotation.x, coarse ? -0.1 : -0.12 - state.pointer.y * 0.2, 0.04);
     }
   });
 
@@ -240,7 +245,7 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
       </group>
       {!lowPower && (
         <EffectComposer>
-          <Bloom intensity={0.7} luminanceThreshold={0.25} luminanceSmoothing={0.85} mipmapBlur radius={0.65} />
+          <Bloom intensity={0.5} luminanceThreshold={0.5} luminanceSmoothing={0.9} mipmapBlur radius={0.6} />
         </EffectComposer>
       )}
     </>
