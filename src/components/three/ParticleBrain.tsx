@@ -8,36 +8,6 @@ const lerp = THREE.MathUtils.lerp;
 const _v = new THREE.Vector3();
 const _w = new THREE.Vector3();
 
-/* ---------------- 3D value noise + ridged fbm ---------------- */
-function hash(x: number, y: number, z: number) {
-  const n = Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43758.5453;
-  return n - Math.floor(n);
-}
-const sm = (t: number) => t * t * (3 - 2 * t);
-function noise3(x: number, y: number, z: number) {
-  const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z);
-  const xf = x - xi, yf = y - yi, zf = z - zi;
-  const u = sm(xf), v = sm(yf), w = sm(zf);
-  const L = (a: number, b: number, t: number) => a + (b - a) * t;
-  const c000 = hash(xi, yi, zi), c100 = hash(xi + 1, yi, zi);
-  const c010 = hash(xi, yi + 1, zi), c110 = hash(xi + 1, yi + 1, zi);
-  const c001 = hash(xi, yi, zi + 1), c101 = hash(xi + 1, yi, zi + 1);
-  const c011 = hash(xi, yi + 1, zi + 1), c111 = hash(xi + 1, yi + 1, zi + 1);
-  const x00 = L(c000, c100, u), x10 = L(c010, c110, u);
-  const x01 = L(c001, c101, u), x11 = L(c011, c111, u);
-  return L(L(x00, x10, v), L(x01, x11, v), w);
-}
-function ridged(x: number, y: number, z: number, oct = 4) {
-  let a = 0, amp = 0.5, f = 1;
-  for (let o = 0; o < oct; o++) {
-    let n = noise3(x * f, y * f, z * f);
-    n = 1 - Math.abs(2 * n - 1);
-    a += n * amp;
-    amp *= 0.5;
-    f *= 2.13;
-  }
-  return a;
-}
 function fibDir(i: number, n: number) {
   const t = (i + 0.5) / n;
   const incl = Math.acos(1 - 2 * t);
@@ -45,46 +15,57 @@ function fibDir(i: number, n: number) {
   return [Math.sin(incl) * Math.cos(az), Math.cos(incl), Math.sin(incl) * Math.sin(az)];
 }
 
-/* ---------------- shape 1: detailed brain ---------------- */
-function shapeBrain(count: number) {
+/* ---------------- shape 1: a recognizable 3D heart ---------------- */
+function heart2D(t: number) {
+  // classic heart curve
+  const x = 16 * Math.pow(Math.sin(t), 3);
+  const y =
+    13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+  return [x, y];
+}
+function shapeHeart(count: number) {
   const p = new Float32Array(count * 3);
-  const nC = Math.floor(count * 0.8);
-  const nB = Math.floor(count * 0.16);
-  for (let i = 0; i < count; i++) {
-    let px: number, py: number, pz: number;
-    if (i < nC) {
-      let [x, y, z] = fibDir(i, nC);
-      px = x * 1.3; py = y * 0.92; pz = z * 1.6;
-      const front = Math.max(0, pz);
-      px *= 1 - 0.16 * front; py *= 1 - 0.1 * front;
-      if (py < 0) px *= 1.06;
-      // gyrification: coarse folds + a finer high-frequency layer for detail
-      const r = ridged(px * 3.0 + 12, py * 3.0 + 4, pz * 3.0, 5);
-      const fine = ridged(px * 6.4 + 40, py * 6.4 + 9, pz * 6.4, 3);
-      const disp = (r - 0.5) * 0.24 + (fine - 0.5) * 0.09;
-      const len = Math.hypot(px, py, pz) || 1;
-      px += (px / len) * disp; py += (py / len) * disp; pz += (pz / len) * disp;
-      const fis = Math.exp(-(px * px) / 0.022);
-      if (py > 0) py -= fis * 0.58 * py;
-      px += Math.sign(px || 1) * fis * 0.06;
-      if (py < 0) py *= 0.92;
-      py -= 0.05;
-    } else if (i < nC + nB) {
-      const j = i - nC;
-      let [x, y, z] = fibDir(j, nB);
-      px = x * 0.62; py = y * 0.42 - 0.62; pz = z * 0.5 - 1.15;
-      const r = ridged(px * 8 + 30, py * 8, pz * 8, 4);
-      const disp = (r - 0.5) * 0.12;
-      const len = Math.hypot(px, py, pz) || 1;
-      px += (px / len) * disp; py += (py / len) * disp; pz += (pz / len) * disp;
-      px += Math.sign(px || 1) * Math.exp(-(px * px) / 0.02) * 0.03;
-    } else {
-      const j = i - nC - nB; const n = count - nC - nB;
-      const t = j / n; const a = (j * 2.4) % (Math.PI * 2);
-      const rad = 0.12 * (1 - t * 0.4);
-      px = Math.cos(a) * rad; pz = -1.15 + Math.sin(a) * rad * 0.6; py = -0.95 - t * 0.7;
+  // boundary polygon for the point-in-shape test
+  const B = 240;
+  const bx: number[] = [];
+  const by: number[] = [];
+  for (let k = 0; k < B; k++) {
+    const [x, y] = heart2D((k / B) * Math.PI * 2);
+    bx.push(x);
+    by.push(y);
+  }
+  const inside = (X: number, Y: number) => {
+    let hit = false;
+    for (let i = 0, j = B - 1; i < B; j = i++) {
+      if (by[i] > Y !== by[j] > Y && X < ((bx[j] - bx[i]) * (Y - by[i])) / (by[j] - by[i]) + bx[i]) hit = !hit;
     }
-    p[i * 3] = px; p[i * 3 + 1] = py; p[i * 3 + 2] = pz;
+    return hit;
+  };
+  const S = 0.115; // scale
+  const cy = 1.2; // recentre vertically
+  let i = 0;
+  let guard = 0;
+  while (i < count && guard < count * 60) {
+    guard++;
+    const X = (Math.random() * 2 - 1) * 17;
+    const Y = Math.random() * 34 - 16;
+    if (!inside(X, Y)) continue;
+    // puff: thicker in the middle, thin at edges -> rounded 3D heart
+    const rx = X / 17;
+    const ry = (Y - 4) / 17;
+    const puff = Math.sqrt(Math.max(0, 1 - rx * rx - ry * ry));
+    const z = (Math.random() * 2 - 1) * puff * 6.2;
+    p[i * 3] = X * S;
+    p[i * 3 + 1] = (Y - cy) * S;
+    p[i * 3 + 2] = z * S;
+    i++;
+  }
+  // fill any remainder on the surface (safety)
+  for (; i < count; i++) {
+    const [x, y] = heart2D(Math.random() * Math.PI * 2);
+    p[i * 3] = x * S;
+    p[i * 3 + 1] = (y - cy) * S;
+    p[i * 3 + 2] = (Math.random() * 2 - 1) * 0.1;
   }
   return p;
 }
@@ -145,12 +126,12 @@ const vertexShader = /* glsl */ `
   varying float vShade;
   void main() {
     vec3 p = position;
-    // live cursor repulsion (in the form's local space)
+    // subtle live cursor repulsion (in the form's local space)
     vec2 d = p.xy - uMouse.xy;
     float dist = length(d);
-    float infl = smoothstep(0.95, 0.0, dist) * uMouseStrength;
-    p.xy += normalize(d + vec2(0.0001)) * infl * 0.7;
-    p.z += infl * 0.25;
+    float infl = smoothstep(0.45, 0.0, dist) * uMouseStrength;
+    p.xy += normalize(d + vec2(0.0001)) * infl * 0.22;
+    p.z += infl * 0.06;
     // idle drift
     p += 0.022 * vec3(sin(uTime*0.6 + aPhase), cos(uTime*0.5 + aPhase*1.3), sin(uTime*0.4 + aPhase));
     p = mix(p, aCloud, uScatter);
@@ -174,7 +155,7 @@ const fragmentShader = /* glsl */ `
 `;
 
 // Per-section: which shape forms, and which side the form sits on (x>0 = right).
-// shape: 0 brain, 1 DNA, 2 globe
+// shape: 0 heart, 1 DNA, 2 globe
 const SECTIONS = [
   { id: "accueil", shape: 0, x: 0 },
   { id: "manifeste", shape: 0, x: 2.2 },
@@ -190,7 +171,7 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
   const count = lowPower ? 10000 : 32000;
 
   const { points, shapes } = useMemo(() => {
-    const shapes = [shapeBrain(count), shapeDNA(count), shapeGlobe(count)];
+    const shapes = [shapeHeart(count), shapeDNA(count), shapeGlobe(count)];
     const cloud = new Float32Array(count * 3);
     const rand = new Float32Array(count);
     const phase = new Float32Array(count);
@@ -314,9 +295,9 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
 
   return (
     <>
-      <color attach="background" args={["#06070d"]} />
-      <fogExp2 attach="fog" args={["#06070d", 0.018]} />
-      <Stars radius={120} depth={60} count={lowPower ? 500 : 1400} factor={3} saturation={0} fade speed={0.5} />
+      <color attach="background" args={["#080a14"]} />
+      <fogExp2 attach="fog" args={["#080a14", 0.016]} />
+      <Stars radius={120} depth={70} count={lowPower ? 900 : 2600} factor={4.5} saturation={0} fade speed={0.6} />
       <group ref={group}>
         <primitive object={points} />
       </group>
