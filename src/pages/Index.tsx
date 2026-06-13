@@ -1,6 +1,5 @@
-import Scene3D from "@/components/site/Scene3D";
 import SmoothScroll from "@/components/site/SmoothScroll";
-import BottomNav from "@/components/site/BottomNav";
+import TopNav from "@/components/site/TopNav";
 import Hero from "@/components/site/Hero";
 import Manifesto from "@/components/site/Manifesto";
 import Studio from "@/components/site/Studio";
@@ -10,10 +9,10 @@ import Contact from "@/components/site/Contact";
 
 const Index = () => {
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen bg-background text-foreground">
       <SmoothScroll />
-      <Scene3D />
-      <main className="relative z-10">
+      <TopNav />
+      <main>
         <Hero />
         <Manifesto />
         <Studio />
@@ -21,7 +20,6 @@ const Index = () => {
         <Vision />
         <Contact />
       </main>
-      <BottomNav />
     </div>
   );
 };
