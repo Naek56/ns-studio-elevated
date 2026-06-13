@@ -43,10 +43,10 @@ function ridged(x: number, y: number, z: number, oct = 4) {
 }
 
 /* ---------------- shape 0: detailed brain ---------------- */
-function shapeBrain(count: number) {
+function shapeBrain(count: number, cerebrumOnly = false) {
   const p = new Float32Array(count * 3);
-  const nC = Math.floor(count * 0.8);
-  const nB = Math.floor(count * 0.16);
+  const nC = cerebrumOnly ? count : Math.floor(count * 0.8);
+  const nB = cerebrumOnly ? 0 : Math.floor(count * 0.16);
   for (let i = 0; i < count; i++) {
     let px: number, py: number, pz: number;
     if (i < nC) {
@@ -211,25 +211,37 @@ function shapeEye(count: number) {
   return p;
 }
 
-/* ---------------- shape: AI brain (brain + node network) ---------------- */
+/* ---------------- shape: AI brain (cerebrum + wireframe network) ---------------- */
 function shapeAIBrain(count: number) {
   const p = new Float32Array(count * 3);
-  const nBrain = Math.floor(count * 0.62);
-  const brain = shapeBrain(nBrain);
-  for (let k = 0; k < nBrain * 3; k++) p[k] = brain[k] * 0.92;
-  const K = 46;
+  // cerebrum only (no cerebellum / stem ball at the bottom)
+  const nBrain = Math.floor(count * 0.5);
+  const brain = shapeBrain(nBrain, true);
+  for (let k = 0; k < nBrain * 3; k++) p[k] = brain[k] * 0.9;
+
+  // network of nodes wrapping the brain like the reference image
+  const K = 62;
   const nodes: [number, number, number][] = [];
   for (let k = 0; k < K; k++) {
     const [x, y, z] = fibDir(k + 1, K);
-    const r = 2.0 + Math.random() * 0.55;
-    nodes.push([x * r, y * r * 0.9, z * r]);
+    const r = 1.08 + Math.random() * 0.22;
+    nodes.push([x * 1.75 * r, y * 1.3 * r, z * 2.15 * r]);
   }
+  // connect each node to its 3 nearest -> polygonal web
   const edges: [number, number][] = [];
+  const seen = new Set<string>();
   for (let a = 0; a < K; a++) {
-    const d = nodes.map((n, b) => ({ b, v: b === a ? 1e9 : (n[0] - nodes[a][0]) ** 2 + (n[1] - nodes[a][1]) ** 2 + (n[2] - nodes[a][2]) ** 2 })).sort((x, y) => x.v - y.v);
-    edges.push([a, d[0].b], [a, d[1].b]);
+    const d = nodes
+      .map((n, b) => ({ b, v: b === a ? 1e9 : (n[0] - nodes[a][0]) ** 2 + (n[1] - nodes[a][1]) ** 2 + (n[2] - nodes[a][2]) ** 2 }))
+      .sort((x, y) => x.v - y.v);
+    for (let m = 0; m < 3; m++) {
+      const key = a < d[m].b ? `${a}_${d[m].b}` : `${d[m].b}_${a}`;
+      if (!seen.has(key)) { seen.add(key); edges.push([a, d[m].b]); }
+    }
   }
+
   let i = nBrain;
+  // bright node clusters
   for (let k = 0; k < K && i < count; k++) {
     for (let m = 0; m < 3 && i < count; m++, i++) {
       p[i * 3] = nodes[k][0] + (Math.random() - 0.5) * 0.05;
@@ -237,12 +249,13 @@ function shapeAIBrain(count: number) {
       p[i * 3 + 2] = nodes[k][2] + (Math.random() - 0.5) * 0.05;
     }
   }
+  // dense points along the edges so the connections read as lines
   while (i < count) {
     const e = edges[Math.floor(Math.random() * edges.length)];
     const a = nodes[e[0]], b = nodes[e[1]], t = Math.random();
-    p[i * 3] = a[0] + (b[0] - a[0]) * t + (Math.random() - 0.5) * 0.02;
-    p[i * 3 + 1] = a[1] + (b[1] - a[1]) * t + (Math.random() - 0.5) * 0.02;
-    p[i * 3 + 2] = a[2] + (b[2] - a[2]) * t + (Math.random() - 0.5) * 0.02;
+    p[i * 3] = a[0] + (b[0] - a[0]) * t + (Math.random() - 0.5) * 0.015;
+    p[i * 3 + 1] = a[1] + (b[1] - a[1]) * t + (Math.random() - 0.5) * 0.015;
+    p[i * 3 + 2] = a[2] + (b[2] - a[2]) * t + (Math.random() - 0.5) * 0.015;
     i++;
   }
   return p;
