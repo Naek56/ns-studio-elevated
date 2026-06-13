@@ -4,36 +4,38 @@
 
 @layer base {
   :root {
-    /* WAY Agency — pure black & white, dramatic */
-    --background: 0 0% 4%;
-    --foreground: 0 0% 98%;
+    /* WAY Agency — light theme, white & blue */
+    --background: 210 40% 99%;
+    --foreground: 222 30% 12%;
 
-    --card: 0 0% 7%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 30% 12%;
 
-    --popover: 0 0% 6%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 30% 12%;
 
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 4%;
+    --primary: 222 25% 14%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 214 30% 95%;
+    --secondary-foreground: 222 30% 14%;
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 56%;
+    --muted: 214 28% 95%;
+    --muted-foreground: 220 12% 46%;
 
-    --accent: 0 0% 98%;
-    --accent-foreground: 0 0% 4%;
+    --accent: 218 90% 56%;
+    --accent-foreground: 0 0% 100%;
+
+    --blue: 218 90% 56%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 16%;
-    --input: 0 0% 14%;
-    --ring: 0 0% 80%;
+    --border: 220 22% 90%;
+    --input: 220 22% 88%;
+    --ring: 218 90% 56%;
 
-    --radius: 0.75rem;
+    --radius: 0.85rem;
   }
 }
 
@@ -42,9 +44,7 @@
     @apply border-border;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
+  html { scroll-behavior: smooth; }
 
   /* Lenis smooth scroll */
   html.lenis,
@@ -59,15 +59,12 @@
     overflow-x: hidden;
   }
 
-  ::selection {
-    background: hsl(0 0% 98%);
-    color: hsl(0 0% 4%);
-  }
+  ::selection { background: hsl(218 90% 56%); color: #fff; }
 
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: hsl(0 0% 4%); }
-  ::-webkit-scrollbar-thumb { background: hsl(0 0% 20%); border-radius: 999px; }
-  ::-webkit-scrollbar-thumb:hover { background: hsl(0 0% 35%); }
+  ::-webkit-scrollbar { width: 9px; }
+  ::-webkit-scrollbar-track { background: hsl(210 40% 97%); }
+  ::-webkit-scrollbar-thumb { background: hsl(220 16% 80%); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(218 60% 60%); }
 }
 
 @layer utilities {
@@ -80,62 +77,79 @@
     padding-inline: 1.5rem;
   }
 
-  /* big editorial heading */
   .display-xl {
     font-family: 'Bricolage Grotesque', sans-serif;
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 0.98;
-    text-shadow: 0 2px 34px rgba(0, 0, 0, 0.92), 0 0 12px rgba(0, 0, 0, 0.55);
   }
 
-  /* keep small text readable over the particle field */
-  .legible { text-shadow: 0 1px 14px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.7); }
+  .text-blue { color: hsl(var(--blue)); }
 
-  /* dark halo placed behind a text block */
-  .text-scrim::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 150%;
-    height: 130%;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(ellipse at center, rgba(4, 4, 4, 0.85) 0%, rgba(4, 4, 4, 0.55) 35%, transparent 70%);
-    z-index: -1;
-    pointer-events: none;
+  /* soft white-blue ambience for the hero */
+  .bg-aurora {
+    background:
+      radial-gradient(60% 60% at 50% 35%, hsl(218 100% 97%) 0%, transparent 70%),
+      radial-gradient(50% 50% at 80% 20%, hsl(210 100% 96%) 0%, transparent 60%),
+      linear-gradient(180deg, #ffffff 0%, hsl(212 45% 97%) 100%);
   }
 
-  .grain {
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-  }
-
-  .text-balance { text-wrap: balance; }
+  /* legibility helpers are no-ops on the light theme */
+  .legible { text-shadow: none; }
+  .text-scrim::before { display: none; }
 }
 
 @layer components {
-  /* monochrome glass surface */
-  .glass-mono {
-    background: hsl(0 0% 100% / 0.04);
-    backdrop-filter: blur(16px) saturate(120%);
-    -webkit-backdrop-filter: blur(16px) saturate(120%);
-    border: 1px solid hsl(0 0% 100% / 0.1);
+  /* liquid glass for nav & buttons (frosted light) */
+  .liquid-glass {
+    position: relative;
+    isolation: isolate;
+    background: linear-gradient(180deg, hsl(0 0% 100% / 0.7), hsl(0 0% 100% / 0.4));
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid hsl(0 0% 100% / 0.8);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.9),
+      0 8px 30px -10px hsl(220 40% 40% / 0.25);
+    overflow: hidden;
+  }
+  .liquid-glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 35%, hsl(0 0% 100% / 0.7) 50%, transparent 65%);
+    transform: translateX(-130%);
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+  .liquid-glass:hover::after { transform: translateX(130%); }
+
+  .btn-glass {
+    @apply liquid-glass inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-foreground transition-all duration-200 active:scale-[0.98];
+  }
+
+  .btn-solid {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:brightness-125 active:scale-[0.98];
   }
 
   .btn-line {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/25 px-7 py-3.5 text-sm font-medium text-foreground transition-all duration-300 hover:bg-white hover:text-background;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-foreground/20 px-7 py-3.5 text-sm font-semibold text-foreground transition-all duration-300 hover:bg-foreground hover:text-background;
   }
 
-  .section {
-    @apply relative py-24 md:py-44;
+  /* frosted card on light bg */
+  .glass-mono {
+    background: hsl(0 0% 100% / 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(220 22% 90%);
   }
+
+  .section { @apply relative py-24 md:py-40; }
 }
 
 @layer base {
   @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
+    *, *::before, *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
