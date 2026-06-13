@@ -1,4 +1,5 @@
 import Reveal from "./Reveal";
+import Cta from "./Cta";
 
 const principles = [
   { t: "Le design est une arme", d: "Pas une décoration. Une façon de gagner du terrain." },
@@ -8,9 +9,9 @@ const principles = [
 
 export default function Vision() {
   return (
-    <section id="vision" className="section relative md:flex md:min-h-screen md:items-center">
+    <section id="vision" className="relative flex min-h-screen flex-col justify-end pb-24 lg:justify-center lg:pb-0">
       <div className="container-tight">
-        <div className="md:max-w-[46%] md:ml-auto">
+        <div className="lg:max-w-[46%] lg:ml-auto">
           <Reveal>
             <p className="legible text-xs uppercase tracking-[0.4em] text-muted-foreground">Notre conviction</p>
             <h2 className="display-xl mt-6 text-balance text-4xl sm:text-5xl md:text-6xl">Nous ne suivons pas. Nous traçons.</h2>
@@ -26,6 +27,7 @@ export default function Vision() {
               </Reveal>
             ))}
           </div>
+          <Cta label="Travailler avec nous" />
         </div>
       </div>
     </section>

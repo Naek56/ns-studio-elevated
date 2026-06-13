@@ -1,4 +1,5 @@
 import Reveal from "./Reveal";
+import Cta from "./Cta";
 
 const capabilities = [
   { n: "01", t: "Stratégie", d: "Comprendre le marché, le positionnement, l'intention." },
@@ -9,9 +10,9 @@ const capabilities = [
 
 export default function Studio() {
   return (
-    <section id="studio" className="section relative md:flex md:min-h-screen md:items-center">
+    <section id="studio" className="relative flex min-h-screen flex-col justify-end pb-24 lg:justify-center lg:pb-0">
       <div className="container-tight">
-        <div className="md:max-w-[46%] md:ml-auto">
+        <div className="lg:max-w-[46%] lg:ml-auto">
           <Reveal>
             <p className="legible text-xs uppercase tracking-[0.4em] text-muted-foreground">Le studio</p>
             <h2 className="display-xl mt-6 text-balance text-4xl sm:text-5xl md:text-6xl">Bien plus qu'une agence.</h2>
@@ -33,6 +34,7 @@ export default function Studio() {
               </Reveal>
             ))}
           </div>
+          <Cta label="Démarrer un projet" />
         </div>
       </div>
     </section>

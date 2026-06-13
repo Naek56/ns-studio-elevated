@@ -8,7 +8,7 @@ export default function Scene3D() {
 
   useEffect(() => {
     const coarse = window.matchMedia("(pointer: coarse)").matches;
-    setLowPower(coarse || window.innerWidth < 820);
+    setLowPower(coarse || window.innerWidth < 1024);
   }, []);
 
   return (

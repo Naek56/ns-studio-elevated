@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Cta from "./Cta";
 
 export default function Hero() {
   return (
@@ -38,8 +39,16 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.2 }}
-          className="mt-14 flex flex-col items-center gap-2 text-muted-foreground"
+          transition={{ duration: 1, delay: 1 }}
+        >
+          <Cta label="Démarrer un projet" />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 1.4 }}
+          className="mt-12 hidden flex-col items-center gap-2 text-muted-foreground lg:flex"
         >
           <span className="text-[0.65rem] uppercase tracking-[0.35em]">Défiler</span>
           <motion.span

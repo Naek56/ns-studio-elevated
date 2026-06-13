@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
+import Cta from "./Cta";
 
 export default function Manifesto() {
   const words = ["Voir", "avant", "les", "autres.", "Voilà", "tout."];
   return (
-    <section id="manifeste" className="section relative md:flex md:min-h-screen md:items-center">
+    <section id="manifeste" className="relative flex min-h-screen flex-col justify-end pb-24 lg:justify-center lg:pb-0">
       <div className="container-tight">
-        <div className="md:max-w-[46%] md:mr-auto">
+        <div className="lg:max-w-[46%] lg:mr-auto">
           <p className="legible mb-8 text-xs uppercase tracking-[0.4em] text-muted-foreground">Le constat</p>
           <h2 className="display-xl text-balance text-4xl sm:text-5xl md:text-6xl">
             {words.map((w, i) => (
@@ -30,6 +31,7 @@ export default function Manifesto() {
           >
             La plupart des marques avancent à l'aveugle. Nous, nous regardons. Et nous transformons ce que nous voyons en avance.
           </motion.p>
+          <Cta label="Voir ce qu'on peut faire" />
         </div>
       </div>
     </section>
