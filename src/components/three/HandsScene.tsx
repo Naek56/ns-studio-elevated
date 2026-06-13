@@ -20,63 +20,108 @@ function radialTexture() {
   return new THREE.CanvasTexture(c);
 }
 
-/* ---- finger built from segments (pivots) ---- */
-function addFinger(parent: THREE.Object3D, lengths: number[], radius: number, curl: number, robotic: boolean) {
+/* ---- organic finger: tapered phalanges + rounded knuckles ---- */
+type Phal = { len: number; r0: number; r1: number };
+function addFinger(parent: THREE.Object3D, phalanges: Phal[], curl: number) {
   let node: THREE.Object3D = parent;
-  lengths.forEach((len, i) => {
+  phalanges.forEach((ph, i) => {
     const pivot = new THREE.Group();
-    pivot.rotation.z = -(i === 0 ? curl * 0.5 : curl);
+    pivot.rotation.z = -(i === 0 ? curl * 0.4 : curl);
     node.add(pivot);
-    const seg = new THREE.Mesh(new THREE.CapsuleGeometry(radius, len, 4, 10));
-    seg.rotation.z = Math.PI / 2;
-    seg.position.x = len / 2;
-    pivot.add(seg);
-    if (robotic) {
-      const j = new THREE.Mesh(new THREE.SphereGeometry(radius * 1.12, 10, 10));
-      pivot.add(j);
-    }
+    // rounded knuckle joint
+    const joint = new THREE.Mesh(new THREE.SphereGeometry(ph.r0 * 1.04, 14, 12));
+    pivot.add(joint);
+    // tapered bone (cylinder thicker at base, thinner at tip)
+    const bone = new THREE.Mesh(new THREE.CylinderGeometry(ph.r1, ph.r0, ph.len, 16, 1));
+    bone.rotation.z = -Math.PI / 2;
+    bone.position.x = ph.len / 2;
+    pivot.add(bone);
     const next = new THREE.Group();
-    next.position.x = len;
+    next.position.x = ph.len;
     pivot.add(next);
     node = next;
+    if (i === phalanges.length - 1) {
+      const tip = new THREE.Mesh(new THREE.SphereGeometry(ph.r1, 14, 12));
+      node.add(tip);
+    }
   });
+}
+
+function ellipsoid(sx: number, sy: number, sz: number) {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(1, 28, 20));
+  m.scale.set(sx, sy, sz);
+  return m;
 }
 
 function buildHandMeshes(robotic: boolean) {
   const g = new THREE.Group();
-  const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.26, 1.5, 6, 14));
-  arm.rotation.z = Math.PI / 2;
+
+  // tapered forearm + wrist (rounded, no hard edges)
+  const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.3, 1.5, 18, 1));
+  arm.rotation.z = -Math.PI / 2;
   arm.position.x = -1.0;
   g.add(arm);
-  const palm = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.3, 0.92, 6, 3, 6));
-  palm.position.set(0.12, 0, 0);
+  const wrist = ellipsoid(0.26, 0.2, 0.34);
+  wrist.position.set(-0.28, 0, 0);
+  g.add(wrist);
+
+  // organic palm (ellipsoid), slightly domed
+  const palm = ellipsoid(0.52, 0.17, 0.5);
+  palm.position.set(0.2, 0, 0);
   g.add(palm);
-  if (robotic) {
-    const plate = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.07, 0.7, 4, 2, 4));
-    plate.position.set(0.12, 0.19, 0);
-    g.add(plate);
-  }
-  const fingerZ = [-0.34, -0.12, 0.12, 0.34];
-  const lens = [
-    [0.36, 0.32, 0.26],
-    [0.4, 0.34, 0.27],
-    [0.38, 0.32, 0.26],
-    [0.3, 0.26, 0.2],
+  // thenar muscle (base of the thumb) for a natural silhouette
+  const thenar = ellipsoid(0.24, 0.15, 0.17);
+  thenar.position.set(0.26, -0.02, -0.4);
+  g.add(thenar);
+
+  const fingerZ = [-0.33, -0.11, 0.12, 0.33];
+  const fingers: Phal[][] = [
+    [ // index
+      { len: 0.34, r0: 0.105, r1: 0.095 },
+      { len: 0.3, r0: 0.095, r1: 0.082 },
+      { len: 0.24, r0: 0.082, r1: 0.06 },
+    ],
+    [ // middle (longest)
+      { len: 0.38, r0: 0.11, r1: 0.097 },
+      { len: 0.33, r0: 0.097, r1: 0.084 },
+      { len: 0.26, r0: 0.084, r1: 0.062 },
+    ],
+    [ // ring
+      { len: 0.35, r0: 0.105, r1: 0.093 },
+      { len: 0.31, r0: 0.093, r1: 0.08 },
+      { len: 0.25, r0: 0.08, r1: 0.06 },
+    ],
+    [ // pinky (thinner, shorter)
+      { len: 0.28, r0: 0.09, r1: 0.08 },
+      { len: 0.24, r0: 0.08, r1: 0.068 },
+      { len: 0.19, r0: 0.068, r1: 0.05 },
+    ],
   ];
-  const curls = [0.05, 1.2, 1.35, 1.45];
+  const curls = [0.16, 1.2, 1.35, 1.5]; // index nearly extended (slightly bent = natural)
   fingerZ.forEach((z, k) => {
     const f = new THREE.Group();
-    f.position.set(0.58, 0, z);
-    addFinger(f, lens[k], 0.1, curls[k], robotic);
+    f.position.set(0.62, 0.02, z);
+    addFinger(f, fingers[k], curls[k]);
     g.add(f);
   });
+
+  // thumb (2 phalanges, splayed and rotated up)
   const thumb = new THREE.Group();
-  thumb.position.set(0.2, -0.02, -0.5);
-  thumb.rotation.y = 1.0;
-  thumb.rotation.z = 0.2;
-  addFinger(thumb, [0.32, 0.26], 0.11, 0.35, robotic);
+  thumb.position.set(0.2, -0.02, -0.46);
+  thumb.rotation.set(0.1, 0.95, 0.35);
+  addFinger(
+    thumb,
+    [
+      { len: 0.3, r0: 0.11, r1: 0.095 },
+      { len: 0.24, r0: 0.095, r1: 0.07 },
+    ],
+    0.3
+  );
   g.add(thumb);
-  g.rotation.x = -0.15;
+
+  g.rotation.x = -0.12;
+  // gentle natural cupping
+  g.rotation.y = robotic ? 0.04 : -0.04;
   return g;
 }
 
