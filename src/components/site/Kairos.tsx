@@ -1,4 +1,5 @@
 import Reveal from "./Reveal";
+import Cta from "./Cta";
 
 const traits = [
   { t: "Observe", d: "Votre marché, vos concurrents, vos clients. En continu." },
@@ -8,9 +9,9 @@ const traits = [
 
 export default function Kairos() {
   return (
-    <section id="kairos" className="section relative md:flex md:min-h-screen md:items-center">
+    <section id="kairos" className="relative flex min-h-screen flex-col justify-end pb-24 lg:justify-center lg:pb-0">
       <div className="container-tight">
-        <div className="md:max-w-[46%] md:mr-auto">
+        <div className="lg:max-w-[46%] lg:mr-auto">
           <Reveal>
             <p className="legible text-xs uppercase tracking-[0.45em] text-muted-foreground">Notre intelligence</p>
             <h2 className="display-xl mt-6 text-balance text-4xl sm:text-5xl md:text-6xl">
@@ -31,6 +32,7 @@ export default function Kairos() {
               </Reveal>
             ))}
           </div>
+          <Cta label="Découvrir Kairos" />
         </div>
       </div>
     </section>

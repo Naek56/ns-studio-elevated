@@ -428,10 +428,15 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
       const autoY = Math.sin(state.clock.elapsedTime * 0.25) * 0.45;
       group.current.rotation.y = lerp(group.current.rotation.y, autoY + mx * 0.6, 0.05);
       group.current.rotation.x = lerp(group.current.rotation.x, -0.05 - my * 0.35, 0.05);
-      // sit on the opposite side of the text (alternating per section)
-      const xTarget = coarse ? 0 : SECTIONS[nearest].x;
+      // desktop: form sits on the opposite side of the text (alternating).
+      // tablet/phone: centred, raised and smaller so it shows above the text.
+      const xTarget = lowPower ? 0 : SECTIONS[nearest].x;
+      const yTarget = lowPower ? 1.25 : 0;
       group.current.position.x = lerp(group.current.position.x, xTarget, 0.05);
-      group.current.position.y = lerp(group.current.position.y, 0, 0.05);
+      group.current.position.y = lerp(group.current.position.y, yTarget, 0.05);
+      const sTarget = lowPower ? 0.72 : 1;
+      const sc = lerp(group.current.scale.x, sTarget, 0.05);
+      group.current.scale.set(sc, sc, sc);
     }
   });
 
