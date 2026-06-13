@@ -1,9 +1,12 @@
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
+import { Stars } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 
 const lerp = THREE.MathUtils.lerp;
+const _v = new THREE.Vector3();
+const _w = new THREE.Vector3();
 
 /* ---------------- 3D value noise + ridged fbm ---------------- */
 function hash(x: number, y: number, z: number) {
@@ -55,8 +58,10 @@ function shapeBrain(count: number) {
       const front = Math.max(0, pz);
       px *= 1 - 0.16 * front; py *= 1 - 0.1 * front;
       if (py < 0) px *= 1.06;
+      // gyrification: coarse folds + a finer high-frequency layer for detail
       const r = ridged(px * 3.0 + 12, py * 3.0 + 4, pz * 3.0, 5);
-      const disp = (r - 0.5) * 0.24;
+      const fine = ridged(px * 6.4 + 40, py * 6.4 + 9, pz * 6.4, 3);
+      const disp = (r - 0.5) * 0.24 + (fine - 0.5) * 0.09;
       const len = Math.hypot(px, py, pz) || 1;
       px += (px / len) * disp; py += (py / len) * disp; pz += (pz / len) * disp;
       const fis = Math.exp(-(px * px) / 0.022);
@@ -133,20 +138,27 @@ function shapeGlobe(count: number) {
 }
 
 const vertexShader = /* glsl */ `
-  uniform float uTime, uScatter, uSize, uPixel;
+  uniform float uTime, uScatter, uSize, uPixel, uMouseStrength;
+  uniform vec3 uMouse;
   attribute vec3 aCloud;
   attribute float aRand, aPhase;
   varying float vShade;
   void main() {
     vec3 p = position;
+    // live cursor repulsion (in the form's local space)
+    vec2 d = p.xy - uMouse.xy;
+    float dist = length(d);
+    float infl = smoothstep(0.95, 0.0, dist) * uMouseStrength;
+    p.xy += normalize(d + vec2(0.0001)) * infl * 0.7;
+    p.z += infl * 0.25;
+    // idle drift
     p += 0.022 * vec3(sin(uTime*0.6 + aPhase), cos(uTime*0.5 + aPhase*1.3), sin(uTime*0.4 + aPhase));
     p = mix(p, aCloud, uScatter);
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     gl_Position = projectionMatrix * mv;
     gl_PointSize = (uSize * (0.5 + aRand)) * uPixel / -mv.z;
-    // dimmer, with depth shading so the form reads as a textured grey mass
-    float depth = clamp((9.0 - (-mv.z)) / 7.0, 0.15, 1.0);
-    vShade = mix(0.20, 0.58, aRand) * mix(0.55, 1.0, depth) * (1.0 - 0.5 * uScatter);
+    float depth = clamp((9.0 - (-mv.z)) / 7.0, 0.2, 1.0);
+    vShade = mix(0.34, 0.92, aRand) * mix(0.6, 1.0, depth) * (1.0 - 0.45 * uScatter);
   }
 `;
 const fragmentShader = /* glsl */ `
@@ -175,7 +187,7 @@ const SECTIONS = [
 export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
   const group = useRef<THREE.Group>(null);
   const seg = useRef(0);
-  const count = lowPower ? 9000 : 26000;
+  const count = lowPower ? 10000 : 32000;
 
   const { points, shapes } = useMemo(() => {
     const shapes = [shapeBrain(count), shapeDNA(count), shapeGlobe(count)];
@@ -200,8 +212,10 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
       uniforms: {
         uTime: { value: 0 },
         uScatter: { value: 0 },
-        uSize: { value: lowPower ? 20 : 23 },
+        uSize: { value: lowPower ? 22 : 26 },
         uPixel: { value: Math.min(window.devicePixelRatio || 1, 2) },
+        uMouse: { value: new THREE.Vector3(999, 999, 0) },
+        uMouseStrength: { value: 0 },
       },
       vertexShader,
       fragmentShader,
@@ -216,6 +230,24 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
     () => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches,
     []
   );
+
+  // track the cursor on window (the canvas is behind the content)
+  const ptr = useRef({ x: 0, y: 0, active: false });
+  useEffect(() => {
+    if (coarse) return;
+    const onMove = (e: PointerEvent) => {
+      ptr.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+      ptr.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      ptr.current.active = true;
+    };
+    const onLeave = () => (ptr.current.active = false);
+    window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("pointerleave", onLeave);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerleave", onLeave);
+    };
+  }, [coarse]);
 
   useFrame((state, delta) => {
     const mat = points.material as THREE.ShaderMaterial;
@@ -241,8 +273,12 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
     const neighbour = centers[nearest + dir];
     const spacing = neighbour != null ? Math.abs(neighbour - c) : window.innerHeight;
     const ratio = Math.min(1, Math.abs(center - c) / (spacing * 0.5));
-    const scatterTarget = ratio * ratio * (3 - 2 * ratio) * 0.95;
-    mat.uniforms.uScatter.value = lerp(mat.uniforms.uScatter.value, scatterTarget, 0.08);
+    // stay fully formed across most of the section; disperse only near the
+    // boundary (and reform quickly) -> the model is visible start to end.
+    const e0 = 0.62, e1 = 0.96;
+    const r = Math.min(1, Math.max(0, (ratio - e0) / (e1 - e0)));
+    const scatterTarget = r * r * (3 - 2 * r);
+    mat.uniforms.uScatter.value = lerp(mat.uniforms.uScatter.value, scatterTarget, 0.14);
 
     // swap to the section's shape (happens at the boundary, while dispersed)
     if (nearest !== seg.current) {
@@ -254,23 +290,39 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
 
     if (group.current) {
       group.current.rotation.y += delta * 0.05;
+      const mx = coarse ? 0 : ptr.current.x;
+      const my = coarse ? 0 : ptr.current.y;
       // sit on the opposite side of the text (alternating per section)
-      const xTarget = (coarse ? 0 : SECTIONS[nearest].x) + (coarse ? 0 : state.pointer.x * 0.25);
+      const xTarget = (coarse ? 0 : SECTIONS[nearest].x) + mx * 0.25;
       group.current.position.x = lerp(group.current.position.x, xTarget, 0.05);
       group.current.position.y = lerp(group.current.position.y, 0, 0.05);
-      group.current.rotation.x = lerp(group.current.rotation.x, coarse ? -0.05 : -0.08 - state.pointer.y * 0.15, 0.04);
+      group.current.rotation.x = lerp(group.current.rotation.x, coarse ? -0.05 : -0.08 - my * 0.15, 0.04);
+
+      // live cursor interaction: project pointer onto the z=0 plane, then into
+      // the form's local space so particles part around the cursor in real time
+      if (!coarse) {
+        _v.set(mx, my, 0.5).unproject(state.camera);
+        _v.sub(state.camera.position).normalize();
+        const t = -state.camera.position.z / _v.z;
+        _w.copy(state.camera.position).add(_v.multiplyScalar(t));
+        group.current.worldToLocal(_w);
+        mat.uniforms.uMouse.value.copy(_w);
+        mat.uniforms.uMouseStrength.value = lerp(mat.uniforms.uMouseStrength.value, ptr.current.active ? 1 : 0, 0.1);
+      }
     }
   });
 
   return (
     <>
-      <color attach="background" args={["#040404"]} />
+      <color attach="background" args={["#06070d"]} />
+      <fogExp2 attach="fog" args={["#06070d", 0.018]} />
+      <Stars radius={120} depth={60} count={lowPower ? 500 : 1400} factor={3} saturation={0} fade speed={0.5} />
       <group ref={group}>
         <primitive object={points} />
       </group>
       {!lowPower && (
         <EffectComposer>
-          <Bloom intensity={0.5} luminanceThreshold={0.5} luminanceSmoothing={0.9} mipmapBlur radius={0.6} />
+          <Bloom intensity={0.75} luminanceThreshold={0.32} luminanceSmoothing={0.9} mipmapBlur radius={0.65} />
         </EffectComposer>
       )}
     </>
