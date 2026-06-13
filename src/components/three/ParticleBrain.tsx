@@ -5,8 +5,6 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 
 const lerp = THREE.MathUtils.lerp;
-const _v = new THREE.Vector3();
-const _w = new THREE.Vector3();
 
 function fibDir(i: number, n: number) {
   const t = (i + 0.5) / n;
@@ -135,9 +133,123 @@ function shapeGlobe(count: number) {
   return p;
 }
 
+/* ---------------- shape: WAY logo (W in a circle) ---------------- */
+function shapeLogo(count: number) {
+  const p = new Float32Array(count * 3);
+  const s = 0.085, cx = 24, cy = 24;
+  const W: [number, number][] = [[13, 17.5], [18.5, 31], [24, 20], [29.5, 31], [35, 17.5]];
+  const wp = W.map(([vx, vy]) => [(vx - cx) * s, (cy - vy) * s] as [number, number]);
+  const segs: { ax: number; ay: number; bx: number; by: number; len: number }[] = [];
+  let total = 0;
+  for (let k = 0; k < wp.length - 1; k++) {
+    const [ax, ay] = wp[k], [bx, by] = wp[k + 1];
+    const len = Math.hypot(bx - ax, by - ay);
+    segs.push({ ax, ay, bx, by, len });
+    total += len;
+  }
+  const nW = Math.floor(count * 0.5);
+  const R = 22 * s;
+  for (let i = 0; i < count; i++) {
+    if (i < nW) {
+      let r = Math.random() * total, si = 0;
+      while (si < segs.length - 1 && r > segs[si].len) { r -= segs[si].len; si++; }
+      const sg = segs[si], t = Math.random();
+      p[i * 3] = sg.ax + (sg.bx - sg.ax) * t + (Math.random() - 0.5) * 0.08;
+      p[i * 3 + 1] = sg.ay + (sg.by - sg.ay) * t + (Math.random() - 0.5) * 0.08;
+      p[i * 3 + 2] = (Math.random() - 0.5) * 0.18;
+    } else {
+      const a = Math.random() * Math.PI * 2, rr = R + (Math.random() - 0.5) * 0.1;
+      p[i * 3] = Math.cos(a) * rr;
+      p[i * 3 + 1] = Math.sin(a) * rr;
+      p[i * 3 + 2] = (Math.random() - 0.5) * 0.18;
+    }
+  }
+  return p;
+}
+
+/* ---------------- shape: an eye ---------------- */
+function shapeEye(count: number) {
+  const p = new Float32Array(count * 3);
+  const W = 1.75, A = 0.82, irisR = 0.52, pupil = 0.16;
+  const nOut = Math.floor(count * 0.3);
+  const nIris = Math.floor(count * 0.3);
+  const nSpoke = Math.floor(count * 0.14);
+  let i = 0;
+  for (; i < nOut; i++) {
+    const x = (Math.random() * 2 - 1) * W;
+    const env = 1 - (x / W) * (x / W);
+    const up = Math.random() < 0.5;
+    p[i * 3] = x;
+    p[i * 3 + 1] = (up ? A : -A * 0.72) * env + (Math.random() - 0.5) * 0.04;
+    p[i * 3 + 2] = (Math.random() - 0.5) * 0.1;
+  }
+  for (let k = 0; k < nIris; k++, i++) {
+    const a = Math.random() * Math.PI * 2, rr = irisR + (Math.random() - 0.5) * 0.05;
+    p[i * 3] = Math.cos(a) * rr;
+    p[i * 3 + 1] = Math.sin(a) * rr * 0.95;
+    p[i * 3 + 2] = (Math.random() - 0.5) * 0.07;
+  }
+  for (let k = 0; k < nSpoke; k++, i++) {
+    const a = (Math.floor(Math.random() * 28) / 28) * Math.PI * 2;
+    const rr = pupil + Math.random() * (irisR - pupil);
+    p[i * 3] = Math.cos(a) * rr;
+    p[i * 3 + 1] = Math.sin(a) * rr * 0.95;
+    p[i * 3 + 2] = (Math.random() - 0.5) * 0.05;
+  }
+  for (; i < count; i++) {
+    let x = 0, y = 0;
+    for (let g = 0; g < 12; g++) {
+      x = (Math.random() * 2 - 1) * W;
+      const env = 1 - (x / W) * (x / W);
+      y = (-A * 0.72 * env) + Math.random() * (A * env + A * 0.72 * env);
+      if (x * x + y * y > pupil * pupil) break; // keep the pupil empty
+    }
+    p[i * 3] = x;
+    p[i * 3 + 1] = y;
+    p[i * 3 + 2] = (Math.random() - 0.5) * 0.05;
+  }
+  return p;
+}
+
+/* ---------------- shape: AI brain (brain + node network) ---------------- */
+function shapeAIBrain(count: number) {
+  const p = new Float32Array(count * 3);
+  const nBrain = Math.floor(count * 0.62);
+  const brain = shapeBrain(nBrain);
+  for (let k = 0; k < nBrain * 3; k++) p[k] = brain[k] * 0.92;
+  const K = 46;
+  const nodes: [number, number, number][] = [];
+  for (let k = 0; k < K; k++) {
+    const [x, y, z] = fibDir(k + 1, K);
+    const r = 2.0 + Math.random() * 0.55;
+    nodes.push([x * r, y * r * 0.9, z * r]);
+  }
+  const edges: [number, number][] = [];
+  for (let a = 0; a < K; a++) {
+    const d = nodes.map((n, b) => ({ b, v: b === a ? 1e9 : (n[0] - nodes[a][0]) ** 2 + (n[1] - nodes[a][1]) ** 2 + (n[2] - nodes[a][2]) ** 2 })).sort((x, y) => x.v - y.v);
+    edges.push([a, d[0].b], [a, d[1].b]);
+  }
+  let i = nBrain;
+  for (let k = 0; k < K && i < count; k++) {
+    for (let m = 0; m < 3 && i < count; m++, i++) {
+      p[i * 3] = nodes[k][0] + (Math.random() - 0.5) * 0.05;
+      p[i * 3 + 1] = nodes[k][1] + (Math.random() - 0.5) * 0.05;
+      p[i * 3 + 2] = nodes[k][2] + (Math.random() - 0.5) * 0.05;
+    }
+  }
+  while (i < count) {
+    const e = edges[Math.floor(Math.random() * edges.length)];
+    const a = nodes[e[0]], b = nodes[e[1]], t = Math.random();
+    p[i * 3] = a[0] + (b[0] - a[0]) * t + (Math.random() - 0.5) * 0.02;
+    p[i * 3 + 1] = a[1] + (b[1] - a[1]) * t + (Math.random() - 0.5) * 0.02;
+    p[i * 3 + 2] = a[2] + (b[2] - a[2]) * t + (Math.random() - 0.5) * 0.02;
+    i++;
+  }
+  return p;
+}
+
 const vertexShader = /* glsl */ `
-  uniform float uTime, uScatter, uSize, uPixel, uMouseStrength;
-  uniform vec3 uMouse;
+  uniform float uTime, uScatter, uSize, uPixel;
   attribute vec3 aCloud;
   attribute float aRand, aPhase;
   varying float vShade;
@@ -146,12 +258,6 @@ const vertexShader = /* glsl */ `
     vec3 p = position;
     // colour gradient factor from the resting shape (stable during scatter)
     vGrad = clamp((position.y + 1.9) / 3.8, 0.0, 1.0);
-    // live cursor repulsion (in the form's local space)
-    vec2 d = p.xy - uMouse.xy;
-    float dist = length(d);
-    float infl = smoothstep(0.6, 0.0, dist) * uMouseStrength;
-    p.xy += normalize(d + vec2(0.0001)) * infl * 0.32;
-    p.z += infl * 0.12;
     // idle drift
     p += 0.022 * vec3(sin(uTime*0.6 + aPhase), cos(uTime*0.5 + aPhase*1.3), sin(uTime*0.4 + aPhase));
     p = mix(p, aCloud, uScatter);
@@ -177,21 +283,23 @@ const fragmentShader = /* glsl */ `
 `;
 
 // muted two-tone palette per model (soft, with contrast — not vivid)
+// index: 0 logo, 1 eye, 2 globe, 3 AI-brain, 4 DNA
 const PALETTES: [string, string][] = [
-  ["#5b63a8", "#b487c9"], // brain: indigo -> violet
-  ["#3f9f96", "#5f86c4"], // DNA: teal -> blue
+  ["#6a63c0", "#b487d6"], // logo: indigo -> violet
+  ["#5aa6d8", "#7fd6e0"], // eye: blue -> cyan
   ["#5392c4", "#86c9bd"], // globe: sky -> aqua
+  ["#6f7ae0", "#69d6e0"], // AI brain: indigo -> cyan
+  ["#3f9f96", "#5f86c4"], // DNA: teal -> blue
 ];
 
 // Per-section: which shape forms, and which side the form sits on (x>0 = right).
-// shape: 0 brain, 1 DNA, 2 globe
 const SECTIONS = [
-  { id: "accueil", shape: 0, x: 0 },
-  { id: "manifeste", shape: 0, x: 2.2 },
-  { id: "studio", shape: 2, x: -2.2 },
-  { id: "kairos", shape: 0, x: 2.2 },
-  { id: "vision", shape: 1, x: -2.2 },
-  { id: "contact", shape: 0, x: 0 },
+  { id: "accueil", shape: 0, x: 0 },   // logo
+  { id: "manifeste", shape: 1, x: 2.2 }, // eye
+  { id: "studio", shape: 2, x: -2.2 },   // globe
+  { id: "kairos", shape: 3, x: 2.2 },    // AI brain
+  { id: "vision", shape: 4, x: -2.2 },   // DNA
+  { id: "contact", shape: 0, x: 0 },   // logo
 ];
 
 export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
@@ -200,7 +308,7 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
   const count = lowPower ? 10000 : 32000;
 
   const { points, shapes } = useMemo(() => {
-    const shapes = [shapeBrain(count), shapeDNA(count), shapeGlobe(count)];
+    const shapes = [shapeLogo(count), shapeEye(count), shapeGlobe(count), shapeAIBrain(count), shapeDNA(count)];
     const cloud = new Float32Array(count * 3);
     const rand = new Float32Array(count);
     const phase = new Float32Array(count);
@@ -224,8 +332,6 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
         uScatter: { value: 0 },
         uSize: { value: lowPower ? 22 : 26 },
         uPixel: { value: Math.min(window.devicePixelRatio || 1, 2) },
-        uMouse: { value: new THREE.Vector3(999, 999, 0) },
-        uMouseStrength: { value: 0 },
         uColorA: { value: new THREE.Color(PALETTES[0][0]) },
         uColorB: { value: new THREE.Color(PALETTES[0][1]) },
       },
@@ -261,7 +367,7 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
     };
   }, [coarse]);
 
-  useFrame((state, delta) => {
+  useFrame((state) => {
     const mat = points.material as THREE.ShaderMaterial;
     mat.uniforms.uTime.value = state.clock.elapsedTime;
 
@@ -303,26 +409,16 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
     }
 
     if (group.current) {
-      group.current.rotation.y += delta * 0.05;
       const mx = coarse ? 0 : ptr.current.x;
       const my = coarse ? 0 : ptr.current.y;
+      // gentle turning (no deformation): auto sway + cursor-driven rotation
+      const autoY = Math.sin(state.clock.elapsedTime * 0.25) * 0.45;
+      group.current.rotation.y = lerp(group.current.rotation.y, autoY + mx * 0.6, 0.05);
+      group.current.rotation.x = lerp(group.current.rotation.x, -0.05 - my * 0.35, 0.05);
       // sit on the opposite side of the text (alternating per section)
-      const xTarget = (coarse ? 0 : SECTIONS[nearest].x) + mx * 0.25;
+      const xTarget = coarse ? 0 : SECTIONS[nearest].x;
       group.current.position.x = lerp(group.current.position.x, xTarget, 0.05);
       group.current.position.y = lerp(group.current.position.y, 0, 0.05);
-      group.current.rotation.x = lerp(group.current.rotation.x, coarse ? -0.05 : -0.08 - my * 0.15, 0.04);
-
-      // live cursor interaction: project pointer onto the z=0 plane, then into
-      // the form's local space so particles part around the cursor in real time
-      if (!coarse) {
-        _v.set(mx, my, 0.5).unproject(state.camera);
-        _v.sub(state.camera.position).normalize();
-        const t = -state.camera.position.z / _v.z;
-        _w.copy(state.camera.position).add(_v.multiplyScalar(t));
-        group.current.worldToLocal(_w);
-        mat.uniforms.uMouse.value.copy(_w);
-        mat.uniforms.uMouseStrength.value = lerp(mat.uniforms.uMouseStrength.value, ptr.current.active ? 1 : 0, 0.16);
-      }
     }
   });
 
