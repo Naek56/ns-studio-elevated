@@ -23,11 +23,15 @@ export default function Scene3D() {
         </Canvas>
       </Suspense>
 
-      {/* cinematic grading + dim so text stays readable over the particles */}
-      <div className="pointer-events-none absolute inset-0 bg-background/10" />
+      {/* design detail: subtle blue glows + grid so the bg isn't flat black */}
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(ellipse at center, transparent 38%, hsl(0 0% 2% / 0.9) 100%)" }}
+        style={{ background: "radial-gradient(70% 50% at 50% 0%, hsl(220 70% 22% / 0.28), transparent 60%), radial-gradient(60% 50% at 100% 100%, hsl(265 60% 25% / 0.18), transparent 60%)" }}
+      />
+      <div className="grid-pattern pointer-events-none absolute inset-0 opacity-[0.06]" />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ background: "radial-gradient(ellipse at center, transparent 42%, hsl(230 40% 3% / 0.9) 100%)" }}
       />
       <div className="grain pointer-events-none absolute inset-0 opacity-[0.12] mix-blend-soft-light" />
     </div>
