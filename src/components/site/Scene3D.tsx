@@ -23,15 +23,20 @@ export default function Scene3D() {
         </Canvas>
       </Suspense>
 
-      {/* design detail: subtle blue glows + grid so the bg isn't flat black */}
+      {/* design detail: layered colour glows + grid so the bg isn't flat black */}
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(70% 50% at 50% 0%, hsl(220 70% 22% / 0.28), transparent 60%), radial-gradient(60% 50% at 100% 100%, hsl(265 60% 25% / 0.18), transparent 60%)" }}
+        style={{
+          background:
+            "radial-gradient(75% 55% at 50% -5%, hsl(218 80% 30% / 0.45), transparent 60%)," +
+            "radial-gradient(60% 55% at 92% 105%, hsl(268 70% 34% / 0.34), transparent 60%)," +
+            "radial-gradient(55% 45% at 5% 60%, hsl(195 80% 32% / 0.22), transparent 60%)",
+        }}
       />
-      <div className="grid-pattern pointer-events-none absolute inset-0 opacity-[0.06]" />
+      <div className="grid-pattern pointer-events-none absolute inset-0 opacity-[0.08]" />
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(ellipse at center, transparent 42%, hsl(230 40% 3% / 0.9) 100%)" }}
+        style={{ background: "radial-gradient(ellipse at center, transparent 50%, hsl(230 45% 4% / 0.85) 100%)" }}
       />
       <div className="grain pointer-events-none absolute inset-0 opacity-[0.12] mix-blend-soft-light" />
     </div>
