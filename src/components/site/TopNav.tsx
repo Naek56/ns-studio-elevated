@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import Logo from "./Logo";
 import { cn } from "@/lib/utils";
 
@@ -9,7 +10,7 @@ const links = [
   { label: "Vision", id: "vision" },
 ];
 
-export default function TopNav() {
+export default function TopNav({ show }: { show: boolean }) {
   const [active, setActive] = useState("accueil");
 
   useEffect(() => {
@@ -35,7 +36,13 @@ export default function TopNav() {
   };
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4">
+    <motion.header
+      initial={{ y: -70, opacity: 0 }}
+      animate={{ y: show ? 0 : -70, opacity: show ? 1 : 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      style={{ pointerEvents: show ? "auto" : "none" }}
+      className="fixed inset-x-0 top-0 z-50 px-4 pt-4"
+    >
       <div className="container-tight flex items-center justify-between gap-3">
         <Logo />
 
@@ -46,7 +53,7 @@ export default function TopNav() {
               onClick={() => go(l.id)}
               className={cn(
                 "relative rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300",
-                active === l.id ? "text-primary-foreground" : "text-foreground/70 hover:text-foreground"
+                active === l.id ? "text-primary-foreground" : "text-foreground/65 hover:text-foreground"
               )}
             >
               {active === l.id && <span className="absolute inset-0 rounded-full bg-primary" />}
@@ -59,6 +66,6 @@ export default function TopNav() {
           Contact
         </button>
       </div>
-    </header>
+    </motion.header>
   );
 }

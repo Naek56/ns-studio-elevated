@@ -9,28 +9,30 @@ const capabilities = [
 
 export default function Studio() {
   return (
-    <section id="studio" className="section">
+    <section id="studio" className="section relative md:flex md:min-h-screen md:items-center">
       <div className="container-tight">
-        <Reveal>
-          <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">Le studio</p>
-          <h2 className="display-xl mt-7 max-w-3xl text-balance text-4xl sm:text-5xl md:text-6xl">
-            Bien plus qu'une agence.
-          </h2>
-          <p className="legible mt-7 max-w-xl text-lg text-muted-foreground">
-            WAY conçoit des expériences web qui marquent les esprits et font la différence. Chaque projet est une signature, pas un modèle.
-          </p>
-        </Reveal>
+        <div className="md:max-w-[46%] md:ml-auto">
+          <Reveal>
+            <p className="legible text-xs uppercase tracking-[0.4em] text-muted-foreground">Le studio</p>
+            <h2 className="display-xl mt-6 text-balance text-4xl sm:text-5xl md:text-6xl">Bien plus qu'une agence.</h2>
+            <p className="legible mt-6 max-w-md text-lg text-muted-foreground">
+              WAY conçoit des expériences web qui marquent les esprits. Chaque projet est une signature, pas un modèle.
+            </p>
+          </Reveal>
 
-        <div className="mt-20 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2">
-          {capabilities.map((c, i) => (
-            <Reveal key={c.n} delay={(i % 2) * 0.08}>
-              <div className="group h-full bg-background p-8 transition-colors duration-300 hover:bg-card md:p-10">
-                <span className="font-display text-sm font-bold text-muted-foreground">{c.n}</span>
-                <h3 className="mt-4 font-display text-2xl font-bold tracking-tight">{c.t}</h3>
-                <p className="mt-2 text-muted-foreground">{c.d}</p>
-              </div>
-            </Reveal>
-          ))}
+          <div className="mt-10 space-y-px border-t border-border/70">
+            {capabilities.map((c, i) => (
+              <Reveal key={c.n} delay={i * 0.06}>
+                <div className="flex items-baseline gap-5 border-b border-border/70 py-5">
+                  <span className="font-display text-sm font-bold text-muted-foreground">{c.n}</span>
+                  <div>
+                    <h3 className="font-display text-xl font-bold tracking-tight">{c.t}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{c.d}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </div>
     </section>
