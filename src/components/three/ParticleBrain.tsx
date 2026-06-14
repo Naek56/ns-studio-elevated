@@ -318,7 +318,7 @@ const SECTIONS = [
 export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
   const group = useRef<THREE.Group>(null);
   const seg = useRef(0);
-  const count = lowPower ? 10000 : 32000;
+  const count = lowPower ? 15000 : 32000;
 
   const { points, shapes } = useMemo(() => {
     const shapes = [shapeLogo(count), shapeEye(count), shapeGlobe(count), shapeAIBrain(count), shapeDNA(count)];
@@ -343,8 +343,8 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
       uniforms: {
         uTime: { value: 0 },
         uScatter: { value: 0 },
-        uSize: { value: lowPower ? 26 : 26 },
-        uPixel: { value: Math.min(window.devicePixelRatio || 1, 2) },
+        uSize: { value: lowPower ? 24 : 26 },
+        uPixel: { value: Math.min(window.devicePixelRatio || 1, 3) },
         uColorA: { value: new THREE.Color(PALETTES[0][0]) },
         uColorB: { value: new THREE.Color(PALETTES[0][1]) },
       },
