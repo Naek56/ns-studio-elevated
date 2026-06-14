@@ -1,9 +1,8 @@
 import { motion } from "framer-motion";
-import Cta from "./Cta";
 
 export default function Hero() {
   return (
-    <section id="accueil" className="relative flex min-h-screen items-center justify-center">
+    <section id="accueil" className="relative flex min-h-screen flex-col items-center justify-end pb-24 lg:justify-center lg:pb-0">
       <div className="container-tight relative z-10 text-center">
         <motion.p
           initial={{ opacity: 0 }}
@@ -35,14 +34,6 @@ export default function Hero() {
             Et vous ?
           </motion.span>
         </h1>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-        >
-          <Cta label="Démarrer un projet" />
-        </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
