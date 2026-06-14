@@ -343,7 +343,7 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
       uniforms: {
         uTime: { value: 0 },
         uScatter: { value: 0 },
-        uSize: { value: lowPower ? 22 : 26 },
+        uSize: { value: lowPower ? 26 : 26 },
         uPixel: { value: Math.min(window.devicePixelRatio || 1, 2) },
         uColorA: { value: new THREE.Color(PALETTES[0][0]) },
         uColorB: { value: new THREE.Color(PALETTES[0][1]) },

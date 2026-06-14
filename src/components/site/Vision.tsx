@@ -13,16 +13,16 @@ export default function Vision() {
       <div className="container-tight">
         <div className="w-[54%] ml-auto">
           <Reveal>
-            <p className="legible text-[0.6rem] uppercase tracking-[0.4em] text-muted-foreground sm:text-xs">Notre conviction</p>
-            <h2 className="display-xl mt-4 text-balance text-2xl sm:text-3xl md:text-4xl lg:text-6xl">Nous ne suivons pas. Nous traçons.</h2>
+            <p className="legible text-xs uppercase tracking-[0.35em] text-muted-foreground sm:text-sm">Notre conviction</p>
+            <h2 className="display-xl mt-5 text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl">Nous ne suivons pas. Nous traçons.</h2>
           </Reveal>
 
           <div className="mt-6 space-y-px border-t border-border/70 lg:mt-10">
             {principles.map((p, i) => (
               <Reveal key={p.t} delay={i * 0.06}>
                 <div className="border-b border-border/70 py-4 lg:py-6">
-                  <h3 className="font-display text-base font-bold tracking-tight lg:text-2xl">{p.t}</h3>
-                  <p className="mt-1 text-xs text-muted-foreground lg:text-base">{p.d}</p>
+                  <h3 className="font-display text-lg font-bold tracking-tight lg:text-2xl">{p.t}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground lg:text-base">{p.d}</p>
                 </div>
               </Reveal>
             ))}

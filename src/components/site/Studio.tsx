@@ -14,9 +14,9 @@ export default function Studio() {
       <div className="container-tight">
         <div className="w-[54%] ml-auto">
           <Reveal>
-            <p className="legible text-[0.6rem] uppercase tracking-[0.4em] text-muted-foreground sm:text-xs">Le studio</p>
-            <h2 className="display-xl mt-4 text-balance text-2xl sm:text-3xl md:text-4xl lg:text-6xl">Bien plus qu'une agence.</h2>
-            <p className="legible mt-4 max-w-md text-xs text-muted-foreground sm:text-sm lg:text-lg">
+            <p className="legible text-xs uppercase tracking-[0.35em] text-muted-foreground sm:text-sm">Le studio</p>
+            <h2 className="display-xl mt-5 text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl">Bien plus qu'une agence.</h2>
+            <p className="legible mt-5 max-w-md text-sm text-muted-foreground sm:text-base lg:text-lg">
               WAY conçoit des expériences web qui marquent les esprits. Chaque projet est une signature, pas un modèle.
             </p>
           </Reveal>
@@ -27,8 +27,8 @@ export default function Studio() {
                 <div className="flex items-baseline gap-3 border-b border-border/70 py-3 lg:gap-5 lg:py-5">
                   <span className="font-display text-xs font-bold text-muted-foreground lg:text-sm">{c.n}</span>
                   <div>
-                    <h3 className="font-display text-base font-bold tracking-tight lg:text-xl">{c.t}</h3>
-                    <p className="mt-1 text-[0.7rem] text-muted-foreground lg:text-sm">{c.d}</p>
+                    <h3 className="font-display text-lg font-bold tracking-tight lg:text-xl">{c.t}</h3>
+                    <p className="mt-1 text-xs text-muted-foreground lg:text-sm">{c.d}</p>
                   </div>
                 </div>
               </Reveal>

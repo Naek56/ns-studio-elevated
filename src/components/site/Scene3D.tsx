@@ -15,8 +15,8 @@ export default function Scene3D() {
     <div className="fixed inset-0 -z-10">
       <Suspense fallback={<div className="absolute inset-0 bg-background" />}>
         <Canvas
-          dpr={lowPower ? [1, 1.5] : [1, 2]}
-          gl={{ antialias: !lowPower, powerPreference: "high-performance" }}
+          dpr={[1, 2]}
+          gl={{ antialias: true, powerPreference: "high-performance" }}
           camera={{ fov: 45, position: [0, 0, 6], near: 0.1, far: 100 }}
         >
           <ParticleBrain lowPower={lowPower} />
