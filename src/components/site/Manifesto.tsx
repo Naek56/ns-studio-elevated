@@ -4,9 +4,9 @@ import Cta from "./Cta";
 export default function Manifesto() {
   const words = ["Voir", "avant", "les", "autres.", "Voilà", "tout."];
   return (
-    <section id="manifeste" className="relative flex min-h-screen items-center">
+    <section id="manifeste" className="relative flex min-h-screen flex-col justify-end pb-24 lg:justify-center lg:pb-0">
       <div className="container-tight">
-        <div className="w-[54%] mr-auto">
+        <div className="w-full lg:w-[54%] lg:mr-auto">
           <p className="legible mb-5 text-xs uppercase tracking-[0.35em] text-muted-foreground sm:text-sm">Le constat</p>
           <h2 className="display-xl text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
             {words.map((w, i) => (

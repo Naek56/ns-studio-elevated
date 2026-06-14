@@ -9,9 +9,9 @@ const principles = [
 
 export default function Vision() {
   return (
-    <section id="vision" className="relative flex min-h-screen items-center">
+    <section id="vision" className="relative flex min-h-screen flex-col justify-end pb-24 lg:justify-center lg:pb-0">
       <div className="container-tight">
-        <div className="w-[54%] ml-auto">
+        <div className="w-full lg:w-[54%] lg:ml-auto">
           <Reveal>
             <p className="legible text-xs uppercase tracking-[0.35em] text-muted-foreground sm:text-sm">Notre conviction</p>
             <h2 className="display-xl mt-5 text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl">Nous ne suivons pas. Nous traçons.</h2>
