@@ -9,20 +9,20 @@ const principles = [
 
 export default function Vision() {
   return (
-    <section id="vision" className="relative flex min-h-screen flex-col justify-end pb-24 lg:justify-center lg:pb-0">
+    <section id="vision" className="relative flex min-h-screen items-center">
       <div className="container-tight">
-        <div className="lg:max-w-[46%] lg:ml-auto">
+        <div className="w-[54%] ml-auto">
           <Reveal>
-            <p className="legible text-xs uppercase tracking-[0.4em] text-muted-foreground">Notre conviction</p>
-            <h2 className="display-xl mt-6 text-balance text-4xl sm:text-5xl md:text-6xl">Nous ne suivons pas. Nous traçons.</h2>
+            <p className="legible text-[0.6rem] uppercase tracking-[0.4em] text-muted-foreground sm:text-xs">Notre conviction</p>
+            <h2 className="display-xl mt-4 text-balance text-2xl sm:text-3xl md:text-4xl lg:text-6xl">Nous ne suivons pas. Nous traçons.</h2>
           </Reveal>
 
-          <div className="mt-10 space-y-px border-t border-border/70">
+          <div className="mt-6 space-y-px border-t border-border/70 lg:mt-10">
             {principles.map((p, i) => (
               <Reveal key={p.t} delay={i * 0.06}>
-                <div className="border-b border-border/70 py-6">
-                  <h3 className="font-display text-xl font-bold tracking-tight md:text-2xl">{p.t}</h3>
-                  <p className="mt-1 text-muted-foreground">{p.d}</p>
+                <div className="border-b border-border/70 py-4 lg:py-6">
+                  <h3 className="font-display text-base font-bold tracking-tight lg:text-2xl">{p.t}</h3>
+                  <p className="mt-1 text-xs text-muted-foreground lg:text-base">{p.d}</p>
                 </div>
               </Reveal>
             ))}

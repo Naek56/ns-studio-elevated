@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export default function Hero() {
   return (
-    <section id="accueil" className="relative flex min-h-screen flex-col items-center justify-end pb-24 lg:justify-center lg:pb-0">
+    <section id="accueil" className="relative flex min-h-screen flex-col items-center justify-center">
       <div className="container-tight relative z-10 text-center">
         <motion.p
           initial={{ opacity: 0 }}
@@ -13,7 +13,7 @@ export default function Hero() {
           WAY Agency
         </motion.p>
 
-        <h1 className="text-scrim relative display-xl mx-auto max-w-4xl text-balance text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
+        <h1 className="text-scrim relative display-xl mx-auto max-w-4xl text-balance text-3xl sm:text-4xl md:text-5xl lg:text-7xl">
           {["Votre concurrent sait", "ce qui se passe sur son site."].map((line, i) => (
             <motion.span
               key={line}
