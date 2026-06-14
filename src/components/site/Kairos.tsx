@@ -13,11 +13,11 @@ export default function Kairos() {
       <div className="container-tight">
         <div className="w-[54%] mr-auto">
           <Reveal>
-            <p className="legible text-[0.6rem] uppercase tracking-[0.45em] text-muted-foreground sm:text-xs">Notre intelligence</p>
-            <h2 className="display-xl mt-4 text-balance text-2xl sm:text-3xl md:text-4xl lg:text-6xl">
+            <p className="legible text-xs uppercase tracking-[0.4em] text-muted-foreground sm:text-sm">Notre intelligence</p>
+            <h2 className="display-xl mt-5 text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
               Nous avons créé <span className="italic">Kairos.</span>
             </h2>
-            <p className="legible mt-4 max-w-md text-xs text-muted-foreground sm:text-sm lg:text-lg">
+            <p className="legible mt-5 max-w-md text-sm text-muted-foreground sm:text-base lg:text-lg">
               Une intelligence qui voit ce que vos concurrents voient déjà. Et bien plus encore.
             </p>
           </Reveal>
@@ -26,8 +26,8 @@ export default function Kairos() {
             {traits.map((t, i) => (
               <Reveal key={t.t} delay={i * 0.08}>
                 <div className="border-l border-white/20 pl-4 lg:pl-5">
-                  <h3 className="font-display text-base font-bold tracking-tight lg:text-xl">{t.t}</h3>
-                  <p className="mt-1 text-[0.7rem] text-muted-foreground lg:text-sm">{t.d}</p>
+                  <h3 className="font-display text-lg font-bold tracking-tight lg:text-xl">{t.t}</h3>
+                  <p className="mt-1 text-xs text-muted-foreground lg:text-sm">{t.d}</p>
                 </div>
               </Reveal>
             ))}
