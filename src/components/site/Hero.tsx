@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export default function Hero() {
   return (
-    <section id="accueil" className="relative flex min-h-screen flex-col items-center justify-center">
+    <section id="accueil" className="relative flex min-h-screen flex-col items-center justify-end pb-24 lg:justify-center lg:pb-0">
       <div className="container-tight relative z-10 text-center">
         <motion.p
           initial={{ opacity: 0 }}

@@ -430,12 +430,13 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
       group.current.rotation.x = lerp(group.current.rotation.x, -0.05 - my * 0.35, 0.05);
       // desktop: form sits on the opposite side of the text (alternating).
       // tablet/phone: centred, raised and smaller so it shows above the text.
-      // same side-by-side arrangement as desktop, just smaller/closer on mobile
-      const xTarget = lowPower ? SECTIONS[nearest].x * 0.28 : SECTIONS[nearest].x;
-      const yTarget = 0;
+      // desktop: form on the alternating side. mobile: centred and zoomed out
+      // so the whole model is visible in the middle of the screen.
+      const xTarget = lowPower ? 0 : SECTIONS[nearest].x;
+      const yTarget = lowPower ? 0.9 : 0;
       group.current.position.x = lerp(group.current.position.x, xTarget, 0.05);
       group.current.position.y = lerp(group.current.position.y, yTarget, 0.05);
-      const sTarget = lowPower ? 0.42 : 1;
+      const sTarget = lowPower ? 0.6 : 1;
       const sc = lerp(group.current.scale.x, sTarget, 0.05);
       group.current.scale.set(sc, sc, sc);
     }
