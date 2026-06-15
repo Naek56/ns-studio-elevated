@@ -12,8 +12,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "studio": "remotion studio src/remotion/index.ts",
-    "render": "remotion render src/remotion/index.ts WayPromo out/WayPromo.mp4",
-    "render:still": "remotion still src/remotion/index.ts WayPromo out/WayPromo.png",
+    "render": "remotion render src/remotion/index.ts WayMotion out/WayMotion.mp4",
+    "render:promo": "remotion render src/remotion/index.ts WayPromo out/WayPromo.mp4",
+    "render:still": "remotion still src/remotion/index.ts WayMotion out/WayMotion.png",
     "video:upgrade": "remotion upgrade"
   },
   "dependencies": {
