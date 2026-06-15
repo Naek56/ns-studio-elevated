@@ -162,8 +162,16 @@ export const WayPromo: FC<WayPromoProps> = ({
         </div>
       </AbsoluteFill>
 
-      {/* Closing statement */}
-      <AbsoluteFill style={{ ...centeredLayer, opacity: band(frame, 214, 240, durationInFrames, durationInFrames) }}>
+      {/* Closing statement — fades in and holds; the master fade closes it out */}
+      <AbsoluteFill
+        style={{
+          ...centeredLayer,
+          opacity: interpolate(frame, [214, 240], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      >
         <div
           style={{
             transform: `translateY(${rise(frame, 214, 248)}px)`,
