@@ -27,3 +27,20 @@ npm install
 npm run dev
 npm run build
 ```
+
+## Vidéo (Remotion)
+
+Les vidéos promotionnelles vivent dans `src/remotion/` et partagent l'identité du
+site (noir & blanc, éclipse au rim lumineux, polices Syne / Inter). Elles sont
+écrites en React et rendues avec [Remotion](https://www.remotion.dev).
+
+```bash
+npm run studio        # ouvre le Studio Remotion (aperçu + édition)
+npm run render        # rend la vidéo dans out/WayPromo.mp4
+npm run render:still  # exporte une image fixe dans out/WayPromo.png
+```
+
+- Composition : **WayPromo** — 1920×1080, 30 fps, 9 s (`src/remotion/WayPromo.tsx`).
+- Le code Remotion utilise son propre bundler ; il n'impacte pas le build Vite du site.
+- Le premier rendu télécharge Chrome Headless Shell depuis `remotion.media` :
+  autorisez cet hôte si votre environnement filtre le réseau sortant.
