@@ -53,10 +53,16 @@
   .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
   .lenis.lenis-stopped { overflow: hidden; }
 
+  html { overflow-x: hidden; }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
+    max-width: 100vw;
+    /* allow only vertical finger scroll (no horizontal drift on mobile) */
+    touch-action: pan-y;
+    overscroll-behavior-x: none;
   }
 
   ::selection {
