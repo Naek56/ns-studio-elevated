@@ -12,7 +12,7 @@ export default function Studio() {
   return (
     <section id="studio" className="relative flex min-h-screen flex-col justify-center">
       <div className="container-tight">
-        <div className="w-full lg:w-[54%] lg:ml-auto">
+        <div className="w-full rounded-3xl border border-white/10 bg-background/55 p-6 backdrop-blur-md lg:w-[54%] lg:ml-auto lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
           <Reveal>
             <p className="legible text-xs uppercase tracking-[0.35em] text-muted-foreground sm:text-sm">Le studio</p>
             <h2 className="display-xl mt-5 text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl">Bien plus qu'une agence.</h2>
