@@ -133,7 +133,7 @@ function shapeGlobe(count: number) {
   return p;
 }
 
-/* ---------------- shape: WAY logo (W in a circle) ---------------- */
+/* ---------------- shape: WAY logo (W in a circle), 3D ---------------- */
 function shapeLogo(count: number) {
   const p = new Float32Array(count * 3);
   const s = 0.085, cx = 24, cy = 24;
@@ -148,65 +148,78 @@ function shapeLogo(count: number) {
     total += len;
   }
   const nW = Math.floor(count * 0.5);
-  const R = 22 * s;
+  const R = 22 * s, tube = 0.16, depth = 0.5;
   for (let i = 0; i < count; i++) {
     if (i < nW) {
+      // the "W" extruded into a 3D bar (thickness + depth)
       let r = Math.random() * total, si = 0;
       while (si < segs.length - 1 && r > segs[si].len) { r -= segs[si].len; si++; }
       const sg = segs[si], t = Math.random();
-      p[i * 3] = sg.ax + (sg.bx - sg.ax) * t + (Math.random() - 0.5) * 0.08;
-      p[i * 3 + 1] = sg.ay + (sg.by - sg.ay) * t + (Math.random() - 0.5) * 0.08;
-      p[i * 3 + 2] = (Math.random() - 0.5) * 0.18;
+      p[i * 3] = sg.ax + (sg.bx - sg.ax) * t + (Math.random() - 0.5) * 0.1;
+      p[i * 3 + 1] = sg.ay + (sg.by - sg.ay) * t + (Math.random() - 0.5) * 0.1;
+      p[i * 3 + 2] = (Math.random() - 0.5) * depth;
     } else {
-      const a = Math.random() * Math.PI * 2, rr = R + (Math.random() - 0.5) * 0.1;
+      // the circle as a real 3D torus ring
+      const a = Math.random() * Math.PI * 2, ta = Math.random() * Math.PI * 2;
+      const rr = R + tube * Math.cos(ta);
       p[i * 3] = Math.cos(a) * rr;
       p[i * 3 + 1] = Math.sin(a) * rr;
-      p[i * 3 + 2] = (Math.random() - 0.5) * 0.18;
+      p[i * 3 + 2] = tube * Math.sin(ta);
     }
   }
   return p;
 }
 
-/* ---------------- shape: an eye ---------------- */
+/* ---------------- shape: a detailed 3D eye ---------------- */
 function shapeEye(count: number) {
   const p = new Float32Array(count * 3);
-  const W = 1.75, A = 0.82, irisR = 0.52, pupil = 0.16;
-  const nOut = Math.floor(count * 0.3);
-  const nIris = Math.floor(count * 0.3);
-  const nSpoke = Math.floor(count * 0.14);
+  const W = 1.8, A = 0.85, irisR = 0.55, pupil = 0.2;
+  const dome = (x: number, y: number) => 0.55 * Math.max(0, 1 - (x / W) ** 2 * 0.7 - (y / A) ** 2);
   let i = 0;
-  for (; i < nOut; i++) {
+  const nLid = Math.floor(count * 0.26);
+  const nRing = Math.floor(count * 0.16);
+  const nSpoke = Math.floor(count * 0.28);
+  const nPupil = Math.floor(count * 0.08);
+  // eyelids (almond outline)
+  for (; i < nLid; i++) {
     const x = (Math.random() * 2 - 1) * W;
     const env = 1 - (x / W) * (x / W);
-    const up = Math.random() < 0.5;
-    p[i * 3] = x;
-    p[i * 3 + 1] = (up ? A : -A * 0.72) * env + (Math.random() - 0.5) * 0.04;
-    p[i * 3 + 2] = (Math.random() - 0.5) * 0.1;
+    const up = Math.random() < 0.55;
+    const y = (up ? A : -A * 0.72) * env;
+    p[i * 3] = x + (Math.random() - 0.5) * 0.05;
+    p[i * 3 + 1] = y + (Math.random() - 0.5) * 0.05;
+    p[i * 3 + 2] = dome(x, y) * 0.35 + (Math.random() - 0.5) * 0.04;
   }
-  for (let k = 0; k < nIris; k++, i++) {
-    const a = Math.random() * Math.PI * 2, rr = irisR + (Math.random() - 0.5) * 0.05;
-    p[i * 3] = Math.cos(a) * rr;
-    p[i * 3 + 1] = Math.sin(a) * rr * 0.95;
-    p[i * 3 + 2] = (Math.random() - 0.5) * 0.07;
+  // iris outer ring
+  for (let k = 0; k < nRing; k++, i++) {
+    const a = Math.random() * Math.PI * 2, rr = irisR + (Math.random() - 0.5) * 0.04;
+    const x = Math.cos(a) * rr, y = Math.sin(a) * rr * 0.96;
+    p[i * 3] = x; p[i * 3 + 1] = y; p[i * 3 + 2] = dome(x, y) + 0.05;
   }
+  // iris radial spokes (detail)
   for (let k = 0; k < nSpoke; k++, i++) {
-    const a = (Math.floor(Math.random() * 28) / 28) * Math.PI * 2;
+    const a = (Math.floor(Math.random() * 44) / 44) * Math.PI * 2;
     const rr = pupil + Math.random() * (irisR - pupil);
-    p[i * 3] = Math.cos(a) * rr;
-    p[i * 3 + 1] = Math.sin(a) * rr * 0.95;
-    p[i * 3 + 2] = (Math.random() - 0.5) * 0.05;
+    const x = Math.cos(a) * rr, y = Math.sin(a) * rr * 0.96;
+    p[i * 3] = x; p[i * 3 + 1] = y; p[i * 3 + 2] = dome(x, y) + 0.04 + rr * 0.12;
   }
+  // pupil ring
+  for (let k = 0; k < nPupil; k++, i++) {
+    const a = Math.random() * Math.PI * 2, rr = pupil + (Math.random() - 0.5) * 0.02;
+    const x = Math.cos(a) * rr, y = Math.sin(a) * rr * 0.96;
+    p[i * 3] = x; p[i * 3 + 1] = y; p[i * 3 + 2] = dome(x, y) + 0.07;
+  }
+  // faint sclera fill on the dome (pupil left empty)
   for (; i < count; i++) {
     let x = 0, y = 0;
-    for (let g = 0; g < 12; g++) {
+    for (let g = 0; g < 14; g++) {
       x = (Math.random() * 2 - 1) * W;
       const env = 1 - (x / W) * (x / W);
-      y = (-A * 0.72 * env) + Math.random() * (A * env + A * 0.72 * env);
-      if (x * x + y * y > pupil * pupil) break; // keep the pupil empty
+      const ymax = A * env, ymin = -A * 0.72 * env;
+      y = ymin + Math.random() * (ymax - ymin);
+      if (x * x + y * y > pupil * pupil) break;
     }
-    p[i * 3] = x;
-    p[i * 3 + 1] = y;
-    p[i * 3 + 2] = (Math.random() - 0.5) * 0.05;
+    p[i * 3] = x; p[i * 3 + 1] = y; p[i * 3 + 2] = dome(x, y);
   }
   return p;
 }
@@ -298,7 +311,7 @@ const fragmentShader = /* glsl */ `
 // muted two-tone palette per model (soft, with contrast — not vivid)
 // index: 0 logo, 1 eye, 2 globe, 3 AI-brain, 4 DNA
 const PALETTES: [string, string][] = [
-  ["#6a63c0", "#b487d6"], // logo: indigo -> violet
+  ["#ffffff", "#cdd6e6"], // logo: white (like the real logo)
   ["#5aa6d8", "#7fd6e0"], // eye: blue -> cyan
   ["#5392c4", "#86c9bd"], // globe: sky -> aqua
   ["#6f7ae0", "#69d6e0"], // AI brain: indigo -> cyan
@@ -362,21 +375,40 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
     []
   );
 
-  // track the cursor on window (the canvas is behind the content)
-  const ptr = useRef({ x: 0, y: 0, active: false });
+  // Manual drag-to-rotate (desktop). Grab the model, rotate it; it stays where
+  // you leave it, then eases back upright after ~2s of no interaction.
+  const drag = useRef({ on: false, lx: 0, ly: 0, rx: 0, ry: 0, t: 0 });
   useEffect(() => {
     if (coarse) return;
-    const onMove = (e: PointerEvent) => {
-      ptr.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-      ptr.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
-      ptr.current.active = true;
+    const down = (e: PointerEvent) => {
+      if ((e.target as HTMLElement)?.closest("a,button,input,nav,header")) return;
+      drag.current.on = true;
+      drag.current.lx = e.clientX;
+      drag.current.ly = e.clientY;
+      drag.current.t = performance.now();
     };
-    const onLeave = () => (ptr.current.active = false);
-    window.addEventListener("pointermove", onMove, { passive: true });
-    window.addEventListener("pointerleave", onLeave);
+    const move = (e: PointerEvent) => {
+      if (!drag.current.on) return;
+      drag.current.ry += (e.clientX - drag.current.lx) * 0.006;
+      drag.current.rx += (e.clientY - drag.current.ly) * 0.006;
+      drag.current.rx = Math.max(-1.2, Math.min(1.2, drag.current.rx));
+      drag.current.lx = e.clientX;
+      drag.current.ly = e.clientY;
+      drag.current.t = performance.now();
+    };
+    const up = () => {
+      drag.current.on = false;
+      drag.current.t = performance.now();
+    };
+    window.addEventListener("pointerdown", down);
+    window.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
     return () => {
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerleave", onLeave);
+      window.removeEventListener("pointerdown", down);
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
     };
   }, [coarse]);
 
@@ -422,20 +454,20 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
     }
 
     if (group.current) {
-      const mx = coarse ? 0 : ptr.current.x;
-      const my = coarse ? 0 : ptr.current.y;
-      // gentle turning (no deformation): auto sway + cursor-driven rotation
-      const autoY = Math.sin(state.clock.elapsedTime * 0.25) * 0.45;
-      group.current.rotation.y = lerp(group.current.rotation.y, autoY + mx * 0.6, 0.05);
-      group.current.rotation.x = lerp(group.current.rotation.x, -0.05 - my * 0.35, 0.05);
-      // desktop: form sits on the opposite side of the text (alternating).
-      // tablet/phone: centred, raised and smaller so it shows above the text.
-      // desktop: form on the alternating side. mobile: centred and zoomed out
-      // so the whole model is visible in the middle of the screen.
+      // manual rotation: stays where you leave it, eases back upright after ~2s
+      const d = drag.current;
+      if (!d.on && performance.now() - d.t > 2000) {
+        d.rx = lerp(d.rx, 0, 0.06);
+        d.ry = lerp(d.ry, 0, 0.06);
+      }
+      const k = d.on ? 0.4 : 0.12;
+      group.current.rotation.x = lerp(group.current.rotation.x, d.rx, k);
+      group.current.rotation.y = lerp(group.current.rotation.y, d.ry, k);
+
+      // desktop: model on the alternating side. mobile: centred.
       const xTarget = lowPower ? 0 : SECTIONS[nearest].x;
-      const yTarget = 0;
       group.current.position.x = lerp(group.current.position.x, xTarget, 0.05);
-      group.current.position.y = lerp(group.current.position.y, yTarget, 0.05);
+      group.current.position.y = lerp(group.current.position.y, 0, 0.05);
       const sTarget = lowPower ? 0.66 : 1;
       const sc = lerp(group.current.scale.x, sTarget, 0.05);
       group.current.scale.set(sc, sc, sc);
