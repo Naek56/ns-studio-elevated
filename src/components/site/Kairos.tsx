@@ -9,7 +9,7 @@ const traits = [
 
 export default function Kairos() {
   return (
-    <section id="kairos" className="relative flex min-h-screen flex-col justify-end pb-24 lg:justify-center lg:pb-0">
+    <section id="kairos" className="relative flex min-h-screen flex-col justify-center">
       <div className="container-tight">
         <div className="w-full lg:w-[54%] lg:mr-auto">
           <Reveal>

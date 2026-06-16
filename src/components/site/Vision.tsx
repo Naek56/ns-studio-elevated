@@ -9,7 +9,7 @@ const principles = [
 
 export default function Vision() {
   return (
-    <section id="vision" className="relative flex min-h-screen flex-col justify-end pb-24 lg:justify-center lg:pb-0">
+    <section id="vision" className="relative flex min-h-screen flex-col justify-center">
       <div className="container-tight">
         <div className="w-full lg:w-[54%] lg:ml-auto">
           <Reveal>
