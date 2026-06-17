@@ -232,25 +232,27 @@ function shapeAIBrain(count: number) {
   const brain = shapeBrain(nBrain, true);
   for (let k = 0; k < nBrain * 3; k++) p[k] = brain[k] * 0.9;
 
-  // network of nodes wrapping the brain like the reference image
-  const K = 62;
+  // network of nodes fully wrapping the brain (denser, no gaps)
+  const K = 90;
   const nodes: [number, number, number][] = [];
   for (let k = 0; k < K; k++) {
-    const [x, y, z] = fibDir(k + 1, K);
-    const r = 1.08 + Math.random() * 0.22;
-    nodes.push([x * 1.75 * r, y * 1.3 * r, z * 2.15 * r]);
+    const [x, y, z] = fibDir(k, K);
+    const r = 1.1 + Math.random() * 0.2;
+    nodes.push([x * 1.85 * r, y * 1.45 * r, z * 2.2 * r]);
   }
-  // connect each node to its 3 nearest -> polygonal web
+  // connect each node to its 3 nearest + an occasional long link -> full web
   const edges: [number, number][] = [];
   const seen = new Set<string>();
+  const addEdge = (a: number, c: number) => {
+    const key = a < c ? `${a}_${c}` : `${c}_${a}`;
+    if (a !== c && !seen.has(key)) { seen.add(key); edges.push([a, c]); }
+  };
   for (let a = 0; a < K; a++) {
     const d = nodes
       .map((n, b) => ({ b, v: b === a ? 1e9 : (n[0] - nodes[a][0]) ** 2 + (n[1] - nodes[a][1]) ** 2 + (n[2] - nodes[a][2]) ** 2 }))
       .sort((x, y) => x.v - y.v);
-    for (let m = 0; m < 3; m++) {
-      const key = a < d[m].b ? `${a}_${d[m].b}` : `${d[m].b}_${a}`;
-      if (!seen.has(key)) { seen.add(key); edges.push([a, d[m].b]); }
-    }
+    for (let m = 0; m < 3; m++) addEdge(a, d[m].b);
+    if (Math.random() < 0.35) addEdge(a, d[4 + Math.floor(Math.random() * 6)].b);
   }
 
   let i = nBrain;
@@ -378,10 +380,13 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
   // Manual drag-to-rotate (desktop). Grab the model, rotate it; it stays where
   // you leave it, then eases back upright after ~2s of no interaction.
   const drag = useRef({ on: false, lx: 0, ly: 0, rx: 0, ry: 0, t: 0 });
+  const spin = useRef(0);
   useEffect(() => {
     if (coarse) return;
     const down = (e: PointerEvent) => {
       if ((e.target as HTMLElement)?.closest("a,button,input,nav,header")) return;
+      e.preventDefault(); // don't start a text selection while grabbing the model
+      document.body.style.userSelect = "none";
       drag.current.on = true;
       drag.current.lx = e.clientX;
       drag.current.ly = e.clientY;
@@ -399,6 +404,7 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
     const up = () => {
       drag.current.on = false;
       drag.current.t = performance.now();
+      document.body.style.userSelect = "";
     };
     window.addEventListener("pointerdown", down);
     window.addEventListener("pointermove", move, { passive: true });
@@ -412,7 +418,7 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
     };
   }, [coarse]);
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     const mat = points.material as THREE.ShaderMaterial;
     mat.uniforms.uTime.value = state.clock.elapsedTime;
 
@@ -454,15 +460,21 @@ export default function ParticleBrain({ lowPower }: { lowPower: boolean }) {
     }
 
     if (group.current) {
-      // manual rotation: stays where you leave it, eases back upright after ~2s
+      // 3D models (globe, AI brain, DNA) slowly auto-rotate to the left;
+      // the flat eye and logo stay facing the camera.
+      const spins = SECTIONS[nearest].shape >= 2;
+      if (spins) spin.current -= delta * 0.18;
+      const baseY = spins ? spin.current : 0;
+
+      // manual drag adds an offset; it eases back after ~2s of no interaction
       const d = drag.current;
       if (!d.on && performance.now() - d.t > 2000) {
         d.rx = lerp(d.rx, 0, 0.06);
         d.ry = lerp(d.ry, 0, 0.06);
       }
-      const k = d.on ? 0.4 : 0.12;
+      const k = d.on ? 0.4 : 0.1;
       group.current.rotation.x = lerp(group.current.rotation.x, d.rx, k);
-      group.current.rotation.y = lerp(group.current.rotation.y, d.ry, k);
+      group.current.rotation.y = lerp(group.current.rotation.y, baseY + d.ry, k);
 
       // desktop: model on the alternating side. mobile: centred.
       const xTarget = lowPower ? 0 : SECTIONS[nearest].x;
