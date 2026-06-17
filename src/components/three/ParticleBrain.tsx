@@ -167,6 +167,8 @@ function shapeLogo(count: number) {
       p[i * 3 + 2] = tube * Math.sin(ta);
     }
   }
+  // shrink a touch so the logo never touches the top navigation
+  for (let k = 0; k < count * 3; k++) p[k] *= 0.8;
   return p;
 }
 

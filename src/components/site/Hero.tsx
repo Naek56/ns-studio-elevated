@@ -4,7 +4,7 @@ export default function Hero() {
   return (
     <section id="accueil" className="relative flex min-h-screen flex-col items-center justify-center">
       <div className="container-tight relative z-10 text-center">
-        <div className="rounded-3xl border border-white/10 bg-background/40 p-6 backdrop-blur-sm lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+        <div className="rounded-3xl border border-white/10 bg-background/60 p-6 lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
