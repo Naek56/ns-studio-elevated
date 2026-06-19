@@ -1,49 +1,17 @@
-import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import LogoParticles from "./LogoParticles";
 
 const WORDS = ["AVEUGLE", "MUET", "SEUL", "PERDU"];
 
-function useTypewriter(words: string[]) {
-  const [text, setText] = useState("");
-  const wi = useRef(0);
-  const ci = useRef(0);
-  const deleting = useRef(false);
-
-  useEffect(() => {
-    let timer: number;
-    const tick = () => {
-      const word = words[wi.current % words.length];
-      if (!deleting.current) {
-        ci.current++;
-        setText(word.slice(0, ci.current));
-        if (ci.current >= word.length) {
-          deleting.current = true;
-          timer = window.setTimeout(tick, 1500); // hold the full word
-          return;
-        }
-        timer = window.setTimeout(tick, 110);
-      } else {
-        ci.current--;
-        setText(word.slice(0, ci.current));
-        if (ci.current <= 0) {
-          deleting.current = false;
-          wi.current++;
-          timer = window.setTimeout(tick, 380);
-          return;
-        }
-        timer = window.setTimeout(tick, 55);
-      }
-    };
-    timer = window.setTimeout(tick, 600);
-    return () => window.clearTimeout(timer);
-  }, [words]);
-
-  return text;
-}
-
 export default function Hero() {
-  const typed = useTypewriter(WORDS);
+  const [w, setW] = useState(0);
+  useEffect(() => {
+    const id = window.setInterval(() => setW((v) => (v + 1) % WORDS.length), 2000);
+    return () => window.clearInterval(id);
+  }, []);
+
   const go = (id: string) => {
     const lenis = (window as unknown as { lenis?: { scrollTo: (t: string) => void } }).lenis;
     if (lenis) lenis.scrollTo("#" + id);
@@ -51,47 +19,44 @@ export default function Hero() {
   };
 
   return (
-    <section id="accueil" className="relative flex min-h-screen flex-col items-center justify-center">
-      <div className="container-tight relative z-10 text-center">
-        <div className="rounded-3xl border border-white/10 bg-background/60 p-6 lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0">
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="legible mb-7 text-xs uppercase tracking-[0.45em] text-muted-foreground"
-          >
-            WAY Agency
-          </motion.p>
+    <section id="accueil" className="relative flex min-h-screen flex-col items-center justify-center py-28 text-center">
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="label mb-10"
+      >
+        WAY Creative Agency
+      </motion.p>
 
-          <h1 className="text-scrim relative display-xl mx-auto max-w-4xl text-balance text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
-            <span className="block">Votre site est</span>
-            <span className="mt-2 block">
-              <span>{typed}</span>
-              <span className="ml-1 inline-block w-[0.06em] animate-pulse bg-current align-baseline" style={{ height: "0.85em" }} />
-            </span>
-          </h1>
+      <h1 className="display-xl px-6 text-foreground" style={{ fontSize: "clamp(56px, 8vw, 110px)" }}>
+        <span className="block font-light">Votre site est</span>
+        <span className="block h-[1.1em] font-light italic" style={{ color: "rgba(255,255,255,0.78)" }}>
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={WORDS[w]}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-block"
+            >
+              {WORDS[w]}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+      </h1>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.6 }}
-            className="legible mt-6 text-base text-muted-foreground sm:text-lg"
-          >
-            Kairos change ça.
-          </motion.p>
+      <LogoParticles className="my-6 h-[min(400px,72vw)] w-[min(400px,72vw)]" />
 
-          <motion.button
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.8 }}
-            onClick={() => go("kairos")}
-            className="btn-glass group mt-8"
-          >
-            Découvrir Kairos
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </motion.button>
-        </div>
-      </div>
+      <p className="font-mono text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>
+        Kairos change ça.
+      </p>
+
+      <button onClick={() => go("kairos")} className="btn-glass group mt-8">
+        Découvrir Kairos
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+      </button>
     </section>
   );
 }

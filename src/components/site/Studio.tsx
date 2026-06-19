@@ -1,40 +1,41 @@
 import Reveal from "./Reveal";
-import Cta from "./Cta";
 
-const capabilities = [
+const items = [
   { n: "01", t: "Stratégie", d: "Comprendre le marché, le positionnement, l'intention." },
   { n: "02", t: "Design", d: "Une direction artistique forte, jamais générique." },
   { n: "03", t: "Expérience", d: "Des sites qui se vivent, pas qui se lisent." },
-  { n: "04", t: "Développement", d: "Performance, motion, détails au pixel près." },
 ];
 
 export default function Studio() {
   return (
-    <section id="studio" className="relative flex min-h-screen flex-col justify-center">
-      <div className="container-tight">
-        <div className="w-full rounded-3xl border border-white/10 bg-background/60 p-6 lg:w-[54%] lg:ml-auto lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
-          <Reveal>
-            <p className="legible text-xs uppercase tracking-[0.35em] text-muted-foreground sm:text-sm">Le studio</p>
-            <h2 className="display-xl mt-5 text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl">Bien plus qu'une agence.</h2>
-            <p className="legible mt-5 max-w-md text-sm text-muted-foreground sm:text-base lg:text-lg">
-              WAY conçoit des expériences web qui marquent les esprits. Chaque projet est une signature, pas un modèle.
-            </p>
-          </Reveal>
+    <section id="studio" className="relative border-t border-white/5 py-24 md:py-40">
+      <div className="container-wide">
+        <Reveal>
+          <p className="label">Le studio</p>
+          <h2 className="display-xl mt-7 max-w-4xl text-balance text-5xl sm:text-6xl md:text-7xl">
+            Chaque projet est une signature.{" "}
+            <span className="italic text-muted-foreground">Pas un modèle.</span>
+          </h2>
+          <p className="mt-7 max-w-xl text-base text-muted-foreground sm:text-lg">
+            WAY conçoit des expériences web qui marquent les esprits.
+          </p>
+        </Reveal>
 
-          <div className="mt-6 space-y-px border-t border-border/70 lg:mt-10">
-            {capabilities.map((c, i) => (
-              <Reveal key={c.n} delay={i * 0.06}>
-                <div className="flex items-baseline gap-3 border-b border-border/70 py-3 lg:gap-5 lg:py-5">
-                  <span className="font-display text-xs font-bold text-muted-foreground lg:text-sm">{c.n}</span>
-                  <div>
-                    <h3 className="font-display text-lg font-bold tracking-tight lg:text-xl">{c.t}</h3>
-                    <p className="mt-1 text-xs text-muted-foreground lg:text-sm">{c.d}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-          <Cta label="Démarrer un projet" />
+        <div className="mt-16 grid border-t border-white/10 sm:grid-cols-3">
+          {items.map((it, i) => (
+            <Reveal key={it.n} delay={i * 0.1}>
+              <div className="relative overflow-hidden px-2 py-10 sm:px-8 sm:py-12 sm:border-l sm:border-white/10 sm:first:border-l-0 sm:first:pl-0">
+                <span
+                  className="watermark display-xl pointer-events-none absolute -top-4 right-2 select-none leading-none"
+                  style={{ fontSize: "clamp(90px, 10vw, 150px)" }}
+                >
+                  {it.n}
+                </span>
+                <h3 className="relative font-display text-3xl font-light">{it.t}</h3>
+                <p className="relative mt-3 max-w-xs text-sm text-muted-foreground">{it.d}</p>
+              </div>
+            </Reveal>
+          ))}
         </div>
       </div>
     </section>

@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import Intro from "@/components/site/Intro";
 import SmoothScroll from "@/components/site/SmoothScroll";
-import Scene3D from "@/components/site/Scene3D";
 import TopNav from "@/components/site/TopNav";
 import Hero from "@/components/site/Hero";
 import Manifesto from "@/components/site/Manifesto";
 import Studio from "@/components/site/Studio";
+import Realisations from "@/components/site/Realisations";
 import Kairos from "@/components/site/Kairos";
 import Vision from "@/components/site/Vision";
 import Contact from "@/components/site/Contact";
@@ -31,13 +31,13 @@ const Index = () => {
       <AnimatePresence>{!entered && <Intro key="intro" onEnter={() => setEntered(true)} />}</AnimatePresence>
 
       {entered && <SmoothScroll />}
-      <Scene3D />
       <TopNav show={entered} />
 
       <main className="relative z-10">
         <Hero />
         <Manifesto />
         <Studio />
+        <Realisations />
         <Kairos />
         <Vision />
         <Contact />

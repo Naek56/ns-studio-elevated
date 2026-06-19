@@ -1,5 +1,4 @@
 import Reveal from "./Reveal";
-import Cta from "./Cta";
 
 const principles = [
   { t: "Le design est une arme", d: "Pas une décoration. Une façon de gagner du terrain." },
@@ -9,25 +8,24 @@ const principles = [
 
 export default function Vision() {
   return (
-    <section id="vision" className="relative flex min-h-screen flex-col justify-center">
-      <div className="container-tight">
-        <div className="w-full rounded-3xl border border-white/10 bg-background/60 p-6 lg:w-[54%] lg:ml-auto lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
-          <Reveal>
-            <p className="legible text-xs uppercase tracking-[0.35em] text-muted-foreground sm:text-sm">Notre conviction</p>
-            <h2 className="display-xl mt-5 text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl">Nous ne suivons pas. Nous traçons.</h2>
-          </Reveal>
+    <section id="vision" className="relative border-t border-white/5 py-24 md:py-40">
+      <div className="container-wide">
+        <Reveal>
+          <p className="label">Notre conviction</p>
+          <h2 className="display-xl mt-7 max-w-5xl text-balance text-5xl sm:text-6xl md:text-7xl">
+            Nous ne suivons pas. <span className="italic">Nous traçons.</span>
+          </h2>
+        </Reveal>
 
-          <div className="mt-6 space-y-px border-t border-border/70 lg:mt-10">
-            {principles.map((p, i) => (
-              <Reveal key={p.t} delay={i * 0.06}>
-                <div className="border-b border-border/70 py-4 lg:py-6">
-                  <h3 className="font-display text-lg font-bold tracking-tight lg:text-2xl">{p.t}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground lg:text-base">{p.d}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-          <Cta label="Travailler avec nous" />
+        <div className="mt-16 border-t border-white/10">
+          {principles.map((p, i) => (
+            <Reveal key={p.t} delay={i * 0.08}>
+              <div className="grid gap-3 border-b border-white/10 py-8 md:grid-cols-[1.2fr_1fr] md:items-baseline md:gap-10">
+                <h3 className="font-display text-3xl font-light md:text-4xl">{p.t}</h3>
+                <p className="text-base text-muted-foreground">{p.d}</p>
+              </div>
+            </Reveal>
+          ))}
         </div>
       </div>
     </section>

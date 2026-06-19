@@ -66,7 +66,9 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        display: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif'],
+        display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        mono: ['"DM Mono"', 'ui-monospace', 'monospace'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       keyframes: {

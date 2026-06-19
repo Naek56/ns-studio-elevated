@@ -1,38 +1,40 @@
-import { motion } from "framer-motion";
+import Reveal from "./Reveal";
 import Cta from "./Cta";
 
 export default function Manifesto() {
-  const words = ["Voir", "avant", "les", "autres.", "Voilà", "tout."];
   return (
-    <section id="manifeste" className="relative flex min-h-screen flex-col justify-center">
-      <div className="container-tight">
-        <div className="w-full rounded-3xl border border-white/10 bg-background/60 p-6 lg:w-[54%] lg:mr-auto lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
-          <p className="legible mb-5 text-xs uppercase tracking-[0.35em] text-muted-foreground sm:text-sm">Le constat</p>
-          <h2 className="display-xl text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
-            {words.map((w, i) => (
-              <motion.span
-                key={i}
-                initial={{ opacity: 0.15 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                className={i > 3 ? "text-muted-foreground" : ""}
-              >
-                {w}{" "}
-              </motion.span>
-            ))}
+    <section id="manifeste" className="relative border-t border-white/5 py-24 md:py-40">
+      <div className="container-wide grid items-center gap-14 lg:grid-cols-2">
+        {/* left: copy */}
+        <Reveal>
+          <p className="label">Le constat</p>
+          <h2 className="display-xl mt-7 text-balance text-5xl sm:text-6xl md:text-7xl">
+            Voir avant les autres.{" "}
+            <span className="italic text-muted-foreground">Voilà tout.</span>
           </h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="legible mt-6 max-w-md text-sm text-muted-foreground sm:text-base lg:text-lg"
-          >
+          <p className="mt-7 max-w-md text-base text-muted-foreground sm:text-lg">
             La plupart des marques avancent à l'aveugle. Nous, nous regardons. Et nous transformons ce que nous voyons en avance.
-          </motion.p>
+          </p>
           <Cta label="Voir ce qu'on peut faire" />
-        </div>
+        </Reveal>
+
+        {/* right: typographic stat */}
+        <Reveal delay={0.1}>
+          <div className="relative flex items-center justify-center py-10">
+            <span
+              className="watermark display-xl select-none leading-none"
+              style={{ fontSize: "clamp(140px, 24vw, 240px)" }}
+            >
+              97%
+            </span>
+            <span
+              className="absolute font-mono text-xs sm:text-sm"
+              style={{ color: "rgba(255,255,255,0.5)" }}
+            >
+              des visiteurs repartent sans jamais revenir.
+            </span>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
