@@ -14,9 +14,9 @@ export default function Logo({ className, withText = true }: { className?: strin
         />
       </svg>
       {withText && (
-        <span className="font-display text-lg font-extrabold tracking-tight leading-none">
+        <span className="font-sans text-lg font-semibold leading-none tracking-[0.18em]">
           WAY
-          <span className="block text-[0.55rem] font-medium tracking-[0.3em] text-muted-foreground">
+          <span className="mt-1 block text-[0.5rem] font-medium tracking-[0.32em] text-muted-foreground">
             CREATIVE AGENCY
           </span>
         </span>

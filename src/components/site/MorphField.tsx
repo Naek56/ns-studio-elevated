@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 
-const MorphCloud = lazy(() => import("@/components/three/MorphCloud"));
+const WaveScene = lazy(() => import("@/components/three/WaveScene"));
 
 export default function MorphField() {
   const [lowPower, setLowPower] = useState(false);
@@ -18,7 +18,7 @@ export default function MorphField() {
           gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
           camera={{ fov: 45, position: [0, 0, 6], near: 0.1, far: 100 }}
         >
-          <MorphCloud lowPower={lowPower} />
+          <WaveScene lowPower={lowPower} />
         </Canvas>
       </Suspense>
       {/* vignette so text stays readable over the form */}

@@ -41,19 +41,19 @@ export default function TopNav({ show }: { show: boolean }) {
       animate={{ y: show ? 0 : -70, opacity: show ? 1 : 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       style={{ pointerEvents: show ? "auto" : "none" }}
-      className="fixed inset-x-0 top-0 z-50 px-4 pt-4"
+      className="fixed inset-x-0 top-0 z-50 px-6 pt-6"
     >
-      <div className="container-tight flex items-center justify-between gap-3">
+      <div className="container-wide flex items-center justify-between gap-6">
         <Logo />
 
-        <nav className="liquid-glass hidden items-center gap-0.5 rounded-full p-1.5 md:flex">
+        <nav className="liquid-glass hidden items-center gap-2 rounded-full px-3 py-2 md:flex">
           {links.map((l) => (
             <button
               key={l.id}
               onClick={() => go(l.id)}
               className={cn(
-                "relative rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300",
-                active === l.id ? "text-primary-foreground" : "text-foreground/65 hover:text-foreground"
+                "relative rounded-full px-6 py-2.5 text-sm font-medium tracking-wide transition-colors duration-300",
+                active === l.id ? "text-primary-foreground" : "text-foreground/60 hover:text-foreground"
               )}
             >
               {active === l.id && <span className="absolute inset-0 rounded-full bg-primary" />}
@@ -62,7 +62,7 @@ export default function TopNav({ show }: { show: boolean }) {
           ))}
         </nav>
 
-        <button onClick={() => go("contact")} className="btn-glass">
+        <button onClick={() => go("contact")} className="btn-glass px-7 py-3">
           Contact
         </button>
       </div>
