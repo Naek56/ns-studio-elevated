@@ -101,13 +101,14 @@
     line-height: 1.04;
   }
 
-  /* section label: DM Mono, tiny, wide tracking */
+  /* section label: clean sans, tiny, wide tracking, readable */
   .label {
-    font-family: 'DM Mono', ui-monospace, monospace;
-    font-size: 0.625rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.7rem;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.25em;
-    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.28em;
+    color: rgba(255, 255, 255, 0.5);
   }
 
   /* giant transparent watermark numerals/words */
