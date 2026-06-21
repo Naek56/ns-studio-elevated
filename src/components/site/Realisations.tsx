@@ -1,3 +1,4 @@
+import { ArrowUpRight } from "lucide-react";
 import Reveal from "./Reveal";
 
 const projects = [
@@ -43,7 +44,7 @@ export default function Realisations() {
       <div className="container-wide">
         <Reveal>
           <p className="label">Réalisations</p>
-          <h2 className="display-xl mt-6 text-5xl sm:text-6xl md:text-7xl">Nos projets.</h2>
+          <h2 className="display-xl mt-6 text-5xl sm:text-6xl md:text-7xl">Nos directions.</h2>
           <p className="mt-4 font-mono text-xs text-muted-foreground">
             Redesigns concept &amp; directions créatives.
           </p>
@@ -58,14 +59,16 @@ export default function Realisations() {
               >
                 <div className={`relative overflow-hidden ${p.wide ? "aspect-[21/9]" : "aspect-[16/10]"}`}>
                   <Mockup bg={p.bg} />
-                  <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/80 via-black/10 to-transparent p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <span className="font-display text-3xl font-light text-white">{p.name}</span>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/65 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <span className="flex h-14 w-14 items-center justify-center rounded-full border border-white/30 text-white transition-transform duration-300 group-hover:scale-110">
+                      <ArrowUpRight className="h-6 w-6" />
+                    </span>
                   </div>
                 </div>
                 <div className="flex flex-col gap-3 p-5">
                   <div className="flex items-baseline justify-between gap-4">
                     <h3 className="font-display text-2xl font-light">{p.name}</h3>
-                    <span className="font-mono text-[0.65rem] text-muted-foreground">Concept — Redesign non sollicité</span>
+                    <span className="font-mono text-[0.65rem] uppercase tracking-wider text-muted-foreground">Concept</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {p.tags.map((t) => (

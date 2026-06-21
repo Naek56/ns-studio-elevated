@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Logo from "./Logo";
-import LogoParticles from "./LogoParticles";
 
 export default function Contact() {
   return (
@@ -17,14 +16,12 @@ export default function Contact() {
           Prenons de l'avance
         </motion.p>
 
-        <LogoParticles className="my-6 h-[min(360px,68vw)] w-[min(360px,68vw)]" />
-
         <motion.h2
           initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="display-xl max-w-3xl text-balance text-5xl sm:text-6xl md:text-7xl"
+          className="display-xl legible mt-8 max-w-3xl text-balance text-5xl sm:text-6xl md:text-7xl"
         >
           Construisons votre avance.
         </motion.h2>

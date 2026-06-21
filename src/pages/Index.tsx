@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import Intro from "@/components/site/Intro";
 import SmoothScroll from "@/components/site/SmoothScroll";
+import MorphField from "@/components/site/MorphField";
 import TopNav from "@/components/site/TopNav";
 import Hero from "@/components/site/Hero";
 import Manifesto from "@/components/site/Manifesto";
@@ -31,6 +32,7 @@ const Index = () => {
       <AnimatePresence>{!entered && <Intro key="intro" onEnter={() => setEntered(true)} />}</AnimatePresence>
 
       {entered && <SmoothScroll />}
+      {entered && <MorphField />}
       <TopNav show={entered} />
 
       <main className="relative z-10">
