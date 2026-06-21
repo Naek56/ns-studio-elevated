@@ -9,7 +9,7 @@ const traits = [
 
 export default function Kairos() {
   return (
-    <section id="kairos" className="relative py-28 md:py-44" style={{ background: "#0b1322" }}>
+    <section id="kairos" className="relative py-28 md:py-44">
       <div className="container-wide text-center">
         <Reveal>
           <p className="label">Notre intelligence</p>

@@ -4,14 +4,14 @@
 
 @layer base {
   :root {
-    /* WAY Agency — pure black & white, dramatic */
-    --background: 0 0% 4%;
+    /* WAY Agency — fully black & white */
+    --background: 0 0% 0%;
     --foreground: 0 0% 98%;
 
-    --card: 0 0% 7%;
+    --card: 0 0% 4%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 6%;
+    --popover: 0 0% 4%;
     --popover-foreground: 0 0% 98%;
 
     --primary: 0 0% 98%;
@@ -67,11 +67,11 @@
 
   ::selection {
     background: hsl(0 0% 98%);
-    color: hsl(0 0% 4%);
+    color: hsl(0 0% 0%);
   }
 
   ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: hsl(0 0% 4%); }
+  ::-webkit-scrollbar-track { background: hsl(0 0% 0%); }
   ::-webkit-scrollbar-thumb { background: hsl(0 0% 20%); border-radius: 999px; }
   ::-webkit-scrollbar-thumb:hover { background: hsl(0 0% 35%); }
 }
@@ -93,12 +93,12 @@
     padding-inline: 1.5rem;
   }
 
-  /* big editorial heading — elegant serif, light weight (typography-first) */
+  /* big editorial heading — classic serif, bolder weight */
   .display-xl {
     font-family: 'Cormorant Garamond', Georgia, serif;
-    font-weight: 300;
+    font-weight: 600;
     letter-spacing: -0.01em;
-    line-height: 1.02;
+    line-height: 1.04;
   }
 
   /* section label: DM Mono, tiny, wide tracking */
