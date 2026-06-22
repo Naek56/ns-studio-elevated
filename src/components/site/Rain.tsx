@@ -61,7 +61,9 @@ export default function Rain({ lineSelectors }: { lineSelectors: string[] }) {
 
     const makeDrop = (spread = false): Drop => ({
       x: Math.random() * w,
-      y: spread ? Math.random() * -h : -Math.random() * 40 - 6,
+      // spread = fill the whole visible height immediately (no empty start);
+      // otherwise respawn just above the top edge
+      y: spread ? Math.random() * h : -Math.random() * 40 - 6,
       vy: 90 + Math.random() * 120,
       len: 9 + Math.random() * 15,
       a: 0.25 + Math.random() * 0.5,
@@ -74,12 +76,20 @@ export default function Rain({ lineSelectors }: { lineSelectors: string[] }) {
 
     const resize = () => {
       const r = canvas.getBoundingClientRect();
+      if (r.width === 0 || r.height === 0) return;
       w = r.width; h = r.height;
       canvas.width = Math.floor(w * dpr);
       canvas.height = Math.floor(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const count = coarse ? 18 : Math.min(46, Math.round(w / 34));
-      drops = Array.from({ length: count }, () => makeDrop(true));
+      const count = coarse ? 20 : Math.min(46, Math.round(w / 34));
+      if (drops.length === 0) {
+        drops = Array.from({ length: count }, () => makeDrop(true));
+      } else {
+        // keep falling drops, just adapt the count and clamp into the new width
+        while (drops.length < count) drops.push(makeDrop(true));
+        if (drops.length > count) drops.length = count;
+        for (const d of drops) if (d.x > w) d.x = Math.random() * w;
+      }
       buildMask();
     };
 
@@ -152,6 +162,11 @@ export default function Rain({ lineSelectors }: { lineSelectors: string[] }) {
 
     resize();
     window.addEventListener("resize", resize);
+    window.addEventListener("orientationchange", resize);
+    document.addEventListener("fullscreenchange", resize);
+    // robustly catch any size change (fullscreen, mobile UI bars, layout)
+    const ro = new ResizeObserver(() => resize());
+    ro.observe(canvas);
     // fonts must be ready for the glyph mask to be accurate
     (document as Document & { fonts?: FontFaceSet }).fonts?.ready.then(buildMask).catch(() => {});
     raf = requestAnimationFrame(loop);
@@ -159,6 +174,9 @@ export default function Rain({ lineSelectors }: { lineSelectors: string[] }) {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("orientationchange", resize);
+      document.removeEventListener("fullscreenchange", resize);
+      ro.disconnect();
     };
   }, [lineSelectors]);
 
