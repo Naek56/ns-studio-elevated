@@ -3,7 +3,7 @@ import Logo from "./Logo";
 import { cn } from "@/lib/utils";
 
 // Light sections (white background) over which the nav must turn dark.
-const LIGHT_IDS = ["approche"];
+const LIGHT_IDS: string[] = [];
 
 export default function TopNav() {
   const [onLight, setOnLight] = useState(false);

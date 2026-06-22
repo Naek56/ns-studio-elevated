@@ -11,11 +11,7 @@ const Index = () => {
       <TopNav />
       <main>
         <Hero />
-        {/* clean, compact fade from the black hero into the white section */}
-        <div className="h-16 w-full bg-gradient-to-b from-black to-white sm:h-20" />
         <Approach />
-        {/* fade back from white into the black contact section */}
-        <div className="h-16 w-full bg-gradient-to-b from-white to-black sm:h-20" />
         <Contact />
       </main>
     </div>
