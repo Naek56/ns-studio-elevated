@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import Rain from "./Rain";
 
 const WORDS = ["AVEUGLE", "MUET", "SEUL", "PERDU"];
 
@@ -54,8 +55,12 @@ export default function Hero() {
       </div>
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[55vh] w-[80vw] max-w-[1100px] -translate-x-1/2 -translate-y-1/2 hero-glow animate-glow-pulse" />
 
+      {/* falling stars that splash on the title letters */}
+      <Rain targetSelector="#hero-title" />
+
       <div className="relative z-10 mx-auto max-w-5xl">
         <motion.h1
+          id="hero-title"
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
