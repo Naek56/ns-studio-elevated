@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Light star/rain that falls from the top and splashes when it hits the
- * letters of a target element (the hero title). Kept sparse on purpose.
+ * Light star/rain that falls from the top and splashes only when it actually
+ * hits a letter of the target lines. Collision uses a pixel mask built from
+ * the real glyphs, so drops never burst above or beside the letters.
  */
-export default function Rain({ targetSelector }: { targetSelector: string }) {
+export default function Rain({ lineSelectors }: { lineSelectors: string[] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -14,21 +15,62 @@ export default function Rain({ targetSelector }: { targetSelector: string }) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let w = 0, h = 0;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const coarse = window.matchMedia("(pointer: coarse)").matches;
+
+    // offscreen mask of the title glyphs (CSS-pixel resolution)
+    const mask = document.createElement("canvas");
+    const mctx = mask.getContext("2d", { willReadFrequently: true })!;
+    let alpha: Uint8ClampedArray | null = null;
+    let lastSig = "";
+    let lastBuild = 0;
+
+    const buildMask = () => {
+      if (!w || !h) return;
+      mask.width = w; mask.height = h;
+      mctx.clearRect(0, 0, w, h);
+      mctx.fillStyle = "#fff";
+      mctx.textAlign = "center";
+      mctx.textBaseline = "alphabetic";
+      const cr = canvas.getBoundingClientRect();
+      for (const sel of lineSelectors) {
+        const el = document.querySelector(sel) as HTMLElement | null;
+        const text = el?.textContent?.trim();
+        if (!el || !text) continue;
+        const r = el.getBoundingClientRect();
+        const cs = getComputedStyle(el);
+        const fs = parseFloat(cs.fontSize);
+        mctx.font = `${cs.fontWeight} ${fs}px ${cs.fontFamily}`;
+        try { (mctx as CanvasRenderingContext2D & { letterSpacing?: string }).letterSpacing = `${-0.02 * fs}px`; } catch { /* noop */ }
+        const m = mctx.measureText(text);
+        const asc = m.actualBoundingBoxAscent || fs * 0.72;
+        const desc = m.actualBoundingBoxDescent || fs * 0.2;
+        const cx = r.left - cr.left + r.width / 2;
+        const top = r.top - cr.top;
+        const baseline = top + (r.height - (asc + desc)) / 2 + asc;
+        mctx.fillText(text, cx, baseline);
+      }
+      alpha = mctx.getImageData(0, 0, w, h).data;
+    };
 
     type Drop = { x: number; y: number; vy: number; len: number; a: number };
     type Splash = { x: number; y: number; vx: number; vy: number; life: number; max: number };
     let drops: Drop[] = [];
     const splashes: Splash[] = [];
 
-    const makeDrop = (fromTop = false): Drop => ({
+    const makeDrop = (spread = false): Drop => ({
       x: Math.random() * w,
-      y: fromTop ? -Math.random() * h : Math.random() * -40,
+      y: spread ? Math.random() * -h : -Math.random() * 40 - 6,
       vy: 90 + Math.random() * 120,
-      len: 10 + Math.random() * 16,
+      len: 9 + Math.random() * 15,
       a: 0.25 + Math.random() * 0.5,
     });
+
+    const hitMask = (x: number, y: number) => {
+      if (!alpha || x < 0 || y < 0 || x >= w || y >= h) return false;
+      return alpha[((y | 0) * w + (x | 0)) * 4 + 3] > 60;
+    };
 
     const resize = () => {
       const r = canvas.getBoundingClientRect();
@@ -36,51 +78,46 @@ export default function Rain({ targetSelector }: { targetSelector: string }) {
       canvas.width = Math.floor(w * dpr);
       canvas.height = Math.floor(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const count = coarse ? 18 : Math.min(48, Math.round(w / 32));
+      const count = coarse ? 18 : Math.min(46, Math.round(w / 34));
       drops = Array.from({ length: count }, () => makeDrop(true));
+      buildMask();
     };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const target = document.querySelector(targetSelector) as HTMLElement | null;
 
     let raf = 0;
     let last = performance.now();
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
+
+      // rebuild the glyph mask when the rotating word changes (throttled)
+      const sig = lineSelectors.map((s) => document.querySelector(s)?.textContent).join("|");
+      if (sig !== lastSig && now - lastBuild > 140) { lastSig = sig; lastBuild = now; buildMask(); }
+
       ctx.clearRect(0, 0, w, h);
 
-      // title impact zone in canvas space
-      const cr = canvas.getBoundingClientRect();
-      let tTop = -1, tLeft = 0, tRight = 0;
-      if (target) {
-        const tr = target.getBoundingClientRect();
-        tTop = tr.top - cr.top;
-        tLeft = tr.left - cr.left;
-        tRight = tr.right - cr.left;
-      }
-
-      // drops
       for (const d of drops) {
         const prevY = d.y;
         d.y += d.vy * dt;
 
-        const overTitle = tTop > 0 && d.x >= tLeft && d.x <= tRight;
-        if (overTitle && prevY < tTop && d.y >= tTop) {
-          // splash on the letters
-          const n = 3 + Math.floor(Math.random() * 3);
+        // sample along the fall path so fast drops can't skip a thin glyph
+        let hit = false, hx = d.x, hy = d.y;
+        const steps = Math.max(1, Math.ceil((d.y - prevY) / 3));
+        for (let s = 1; s <= steps; s++) {
+          const yy = prevY + ((d.y - prevY) * s) / steps;
+          if (hitMask(d.x, yy)) { hit = true; hy = yy; break; }
+        }
+        if (hit) {
+          const n = 4 + Math.floor(Math.random() * 3);
           for (let i = 0; i < n; i++) {
-            const ang = -Math.PI / 2 + (Math.random() - 0.5) * 1.7;
-            const sp = 30 + Math.random() * 70;
-            splashes.push({ x: d.x, y: tTop, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, life: 0.5, max: 0.5 });
+            const ang = -Math.PI / 2 + (Math.random() - 0.5) * 1.9;
+            const sp = 35 + Math.random() * 75;
+            splashes.push({ x: hx, y: hy, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, life: 0.5, max: 0.5 });
           }
           Object.assign(d, makeDrop());
           continue;
         }
-        if (d.y - d.len > h) Object.assign(d, makeDrop());
+        if (d.y - d.len > h) { Object.assign(d, makeDrop()); continue; }
 
-        // draw streak with a glowing head
         const grad = ctx.createLinearGradient(d.x, d.y - d.len, d.x, d.y);
         grad.addColorStop(0, "rgba(200,215,255,0)");
         grad.addColorStop(1, `rgba(210,222,255,${d.a})`);
@@ -96,30 +133,34 @@ export default function Rain({ targetSelector }: { targetSelector: string }) {
         ctx.fill();
       }
 
-      // splashes
       for (let i = splashes.length - 1; i >= 0; i--) {
         const s = splashes[i];
         s.life -= dt;
         if (s.life <= 0) { splashes.splice(i, 1); continue; }
-        s.vy += 220 * dt; // gravity
+        s.vy += 240 * dt;
         s.x += s.vx * dt;
         s.y += s.vy * dt;
-        const a = (s.life / s.max) * 0.9;
+        const a = (s.life / s.max) * 0.95;
         ctx.beginPath();
-        ctx.fillStyle = `rgba(225,232,255,${a})`;
-        ctx.arc(s.x, s.y, 1.4, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(228,234,255,${a})`;
+        ctx.arc(s.x, s.y, 1.5, 0, Math.PI * 2);
         ctx.fill();
       }
 
       raf = requestAnimationFrame(loop);
     };
+
+    resize();
+    window.addEventListener("resize", resize);
+    // fonts must be ready for the glyph mask to be accurate
+    (document as Document & { fonts?: FontFaceSet }).fonts?.ready.then(buildMask).catch(() => {});
     raf = requestAnimationFrame(loop);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
     };
-  }, [targetSelector]);
+  }, [lineSelectors]);
 
-  return <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 h-full w-full" />;
+  return <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 z-[15] h-full w-full" />;
 }

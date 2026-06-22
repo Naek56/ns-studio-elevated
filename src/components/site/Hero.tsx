@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Rain from "./Rain";
 
 const WORDS = ["AVEUGLE", "MUET", "SEUL", "PERDU"];
+const LINES = ["#hero-line1", "#hero-word"];
 
 function useTypewriter(words: string[]) {
   const [text, setText] = useState("");
@@ -49,14 +50,16 @@ export default function Hero() {
     <section id="accueil" className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-6 text-center">
       {/* coloured auroras + white core light behind the title */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="aurora aurora-a absolute h-[42vh] w-[42vh] animate-drift" style={{ transform: "translate(-22%, -12%)" }} />
-        <div className="aurora aurora-b absolute h-[38vh] w-[38vh] animate-drift-slow" style={{ transform: "translate(24%, 10%)" }} />
-        <div className="aurora aurora-c absolute h-[30vh] w-[55vh] animate-glow-pulse" />
+        <div className="aurora aurora-a absolute h-[52vh] w-[52vh] animate-drift" style={{ transform: "translate(-22%, -12%)" }} />
+        <div className="aurora aurora-b absolute h-[48vh] w-[48vh] animate-drift-slow" style={{ transform: "translate(24%, 10%)" }} />
+        <div className="aurora aurora-c absolute h-[40vh] w-[68vh] animate-glow-pulse" />
       </div>
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[55vh] w-[80vw] max-w-[1100px] -translate-x-1/2 -translate-y-1/2 hero-glow animate-glow-pulse" />
+      {/* large soft base light + tighter core glow on the title */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[85vh] w-[95vw] max-w-[1400px] -translate-x-1/2 -translate-y-1/2 hero-glow-wide" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[58vh] w-[80vw] max-w-[1100px] -translate-x-1/2 -translate-y-1/2 hero-glow animate-glow-pulse" />
 
-      {/* falling stars that splash on the title letters */}
-      <Rain targetSelector="#hero-title" />
+      {/* falling stars that splash precisely on the title letters */}
+      <Rain lineSelectors={LINES} />
 
       <div className="relative z-10 mx-auto max-w-5xl">
         <motion.h1
@@ -67,9 +70,9 @@ export default function Hero() {
           className="display-xl text-balance text-[2.6rem] font-semibold leading-tight text-white sm:text-6xl md:text-7xl lg:text-[5.5rem]"
           style={{ textShadow: "0 0 40px rgba(255,255,255,0.25)" }}
         >
-          <span className="block">Votre site est</span>
+          <span id="hero-line1" className="block">Votre site est</span>
           <span className="mt-3 block">
-            <span className="word-glow">{typed}</span>
+            <span id="hero-word" className="word-glow">{typed}</span>
             <motion.span
               aria-hidden
               className="ml-1 inline-block w-[0.06em] rounded-full bg-white align-baseline"
