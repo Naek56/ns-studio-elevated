@@ -53,12 +53,14 @@
   .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
   .lenis.lenis-stopped { overflow: hidden; }
 
-  html { overflow-x: hidden; }
+  /* clip (not hidden) so it never creates a scroll container that breaks
+     position: sticky in the storytelling section */
+  html { overflow-x: clip; }
 
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-    overflow-x: hidden;
+    overflow-x: clip;
     max-width: 100vw;
     /* allow only vertical finger scroll (no horizontal drift on mobile) */
     touch-action: pan-y;
