@@ -116,10 +116,19 @@
     background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.12) 34%, transparent 70%);
     filter: blur(8px);
   }
-  /* wide ambient light so the whole hero feels lit */
+  /* wide ambient white light so the whole hero feels lit */
   .hero-glow-wide {
-    background: radial-gradient(ellipse 55% 50% at 50% 48%, rgba(160, 185, 255, 0.18) 0%, rgba(120, 130, 200, 0.10) 40%, transparent 72%);
+    background: radial-gradient(ellipse 55% 50% at 50% 48%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.07) 42%, transparent 72%);
     filter: blur(30px);
+  }
+
+  /* soft floating white light in the background */
+  .light-orb {
+    border-radius: 9999px;
+    background: radial-gradient(closest-side, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06) 46%, transparent 72%);
+    filter: blur(48px);
+    opacity: 0.85;
+    will-change: transform;
   }
 
   /* coloured aurora blobs behind the hero (subtle, premium) */
