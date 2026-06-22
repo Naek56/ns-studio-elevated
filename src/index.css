@@ -117,6 +117,28 @@
     filter: blur(8px);
   }
 
+  /* coloured aurora blobs behind the hero (subtle, premium) */
+  .aurora {
+    border-radius: 9999px;
+    filter: blur(60px);
+    opacity: 0.55;
+    will-change: transform;
+  }
+  .aurora-a { background: radial-gradient(closest-side, rgba(108, 140, 255, 0.55), transparent 70%); }
+  .aurora-b { background: radial-gradient(closest-side, rgba(178, 130, 255, 0.45), transparent 70%); }
+  .aurora-c { background: radial-gradient(closest-side, rgba(255, 255, 255, 0.5), transparent 70%); }
+
+  /* glowing shimmering word (the rotating one) */
+  .word-glow {
+    background-image: linear-gradient(100deg, #ffffff 0%, #cdd8ff 35%, #ffffff 60%, #e6d6ff 100%);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 6s linear infinite;
+    filter: drop-shadow(0 0 26px rgba(180, 200, 255, 0.65)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
+  }
+
   /* giant transparent watermark numerals/words */
   .watermark { color: rgba(255, 255, 255, 0.05); }
 
