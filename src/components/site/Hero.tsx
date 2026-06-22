@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import Rain from "./Rain";
 
 const WORDS = ["AVEUGLE", "MUET", "SEUL", "PERDU"];
-const LINES = ["#hero-line1", "#hero-word"];
 
 function useTypewriter(words: string[]) {
   const [text, setText] = useState("");
@@ -48,18 +46,18 @@ export default function Hero() {
 
   return (
     <section id="accueil" className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-6 text-center">
-      {/* coloured auroras + white core light behind the title */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="aurora aurora-a absolute h-[52vh] w-[52vh] animate-drift" style={{ transform: "translate(-22%, -12%)" }} />
-        <div className="aurora aurora-b absolute h-[48vh] w-[48vh] animate-drift-slow" style={{ transform: "translate(24%, 10%)" }} />
-        <div className="aurora aurora-c absolute h-[40vh] w-[68vh] animate-glow-pulse" />
+      {/* soft white lights drifting in the background */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="light-orb absolute left-[12%] top-[18%] h-[34vh] w-[34vh] animate-drift" />
+        <div className="light-orb absolute right-[10%] top-[12%] h-[28vh] w-[28vh] animate-float" />
+        <div className="light-orb absolute left-[20%] bottom-[14%] h-[30vh] w-[30vh] animate-drift-slow" />
+        <div className="light-orb absolute right-[16%] bottom-[18%] h-[36vh] w-[36vh] animate-glow-pulse" />
+        <div className="light-orb absolute left-1/2 top-1/2 h-[26vh] w-[26vh] -translate-x-1/2 -translate-y-1/2 animate-float" />
       </div>
+
       {/* large soft base light + tighter core glow on the title */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[85vh] w-[95vw] max-w-[1400px] -translate-x-1/2 -translate-y-1/2 hero-glow-wide" />
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[58vh] w-[80vw] max-w-[1100px] -translate-x-1/2 -translate-y-1/2 hero-glow animate-glow-pulse" />
-
-      {/* falling stars that splash precisely on the title letters */}
-      <Rain lineSelectors={LINES} />
 
       <div className="relative z-10 mx-auto max-w-5xl">
         <motion.h1
