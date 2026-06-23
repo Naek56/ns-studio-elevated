@@ -10,8 +10,28 @@ export default function Realisations() {
   );
 
   return (
-    <section id="realisations" className="relative bg-black py-24 md:py-36">
-      <div className="mx-auto max-w-[1300px] px-6 text-center md:px-12">
+    <section id="realisations" className="relative overflow-hidden bg-black py-24 md:py-36">
+      {/* background fillers so the section doesn't feel empty */}
+      <div className="pointer-events-none absolute inset-0">
+        <div
+          className="absolute inset-0 opacity-60"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px)",
+            backgroundSize: "64px 64px",
+            WebkitMaskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black 25%, transparent 78%)",
+            maskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black 25%, transparent 78%)",
+          }}
+        />
+        <div className="light-orb absolute left-[8%] top-[24%] h-[36vh] w-[36vh] animate-drift" />
+        <div className="light-orb absolute right-[6%] top-[34%] h-[32vh] w-[32vh] animate-float" />
+        <div className="light-orb absolute left-1/2 bottom-[6%] h-[28vh] w-[28vh] -translate-x-1/2 animate-drift-slow" />
+        <span className="watermark absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2 select-none font-semibold leading-none" style={{ fontSize: "clamp(140px, 26vw, 360px)" }}>
+          03
+        </span>
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-[1300px] px-6 text-center md:px-12">
         <Reveal>
           <p className="label">Réalisations</p>
           <h2 className="display-xl mt-5 text-4xl font-semibold text-white sm:text-5xl md:text-6xl">
@@ -21,7 +41,7 @@ export default function Realisations() {
         </Reveal>
       </div>
 
-      <div className="relative mt-8 h-[58vh] w-full md:mt-12 md:h-[64vh]">
+      <div className="relative z-10 mt-8 h-[58vh] w-full md:mt-12 md:h-[64vh]">
         <Suspense fallback={null}>
           <Canvas
             dpr={[1, 2]}
