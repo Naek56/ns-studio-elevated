@@ -54,6 +54,7 @@ function Card({
   const group = useRef<THREE.Group>(null);
   const label = useMemo(() => makeLabel(project), [project]);
   const idle = useRef(Math.random() * 10);
+  const center = useRef(new THREE.Vector3());
 
   useFrame((state, dt) => {
     const g = group.current;
@@ -61,9 +62,12 @@ function Card({
     idle.current += dt;
     let rx: number, ry: number, s: number;
     if (hovered) {
-      // follow the mouse: strong tilt toward the cursor
-      ry = state.pointer.x * 1.7;
-      rx = -state.pointer.y * 1.7;
+      // tilt around the card's own centre, toward the cursor
+      center.current.setFromMatrixPosition(g.matrixWorld).project(state.camera);
+      const dx = state.pointer.x - center.current.x;
+      const dy = state.pointer.y - center.current.y;
+      ry = THREE.MathUtils.clamp(dx * 3.2, -1.0, 1.0);
+      rx = THREE.MathUtils.clamp(-dy * 3.2, -1.0, 1.0);
       s = 1.16;
     } else {
       // gentle idle float
@@ -79,11 +83,11 @@ function Card({
 
   return (
     <group ref={group} position={position} onPointerOver={onOver} onPointerOut={onOut}>
-      <RoundedBox args={[3.0, 3.0, 0.18]} radius={0.12} smoothness={4}>
+      <RoundedBox args={[3.8, 3.8, 0.2]} radius={0.14} smoothness={4}>
         <meshStandardMaterial color="#26262b" metalness={0.95} roughness={0.22} envMapIntensity={1.1} />
       </RoundedBox>
-      <mesh position={[0, 0, 0.1]}>
-        <planeGeometry args={[3.0, 3.0]} />
+      <mesh position={[0, 0, 0.11]}>
+        <planeGeometry args={[3.8, 3.8]} />
         <meshBasicMaterial map={label} transparent toneMapped={false} />
       </mesh>
     </group>
@@ -114,7 +118,7 @@ export default function Gallery({ lowPower }: { lowPower: boolean }) {
     return () => { scene.environment = prev; tex.dispose(); };
   }, [scene]);
 
-  const gap = lowPower ? 3.3 : 3.6;
+  const gap = lowPower ? 4.0 : 6.0;
   const positions: [number, number, number][] = lowPower
     ? [[0, gap, 0], [0, 0, 0], [0, -gap, 0]]
     : [[-gap, 0, 0], [0, 0, 0], [gap, 0, 0]];
