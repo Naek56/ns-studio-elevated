@@ -314,8 +314,8 @@ export default function StoryScroll() {
                     className="absolute top-1/2 h-2.5 w-2.5 rounded-full transition-all duration-500"
                     style={{
                       left: `${((i + 0.5) / 4) * 100}%`,
-                      background: filled ? "#fff" : "transparent",
-                      border: `1px solid ${filled ? "#fff" : "rgba(255,255,255,0.35)"}`,
+                      background: filled ? "#fff" : "#0A0A0A",
+                      border: `1px solid ${filled ? "#fff" : "rgba(255,255,255,0.4)"}`,
                       transform: `translate(-50%,-50%) scale(${current ? 1.5 : 1})`,
                       boxShadow: current ? "0 0 12px rgba(255,255,255,0.85)" : "none",
                     }}
