@@ -61,10 +61,10 @@ function Card({
     idle.current += dt;
     let rx: number, ry: number, s: number;
     if (hovered) {
-      // follow the mouse: stronger tilt toward the cursor
-      ry = state.pointer.x * 1.15;
-      rx = -state.pointer.y * 1.15;
-      s = 1.14;
+      // follow the mouse: strong tilt toward the cursor
+      ry = state.pointer.x * 1.7;
+      rx = -state.pointer.y * 1.7;
+      s = 1.16;
     } else {
       // gentle idle float
       ry = Math.sin(idle.current * 0.5) * 0.08;
@@ -79,11 +79,11 @@ function Card({
 
   return (
     <group ref={group} position={position} onPointerOver={onOver} onPointerOut={onOut}>
-      <RoundedBox args={[2.05, 2.05, 0.14]} radius={0.09} smoothness={4}>
+      <RoundedBox args={[3.0, 3.0, 0.18]} radius={0.12} smoothness={4}>
         <meshStandardMaterial color="#26262b" metalness={0.95} roughness={0.22} envMapIntensity={1.1} />
       </RoundedBox>
-      <mesh position={[0, 0, 0.08]}>
-        <planeGeometry args={[2.05, 2.05]} />
+      <mesh position={[0, 0, 0.1]}>
+        <planeGeometry args={[3.0, 3.0]} />
         <meshBasicMaterial map={label} transparent toneMapped={false} />
       </mesh>
     </group>
@@ -114,7 +114,7 @@ export default function Gallery({ lowPower }: { lowPower: boolean }) {
     return () => { scene.environment = prev; tex.dispose(); };
   }, [scene]);
 
-  const gap = lowPower ? 2.35 : 2.25;
+  const gap = lowPower ? 3.3 : 3.6;
   const positions: [number, number, number][] = lowPower
     ? [[0, gap, 0], [0, 0, 0], [0, -gap, 0]]
     : [[-gap, 0, 0], [0, 0, 0], [gap, 0, 0]];

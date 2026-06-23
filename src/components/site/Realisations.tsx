@@ -1,15 +1,13 @@
-import { Suspense, lazy, useEffect, useState } from "react";
+import { Suspense, lazy, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import Reveal from "./Reveal";
 
 const Gallery = lazy(() => import("@/components/three/Gallery"));
 
 export default function Realisations() {
-  const [lowPower, setLowPower] = useState(false);
-  useEffect(() => {
-    const coarse = window.matchMedia("(pointer: coarse)").matches;
-    setLowPower(coarse || window.innerWidth < 1024);
-  }, []);
+  const [lowPower] = useState(
+    () => typeof window !== "undefined" && (window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 1024)
+  );
 
   return (
     <section id="realisations" className="relative bg-black py-24 md:py-36">
@@ -28,7 +26,7 @@ export default function Realisations() {
           <Canvas
             dpr={[1, 2]}
             gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-            camera={{ fov: 50, position: [0, 0, 7.4], near: 0.1, far: 100 }}
+            camera={{ fov: 50, position: [0, 0, lowPower ? 12 : 7.2], near: 0.1, far: 100 }}
           >
             <ambientLight intensity={0.5} />
             <directionalLight position={[4, 5, 6]} intensity={1.4} />
