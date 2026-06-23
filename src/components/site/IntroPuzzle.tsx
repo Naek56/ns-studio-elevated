@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion, animate, useMotionValue, useTransform } from "framer-motion";
+import { motion, animate, useMotionValue, useSpring, useTransform, type PanInfo } from "framer-motion";
 
 const SIZE = 220;
 
@@ -11,14 +11,21 @@ export default function IntroPuzzle({ onComplete }: { onComplete: () => void }) 
 
   const x = useMotionValue(start.x);
   const y = useMotionValue(start.y);
+  // gravity / swing: the W sways with the drag velocity, then settles
+  const rot = useMotionValue(0);
+  const rotSpring = useSpring(rot, { stiffness: 120, damping: 7, mass: 0.5 });
   const [near, setNear] = useState(false);
   const [solved, setSolved] = useState(false);
 
   // distance-driven helpers
   const dist = () => Math.hypot(x.get(), y.get());
 
-  const onDrag = () => setNear(dist() < 64);
+  const onDrag = (_e: PointerEvent | MouseEvent | TouchEvent, info: PanInfo) => {
+    setNear(dist() < 64);
+    rot.set(Math.max(-16, Math.min(16, info.velocity.x * 0.02)));
+  };
   const onDragEnd = () => {
+    rot.set(0);
     if (dist() < 64) {
       animate(x, 0, { type: "spring", stiffness: 320, damping: 22 });
       animate(y, 0, { type: "spring", stiffness: 320, damping: 22, onComplete: () => setSolved(true) });
@@ -101,18 +108,19 @@ export default function IntroPuzzle({ onComplete }: { onComplete: () => void }) 
           />
         </motion.svg>
 
-        {/* the draggable W */}
+        {/* the draggable W (large invisible grab area so it works on touch) */}
         <motion.svg
           viewBox="0 0 48 48"
           className="absolute inset-0 h-full w-full cursor-grab active:cursor-grabbing"
           fill="none"
           drag={!solved}
           dragMomentum={false}
-          style={{ x, y }}
+          style={{ x, y, rotate: rotSpring, touchAction: "none" }}
           whileDrag={{ scale: 1.06 }}
           onDrag={onDrag}
           onDragEnd={onDragEnd}
         >
+          <rect x="6" y="10" width="36" height="30" rx="4" fill="transparent" pointerEvents="all" />
           <motion.path
             d="M13 17.5 L18.5 31 L24 20 L29.5 31 L35 17.5"
             stroke="#fff"
