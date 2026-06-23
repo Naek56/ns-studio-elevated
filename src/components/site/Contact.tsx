@@ -25,7 +25,7 @@ export default function Contact() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="display-xl mt-6 max-w-3xl text-4xl font-semibold text-white sm:text-6xl md:text-7xl"
         >
-          Faisons performer votre site.
+          Vous ne le regretterez pas.
         </motion.h2>
 
         <motion.a
