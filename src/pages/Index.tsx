@@ -3,6 +3,7 @@ import TopNav from "@/components/site/TopNav";
 import Hero from "@/components/site/Hero";
 import Approach from "@/components/site/Approach";
 import StoryScroll from "@/components/site/StoryScroll";
+import Realisations from "@/components/site/Realisations";
 import Contact from "@/components/site/Contact";
 
 const Index = () => {
@@ -18,6 +19,7 @@ const Index = () => {
         {/* fade back from white into the black storytelling section */}
         <div className="h-16 w-full bg-gradient-to-b from-white to-black sm:h-20" />
         <StoryScroll />
+        <Realisations />
         <Contact />
       </main>
     </div>
