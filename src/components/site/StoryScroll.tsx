@@ -40,7 +40,7 @@ const clouds = [
 ];
 
 function Sky({ step }: { step: number }) {
-  const t = step / 3; // 0 -> 1
+  const t = [0, 0.14, 0.78, 1][step]; // brighten more on discovery (step 2)
   return (
     <div className="absolute inset-0 overflow-hidden" style={{ background: "#0A0A0A", zIndex: 0 }}>
       {clouds.map((c, i) => (
@@ -52,7 +52,7 @@ function Sky({ step }: { step: number }) {
             top: c.t,
             width: c.w,
             height: c.h,
-            background: `radial-gradient(closest-side, rgba(255,255,255,${0.05 + t * 0.14}), transparent 72%)`,
+            background: `radial-gradient(closest-side, rgba(255,255,255,${0.05 + t * 0.18}), transparent 72%)`,
             filter: "blur(44px)",
             opacity: 0.5 + t * 0.5,
             transition: "background 0.8s ease, opacity 0.8s ease",
@@ -65,16 +65,16 @@ function Sky({ step }: { step: number }) {
         style={{
           left: "70%",
           top: "42%",
-          width: "75vh",
-          height: "75vh",
-          transform: `translate(-50%,-50%) scale(${0.6 + t * 0.7})`,
-          background: "radial-gradient(closest-side, rgba(255,255,255,0.9), rgba(255,255,255,0.18) 42%, transparent 72%)",
-          opacity: t * 0.45,
-          filter: "blur(24px)",
+          width: "80vh",
+          height: "80vh",
+          transform: `translate(-50%,-50%) scale(${0.6 + t * 0.8})`,
+          background: "radial-gradient(closest-side, rgba(255,255,255,0.95), rgba(255,255,255,0.22) 42%, transparent 72%)",
+          opacity: t * 0.6,
+          filter: "blur(22px)",
           transition: "opacity 0.8s ease, transform 0.8s ease",
         }}
       />
-      <div className="absolute inset-0" style={{ background: `rgba(255,255,255,${t * 0.05})`, transition: "background 0.8s ease" }} />
+      <div className="absolute inset-0" style={{ background: `rgba(255,255,255,${t * 0.07})`, transition: "background 0.8s ease" }} />
     </div>
   );
 }
@@ -305,18 +305,23 @@ export default function StoryScroll() {
             </div>
             <div className="relative mx-auto mt-2 h-[2px] max-w-[1300px] bg-white/15">
               <div ref={barRef} className="absolute left-0 top-0 h-full bg-white" style={{ width: "0%" }} />
-              {[0, 1, 2, 3].map((i) => (
-                <span
-                  key={i}
-                  className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-300"
-                  style={{
-                    left: `${((i + 0.5) / 4) * 100}%`,
-                    background: i === step ? "#fff" : "transparent",
-                    border: `1px solid ${i === step ? "#fff" : "rgba(255,255,255,0.35)"}`,
-                    transform: `translate(-50%,-50%) scale(${i === step ? 1.15 : 1})`,
-                  }}
-                />
-              ))}
+              {[0, 1, 2, 3].map((i) => {
+                const filled = i <= step;
+                const current = i === step;
+                return (
+                  <span
+                    key={i}
+                    className="absolute top-1/2 h-2.5 w-2.5 rounded-full transition-all duration-500"
+                    style={{
+                      left: `${((i + 0.5) / 4) * 100}%`,
+                      background: filled ? "#fff" : "transparent",
+                      border: `1px solid ${filled ? "#fff" : "rgba(255,255,255,0.35)"}`,
+                      transform: `translate(-50%,-50%) scale(${current ? 1.5 : 1})`,
+                      boxShadow: current ? "0 0 12px rgba(255,255,255,0.85)" : "none",
+                    }}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>
