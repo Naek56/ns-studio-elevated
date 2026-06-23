@@ -11,7 +11,7 @@ export default function Realisations() {
 
   return (
     <section id="realisations" className="relative bg-black py-24 md:py-36">
-      <div className="mx-auto max-w-[1300px] px-6 md:px-12">
+      <div className="mx-auto max-w-[1300px] px-6 text-center md:px-12">
         <Reveal>
           <p className="label">Réalisations</p>
           <h2 className="display-xl mt-5 text-4xl font-semibold text-white sm:text-5xl md:text-6xl">
@@ -26,7 +26,7 @@ export default function Realisations() {
           <Canvas
             dpr={[1, 2]}
             gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-            camera={{ fov: 50, position: [0, 0, lowPower ? 12 : 7.2], near: 0.1, far: 100 }}
+            camera={{ fov: 50, position: [0, 0, lowPower ? 14 : 7.2], near: 0.1, far: 100 }}
           >
             <ambientLight intensity={0.5} />
             <directionalLight position={[4, 5, 6]} intensity={1.4} />
