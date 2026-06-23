@@ -62,13 +62,13 @@ function Card({
     idle.current += dt;
     let rx: number, ry: number, s: number;
     if (hovered) {
-      // tilt around the card's own centre, toward the cursor
+      // tilt around the card's own centre, toward the cursor (subtle)
       center.current.setFromMatrixPosition(g.matrixWorld).project(state.camera);
       const dx = state.pointer.x - center.current.x;
       const dy = state.pointer.y - center.current.y;
-      ry = THREE.MathUtils.clamp(dx * 3.2, -1.0, 1.0);
-      rx = THREE.MathUtils.clamp(-dy * 3.2, -1.0, 1.0);
-      s = 1.16;
+      ry = THREE.MathUtils.clamp(dx * 1.2, -0.4, 0.4);
+      rx = THREE.MathUtils.clamp(-dy * 1.2, -0.4, 0.4);
+      s = 1.08;
     } else {
       // gentle idle float
       ry = Math.sin(idle.current * 0.5) * 0.08;
