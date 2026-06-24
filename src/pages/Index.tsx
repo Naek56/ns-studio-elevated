@@ -8,6 +8,7 @@ import Approach from "@/components/site/Approach";
 import StoryScroll from "@/components/site/StoryScroll";
 import Realisations from "@/components/site/Realisations";
 import Contact from "@/components/site/Contact";
+import CookieBanner from "@/components/site/CookieBanner";
 
 const Index = () => {
   const [entered, setEntered] = useState(false);
@@ -41,6 +42,7 @@ const Index = () => {
         <Realisations />
         <Contact />
       </main>
+      <CookieBanner />
     </div>
   );
 };
