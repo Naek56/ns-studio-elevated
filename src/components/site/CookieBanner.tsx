@@ -7,7 +7,7 @@ const POSTHOG_HOST = "https://eu.i.posthog.com";
 function loadPostHog() {
   if (typeof window === "undefined" || (window as any).posthog?.__loaded) return;
   // Official PostHog snippet (array-stub loader)
-  !(function (t: any, e: any) {
+  (function (t: any, e: any) {
     var o, n, p, r;
     e.__SV ||
       ((window as any).posthog = e),
