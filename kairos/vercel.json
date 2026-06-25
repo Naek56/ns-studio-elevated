@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "src/app/api/clients/[clientId]/reports/route.ts": { "maxDuration": 300 },
+    "src/app/api/clients/[clientId]/competitors/route.ts": { "maxDuration": 300 },
+    "src/app/api/clients/[clientId]/chat/route.ts": { "maxDuration": 120 }
+  }
+}
