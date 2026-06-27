@@ -7,7 +7,7 @@ import type { KairosClient, KairosEvent, KairosMessage, KairosRapport } from "@/
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 120;
+export const maxDuration = 60;
 
 type Params = { params: { clientId: string } };
 

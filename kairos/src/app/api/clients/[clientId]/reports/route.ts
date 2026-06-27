@@ -8,7 +8,7 @@ import type { KairosClient, KairosEvent } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 300;
+export const maxDuration = 60;
 
 type Params = { params: { clientId: string } };
 
