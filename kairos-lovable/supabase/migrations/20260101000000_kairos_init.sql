@@ -34,7 +34,7 @@ create table if not exists public.kairos_rapports (
   id          uuid primary key default gen_random_uuid(),
   client_id   text not null,
   observation text,
-  analyse     text,
+  "analyse"   text,
   rapport     text,
   score       int,
   created_at  timestamptz not null default now()
