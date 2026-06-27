@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Swords, Loader2, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { callFn } from "@/lib/api";
+import { callApi } from "@/lib/api";
 import type { KairosClient, KairosConcurrent } from "@/lib/types";
 import ReportMarkdown from "@/components/ReportMarkdown";
 
@@ -25,8 +25,7 @@ export default function CompetitorsTab({ client }: { client: KairosClient }) {
 
   const load = useCallback(async () => {
     try {
-      const data = await callFn<{ analyses: KairosConcurrent[] }>("kairos-competitors", {
-        op: "list",
+      const data = await callApi<{ analyses: KairosConcurrent[] }>("competitors", "list", {
         clientId: client.client_id,
       });
       const list = data.analyses || [];
@@ -53,8 +52,7 @@ export default function CompetitorsTab({ client }: { client: KairosClient }) {
     setRunning(true);
     setError("");
     try {
-      const data = await callFn<{ analyse: KairosConcurrent }>("kairos-competitors", {
-        op: "analyze",
+      const data = await callApi<{ analyse: KairosConcurrent }>("competitors", "analyze", {
         clientId: client.client_id,
         urls,
       });

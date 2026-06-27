@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Plus, LogOut, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { callFn, clearToken } from "@/lib/api";
+import { callApi, clearToken } from "@/lib/api";
 import type { KairosClientWithStatus } from "@/lib/types";
 import NewClientModal from "@/components/NewClientModal";
 
@@ -15,9 +15,9 @@ export default function Sidebar() {
 
   const load = useCallback(async () => {
     try {
-      const data = await callFn<{ clients: KairosClientWithStatus[] }>(
-        "kairos-clients",
-        { op: "list" }
+      const data = await callApi<{ clients: KairosClientWithStatus[] }>(
+        "clients",
+        "list"
       );
       setClients(data.clients || []);
     } catch {

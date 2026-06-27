@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X, Loader2 } from "lucide-react";
-import { callFn } from "@/lib/api";
+import { callApi } from "@/lib/api";
 import type { KairosClient } from "@/lib/types";
 
 type Props = {
@@ -28,10 +28,7 @@ export default function NewClientModal({ onClose, onCreated }: Props) {
     setError("");
     setLoading(true);
     try {
-      const data = await callFn<{ client: KairosClient }>("kairos-clients", {
-        op: "create",
-        ...form,
-      });
+      const data = await callApi<{ client: KairosClient }>("clients", "create", { ...form });
       onCreated(data.client.client_id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur lors de la création.");

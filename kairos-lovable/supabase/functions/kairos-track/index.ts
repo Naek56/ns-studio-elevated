@@ -1,21 +1,28 @@
-import { corsHeaders, json } from "../_shared/cors.ts";
-import { adminClient } from "../_shared/supabase.ts";
+// ════════════════════════════════════════════════════════════════════
+//  KAIROS — ingestion publique (autonome). Appelée par kairos-tracker.js
+//  depuis les sites des clients. À déployer SANS vérification de JWT.
+// ════════════════════════════════════════════════════════════════════
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 
-// Endpoint PUBLIC d'ingestion (verify_jwt = false dans config.toml).
-// Appelé par kairos-tracker.js depuis les sites des clients.
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-  if (req.method !== "POST") {
-    return new Response(null, { status: 405, headers: corsHeaders });
-  }
+  if (req.method !== "POST") return new Response(null, { status: 405, headers: corsHeaders });
 
   let body: { client_id?: string; session_id?: string; events?: Array<Record<string, unknown>> };
   try {
-    // Le tracker envoie du text/plain pour éviter le preflight CORS.
-    const raw = await req.text();
+    const raw = await req.text(); // text/plain pour éviter le preflight CORS
     body = JSON.parse(raw);
   } catch {
-    return json({ error: "Corps invalide" }, 400);
+    return new Response(JSON.stringify({ error: "Corps invalide" }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
   const clientId = body.client_id;
@@ -25,7 +32,12 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const admin = adminClient();
+    const admin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      { auth: { persistSession: false, autoRefreshToken: false } }
+    );
+
     const { data: client } = await admin
       .from("kairos_clients")
       .select("client_id")
@@ -40,10 +52,9 @@ Deno.serve(async (req) => {
       page: e.page ? String(e.page).slice(0, 512) : null,
       data: e.data && typeof e.data === "object" ? e.data : {},
     }));
-
     await admin.from("kairos_events").insert(rows);
   } catch {
-    // accusé de réception silencieux pour ne rien révéler au site externe
+    // accusé de réception silencieux
   }
 
   return new Response(null, { status: 204, headers: corsHeaders });

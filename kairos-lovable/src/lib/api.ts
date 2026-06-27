@@ -15,61 +15,56 @@ export function isLoggedIn(): boolean {
   return Boolean(getToken());
 }
 
+async function readError(error: unknown): Promise<{ message: string; status: number }> {
+  let message = (error as { message?: string })?.message || "Erreur du serveur.";
+  let status = 0;
+  const ctx = (error as { context?: Response }).context;
+  if (ctx) {
+    status = ctx.status;
+    try {
+      const parsed = await ctx.clone().json();
+      if (parsed?.error) message = parsed.error;
+    } catch {
+      /* corps non-JSON */
+    }
+  }
+  return { message, status };
+}
+
 /**
- * Appelle une Edge Function Kairos en y joignant le token maître.
- * Sur 401 (token expiré/invalide), nettoie la session et renvoie vers /login.
+ * Appelle la fonction unique `kairos-api` (routage par resource + op),
+ * en y joignant le token maître. Sur 401, nettoie la session → /login.
  */
-export async function callFn<T = unknown>(
-  name: string,
-  body: Record<string, unknown>
+export async function callApi<T = unknown>(
+  resource: string,
+  op: string,
+  payload: Record<string, unknown> = {}
 ): Promise<T> {
   const token = getToken();
-  const { data, error } = await supabase.functions.invoke(name, {
-    body,
+  const { data, error } = await supabase.functions.invoke("kairos-api", {
+    body: { resource, op, ...payload },
     headers: token ? { "x-kairos-token": token } : {},
   });
 
   if (error) {
-    let message = error.message || "Erreur du serveur.";
-    let status = 0;
-    // FunctionsHttpError expose la réponse via error.context
-    const ctx = (error as { context?: Response }).context;
-    if (ctx) {
-      status = ctx.status;
-      try {
-        const parsed = await ctx.clone().json();
-        if (parsed?.error) message = parsed.error;
-      } catch {
-        /* corps non-JSON */
-      }
-    }
+    const { message, status } = await readError(error);
     if (status === 401) {
       clearToken();
       if (location.pathname !== "/login") location.href = "/login";
     }
     throw new Error(message);
   }
-
   return data as T;
 }
 
 /** Connexion : échange le mot de passe maître contre un token. */
 export async function login(password: string): Promise<void> {
-  const { data, error } = await supabase.functions.invoke("kairos-auth", {
-    body: { password },
+  const { data, error } = await supabase.functions.invoke("kairos-api", {
+    body: { resource: "auth", op: "login", password },
   });
   if (error) {
-    const ctx = (error as { context?: Response }).context;
-    let message = "Mot de passe incorrect.";
-    if (ctx) {
-      try {
-        const parsed = await ctx.clone().json();
-        if (parsed?.error) message = parsed.error;
-      } catch {
-        /* ignore */
-      }
-    }
-    throw new Error(message);
+    const { message } = await readError(error);
+    throw new Error(message || "Mot de passe incorrect.");
   }
   if (!data?.token) throw new Error("Réponse d'authentification invalide.");
   setToken(data.token);

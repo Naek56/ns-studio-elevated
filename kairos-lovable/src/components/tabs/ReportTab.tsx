@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Sparkles, Loader2, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { callFn } from "@/lib/api";
+import { callApi } from "@/lib/api";
 import type { KairosClient, KairosRapport } from "@/lib/types";
 import HealthScore from "@/components/HealthScore";
 import ReportMarkdown from "@/components/ReportMarkdown";
@@ -25,8 +25,7 @@ export default function ReportTab({ client }: { client: KairosClient }) {
 
   const load = useCallback(async () => {
     try {
-      const data = await callFn<{ rapports: KairosRapport[] }>("kairos-report", {
-        op: "list",
+      const data = await callApi<{ rapports: KairosRapport[] }>("report", "list", {
         clientId: client.client_id,
       });
       const list = data.rapports || [];
@@ -45,8 +44,7 @@ export default function ReportTab({ client }: { client: KairosClient }) {
     setGenerating(true);
     setError("");
     try {
-      const data = await callFn<{ rapport: KairosRapport }>("kairos-report", {
-        op: "generate",
+      const data = await callApi<{ rapport: KairosRapport }>("report", "generate", {
         clientId: client.client_id,
       });
       await load();

@@ -48,20 +48,34 @@ dans Supabase → SQL Editor). Elle crée les tables, la RLS et active Realtime.
 
 ### 4. Déployer les Edge Functions
 
-Six fonctions sous `supabase/functions/`. Avec la CLI Supabase :
+Le backend tient en **2 fonctions autonomes** sous `supabase/functions/` :
+
+| Fonction | Rôle | JWT |
+| --- | --- | --- |
+| `kairos-api` | auth, clients, rapports, concurrents, chat (routage par `resource` + `op`) | requis |
+| `kairos-track` | ingestion publique du tracker | **désactivé** |
+
+> ⚠️ **Lovable ne déploie pas** les Edge Functions écrites hors de son chat. Il
+> faut les déployer soi-même — par l'une des deux méthodes ci-dessous.
+
+**Méthode A — éditeur web Supabase (sans terminal) :**
+
+1. Supabase → **Edge Functions** → **Deploy a new function** → **Via Editor**.
+2. Nomme-la `kairos-api`, colle le contenu de
+   `supabase/functions/kairos-api/index.ts`, **Deploy**.
+3. Recommence avec `kairos-track` (contenu de
+   `supabase/functions/kairos-track/index.ts`) et **décoche la vérification du
+   JWT** (« Enforce JWT verification » / « Verify JWT ») pour cette fonction.
+
+**Méthode B — CLI Supabase :**
 
 ```bash
-supabase functions deploy kairos-auth
-supabase functions deploy kairos-clients
-supabase functions deploy kairos-report
-supabase functions deploy kairos-competitors
-supabase functions deploy kairos-chat
+supabase functions deploy kairos-api
 supabase functions deploy kairos-track --no-verify-jwt
 ```
 
-> `kairos-track` est l'endpoint **public** appelé par le tracker depuis les
-> sites externes : il doit être déployé **sans vérification de JWT**
-> (`--no-verify-jwt`, déjà déclaré dans `supabase/config.toml`).
+`kairos-track` est public (appelé par le tracker depuis les sites externes), d'où
+le JWT désactivé (déjà déclaré dans `supabase/config.toml`).
 
 ### 5. Secrets des Edge Functions
 
@@ -87,17 +101,20 @@ npm run dev   # http://localhost:8080
 
 ## Fonctionnement
 
-- **Auth** — page de login + mot de passe maître (`KAIROS_PASSWORD`). La fonction
-  `kairos-auth` renvoie un token signé (HMAC, 24 h) stocké en `localStorage` et
-  joint à chaque appel (`x-kairos-token`). Aucune inscription.
-- **Rapport** — `kairos-report` enchaîne 3 appels Claude (Observateur → Analyste
-  → Stratège) avec captures Screenshotone, score de santé 0–100 + progression,
-  historique.
+Tout passe par `kairos-api` (routage `resource` + `op`), sauf l'ingestion qui
+passe par `kairos-track`.
+
+- **Auth** — page de login + mot de passe maître (`KAIROS_PASSWORD`). `kairos-api`
+  (`resource: auth`) renvoie un token signé (HMAC, 24 h) stocké en `localStorage`
+  et joint à chaque appel (`x-kairos-token`). Aucune inscription.
+- **Rapport** — `resource: report` enchaîne 3 appels Claude (Observateur →
+  Analyste → Stratège) avec captures Screenshotone, score de santé 0–100 +
+  progression, historique.
 - **Live** — abonnement Supabase Realtime sur `kairos_events` (visiteurs actifs
   sur 5 min, page courante, durée).
-- **Concurrents** — `kairos-competitors` (module Veilleur, captures client +
+- **Concurrents** — `resource: competitors` (module Veilleur, captures client +
   concurrents).
-- **Chat** — `kairos-chat` charge automatiquement 3 rapports, events 7 j et
+- **Chat** — `resource: chat` charge automatiquement 3 rapports, events 7 j et
   profil avant chaque réponse.
 - **Tracker** — le bouton « Télécharger le script » génère `kairos-tracker.js`
   côté navigateur avec le `client_id` intégré ; il pointe vers la fonction

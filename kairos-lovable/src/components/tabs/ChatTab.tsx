@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Send, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { callFn } from "@/lib/api";
+import { callApi } from "@/lib/api";
 import type { KairosClient, KairosMessage } from "@/lib/types";
 import ReportMarkdown from "@/components/ReportMarkdown";
 
@@ -17,8 +17,7 @@ export default function ChatTab({ client }: { client: KairosClient }) {
   useEffect(() => {
     (async () => {
       try {
-        const data = await callFn<{ messages: KairosMessage[] }>("kairos-chat", {
-          op: "history",
+        const data = await callApi<{ messages: KairosMessage[] }>("chat", "history", {
           clientId: client.client_id,
         });
         setMessages(data.messages || []);
@@ -43,8 +42,7 @@ export default function ChatTab({ client }: { client: KairosClient }) {
     setSending(true);
 
     try {
-      const data = await callFn<{ reply: string }>("kairos-chat", {
-        op: "send",
+      const data = await callApi<{ reply: string }>("chat", "send", {
         clientId: client.client_id,
         message: text,
       });

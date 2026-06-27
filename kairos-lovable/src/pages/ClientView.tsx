@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Download, ExternalLink, FileText, Radio, Swords, MessageSquare, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { callFn } from "@/lib/api";
+import { callApi } from "@/lib/api";
 import { downloadTracker } from "@/lib/tracker";
 import { SUPABASE_FUNCTIONS_URL } from "@/lib/supabase";
 import type { KairosClient } from "@/lib/types";
@@ -32,10 +32,7 @@ export default function ClientView() {
     setTab("rapport");
     (async () => {
       try {
-        const data = await callFn<{ client: KairosClient }>("kairos-clients", {
-          op: "get",
-          clientId,
-        });
+        const data = await callApi<{ client: KairosClient }>("clients", "get", { clientId });
         if (!cancelled) setClient(data.client);
       } catch {
         if (!cancelled) setClient(null);
