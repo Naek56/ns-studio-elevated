@@ -28,8 +28,9 @@ export default function IntroPuzzle({ onComplete }: { onComplete: () => void }) 
     rot.set(0);
     if (dist() < 64) {
       animate(x, 0, { type: "spring", stiffness: 320, damping: 22 });
-      animate(y, 0, { type: "spring", stiffness: 320, damping: 22, onComplete: () => setSolved(true) });
+      animate(y, 0, { type: "spring", stiffness: 320, damping: 22 });
       setNear(true);
+      setSolved(true); // trigger directly — don't rely on the snap animation's onComplete
     } else {
       animate(x, start.x, { type: "spring", stiffness: 200, damping: 24 });
       animate(y, start.y, { type: "spring", stiffness: 200, damping: 24 });
@@ -54,9 +55,11 @@ export default function IntroPuzzle({ onComplete }: { onComplete: () => void }) 
   return (
     <motion.div
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-black"
+      style={{ pointerEvents: solved ? "none" : "auto" }}
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0, scale: 1.12, filter: "blur(6px)" }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 1.06 }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >
       {/* soft white light */}
       <motion.div

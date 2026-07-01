@@ -3,6 +3,7 @@ import { AnimatePresence } from "framer-motion";
 import IntroPuzzle from "@/components/site/IntroPuzzle";
 import SmoothScroll from "@/components/site/SmoothScroll";
 import CursorFollower from "@/components/site/CursorFollower";
+import ContactModal from "@/components/site/ContactModal";
 import TopNav from "@/components/site/TopNav";
 import Hero from "@/components/site/Hero";
 import Approach from "@/components/site/Approach";
@@ -43,6 +44,7 @@ const Index = () => {
       <div className="grain pointer-events-none fixed inset-0 z-[45] opacity-[0.05] mix-blend-soft-light" />
 
       <TopNav />
+      <ContactModal />
       <main>
         <Hero />
         {/* clean, compact fade from the black hero into the white section */}
