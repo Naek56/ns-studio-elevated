@@ -212,26 +212,92 @@ export default function StoryScroll() {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    // one snap point per step, centred in its scroll zone
+    const SNAP = [0.125, 0.375, 0.625, 0.875];
     let raf = 0;
+    let snapTimer = 0;
+    let snapping = false;
+    let lastY = window.scrollY;
+    let dir = 1;
+
+    const range = () => Math.max(el.offsetHeight - window.innerHeight, 1);
+    const progress = () => Math.min(1, Math.max(0, -el.getBoundingClientRect().top / range()));
+
+    const setBar = (s: number) => {
+      if (barRef.current) barRef.current.style.width = `${((s + 0.5) / 4) * 100}%`;
+    };
+
     const update = () => {
       raf = 0;
-      const el = wrapRef.current;
-      if (!el) return;
-      const total = el.offsetHeight - window.innerHeight;
-      const scrolled = Math.min(Math.max(-el.getBoundingClientRect().top, 0), Math.max(total, 1));
-      const p = total > 0 ? scrolled / total : 0;
-      if (barRef.current) barRef.current.style.width = `${p * 100}%`;
-      const s = Math.min(3, Math.floor(p * 3.999));
-      if (s !== stepRef.current) { stepRef.current = s; setStep(s); }
+      const s = Math.min(3, Math.floor(progress() * 3.999));
+      if (s !== stepRef.current) {
+        stepRef.current = s;
+        setStep(s);
+        setBar(s); // the bar jumps between steps (eased in CSS), never free-floating
+      }
     };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+
+    const getLenis = () =>
+      (window as unknown as { lenis?: { scrollTo: (t: number, o?: Record<string, unknown>) => void; velocity?: number } }).lenis;
+
+    const snapToNearest = () => {
+      if (snapping) return;
+      const lenis = getLenis();
+      // wait until momentum scrolling has actually settled before snapping
+      if (lenis && Math.abs(lenis.velocity ?? 0) > 0.06) {
+        clearTimeout(snapTimer);
+        snapTimer = window.setTimeout(snapToNearest, 90);
+        return;
+      }
+      const into = -el.getBoundingClientRect().top;
+      const r = range();
+      // ignore when the section isn't the one on screen
+      if (into < -window.innerHeight * 0.4 || into > r + window.innerHeight * 0.4) return;
+      const p = Math.min(1, Math.max(0, into / r));
+      // let the user leave freely past the first / last point
+      if (dir > 0 && p >= SNAP[SNAP.length - 1] - 0.001) return;
+      if (dir < 0 && p <= SNAP[0] + 0.001) return;
+      let best = SNAP[0];
+      let bd = Infinity;
+      for (const sp of SNAP) {
+        const d = Math.abs(sp - p);
+        if (d < bd) { bd = d; best = sp; }
+      }
+      const targetY = el.offsetTop + best * r;
+      if (Math.abs(targetY - window.scrollY) < 2) return;
+      snapping = true;
+      let released = false;
+      const done = () => { if (released) return; released = true; snapping = false; lastY = window.scrollY; };
+      if (lenis) {
+        lenis.scrollTo(targetY, { duration: 0.7, easing: (t: number) => 1 - Math.pow(1 - t, 3), onComplete: done });
+      } else {
+        window.scrollTo({ top: targetY, behavior: "smooth" });
+      }
+      // safety net: always release the lock even if onComplete never fires
+      window.setTimeout(done, 850);
+    };
+
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y !== lastY) { dir = y > lastY ? 1 : -1; lastY = y; }
+      if (!raf) raf = requestAnimationFrame(update);
+      if (!snapping) {
+        clearTimeout(snapTimer);
+        snapTimer = window.setTimeout(snapToNearest, 90);
+      }
+    };
+
     update();
+    setBar(stepRef.current);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("resize", update);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", update);
       cancelAnimationFrame(raf);
+      clearTimeout(snapTimer);
     };
   }, []);
 
@@ -304,7 +370,7 @@ export default function StoryScroll() {
               <span>Après</span>
             </div>
             <div className="relative mx-auto mt-2 h-[2px] max-w-[1300px] bg-white/15">
-              <div ref={barRef} className="absolute left-0 top-0 h-full bg-white" style={{ width: "0%" }} />
+              <div ref={barRef} className="absolute left-0 top-0 h-full bg-white" style={{ width: "12.5%", transition: "width 0.7s cubic-bezier(0.16,1,0.3,1)" }} />
               {[0, 1, 2, 3].map((i) => {
                 const filled = i <= step;
                 const current = i === step;
