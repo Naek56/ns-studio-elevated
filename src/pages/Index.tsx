@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import IntroPuzzle from "@/components/site/IntroPuzzle";
 import SmoothScroll from "@/components/site/SmoothScroll";
+import CursorFollower from "@/components/site/CursorFollower";
 import TopNav from "@/components/site/TopNav";
 import Hero from "@/components/site/Hero";
 import Approach from "@/components/site/Approach";
@@ -13,13 +14,20 @@ const Index = () => {
   const [entered, setEntered] = useState(false);
 
   useEffect(() => {
+    const root = document.documentElement;
     if (!entered) {
+      // lock the page fully while the intro puzzle is up (html + body)
+      root.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
       window.scrollTo(0, 0);
     } else {
+      root.style.overflow = "";
       document.body.style.overflow = "";
     }
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      root.style.overflow = "";
+      document.body.style.overflow = "";
+    };
   }, [entered]);
 
   return (
@@ -29,6 +37,11 @@ const Index = () => {
       </AnimatePresence>
 
       {entered && <SmoothScroll />}
+      {entered && <CursorFollower />}
+
+      {/* filmic grain over the whole site for a premium texture */}
+      <div className="grain pointer-events-none fixed inset-0 z-[45] opacity-[0.05] mix-blend-soft-light" />
+
       <TopNav />
       <main>
         <Hero />
