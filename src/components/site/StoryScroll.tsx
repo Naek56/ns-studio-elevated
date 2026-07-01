@@ -226,7 +226,7 @@ export default function StoryScroll() {
     const progress = () => Math.min(1, Math.max(0, -el.getBoundingClientRect().top / range()));
 
     const setBar = (s: number) => {
-      if (barRef.current) barRef.current.style.width = `${((s + 0.5) / 4) * 100}%`;
+      if (barRef.current) barRef.current.style.width = `${(s / 3) * 100}%`;
     };
 
     const update = () => {
@@ -370,19 +370,20 @@ export default function StoryScroll() {
               <span>Après</span>
             </div>
             <div className="relative mx-auto mt-2 h-[2px] max-w-[1300px] bg-white/15">
-              <div ref={barRef} className="absolute left-0 top-0 h-full bg-white" style={{ width: "12.5%", transition: "width 0.7s cubic-bezier(0.16,1,0.3,1)" }} />
+              <div ref={barRef} className="absolute left-0 top-0 h-full bg-white" style={{ width: "0%", transition: "width 0.7s cubic-bezier(0.16,1,0.3,1)" }} />
               {[0, 1, 2, 3].map((i) => {
                 const filled = i <= step;
                 const current = i === step;
+                const tx = i === 0 ? "0%" : i === 3 ? "-100%" : "-50%";
                 return (
                   <span
                     key={i}
                     className="absolute top-1/2 h-2.5 w-2.5 rounded-full transition-all duration-500"
                     style={{
-                      left: `${((i + 0.5) / 4) * 100}%`,
+                      left: `${(i / 3) * 100}%`,
                       background: filled ? "#fff" : "#0A0A0A",
                       border: `1px solid ${filled ? "#fff" : "rgba(255,255,255,0.4)"}`,
-                      transform: `translate(-50%,-50%) scale(${current ? 1.5 : 1})`,
+                      transform: `translate(${tx}, -50%) scale(${current ? 1.5 : 1})`,
                       boxShadow: current ? "0 0 12px rgba(255,255,255,0.85)" : "none",
                     }}
                   />
