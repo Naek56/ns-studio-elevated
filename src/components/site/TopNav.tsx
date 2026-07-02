@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Logo from "./Logo";
+import { openContact } from "./ContactModal";
 import { cn } from "@/lib/utils";
 
 // Light sections (white background) over which the nav must turn dark.
@@ -25,12 +26,6 @@ export default function TopNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const go = (id: string) => {
-    const lenis = (window as unknown as { lenis?: { scrollTo: (t: string) => void } }).lenis;
-    if (lenis) lenis.scrollTo("#" + id);
-    else document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
     <header
       className={cn(
@@ -41,7 +36,7 @@ export default function TopNav() {
       <div className="mx-auto flex max-w-[1600px] items-center justify-between">
         <Logo />
         <button
-          onClick={() => go("contact")}
+          onClick={openContact}
           className={cn(
             "inline-flex items-center justify-center rounded-full px-7 py-3 text-sm font-medium tracking-wide transition-all duration-300 active:scale-[0.98]",
             onLight

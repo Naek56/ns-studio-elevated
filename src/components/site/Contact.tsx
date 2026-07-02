@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Logo from "./Logo";
+import { openContact } from "./ContactModal";
 
 export default function Contact() {
   return (
@@ -28,17 +29,17 @@ export default function Contact() {
           Vous ne le regretterez pas.
         </motion.h2>
 
-        <motion.a
-          href="mailto:hello@wayagency.fr"
+        <motion.button
+          onClick={openContact}
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.15 }}
           className="btn-glass group mt-10 px-8 py-3.5 text-base"
         >
-          Nous écrire
+          Démarrer un projet
           <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        </motion.a>
+        </motion.button>
       </div>
 
       <footer className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-col items-center justify-between gap-6 border-t border-white/10 pt-8 sm:flex-row">
