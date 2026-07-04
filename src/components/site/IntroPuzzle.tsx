@@ -78,7 +78,7 @@ export default function IntroPuzzle({ onComplete }: { onComplete: () => void }) 
       >
         <p className="label">WAY Creative Agency</p>
         <p className="mt-4 text-base text-white/70 sm:text-lg">
-          {solved ? "Bienvenue." : "Reconstituez le logo — glissez le W dans le cercle."}
+          {solved ? "Bienvenue." : "Reconstituez le logo. Glissez le W dans le cercle."}
         </p>
       </motion.div>
 
