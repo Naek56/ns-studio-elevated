@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import Logo from "./Logo";
+import Footer from "./Footer";
 import { openContact } from "./ContactModal";
 
 export default function Contact() {
@@ -42,10 +42,7 @@ export default function Contact() {
         </motion.button>
       </div>
 
-      <footer className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-col items-center justify-between gap-6 border-t border-white/10 pt-8 sm:flex-row">
-        <Logo />
-        <p className="text-xs text-white/40">© {new Date().getFullYear()} WAY Creative Agency</p>
-      </footer>
+      <Footer />
     </section>
   );
 }

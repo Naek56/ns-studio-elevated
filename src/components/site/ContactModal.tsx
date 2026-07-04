@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowRight, Check } from "lucide-react";
 
@@ -184,6 +185,19 @@ export default function ContactModal() {
                     {status === "sending" ? "Envoi…" : "Envoyer la demande"}
                     {status !== "sending" && <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />}
                   </button>
+
+                  <p className="text-[0.7rem] leading-relaxed text-white/40">
+                    En soumettant ce formulaire vous acceptez que vos données soient utilisées pour vous
+                    recontacter. Voir notre{" "}
+                    <Link
+                      to="/confidentialite"
+                      onClick={close}
+                      className="underline underline-offset-2 transition-colors hover:text-white"
+                    >
+                      politique de confidentialité
+                    </Link>
+                    .
+                  </p>
                 </form>
               </>
             )}
