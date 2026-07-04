@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import IntroPuzzle from "@/components/site/IntroPuzzle";
+import SectionFade from "@/components/site/SectionFade";
 import SmoothScroll from "@/components/site/SmoothScroll";
 import CursorFollower from "@/components/site/CursorFollower";
 import ContactModal from "@/components/site/ContactModal";
@@ -10,10 +11,16 @@ import Approach from "@/components/site/Approach";
 import StoryScroll from "@/components/site/StoryScroll";
 import Realisations from "@/components/site/Realisations";
 import Contact from "@/components/site/Contact";
-import CookieBanner from "@/components/site/CookieBanner";
 
 const Index = () => {
-  const [entered, setEntered] = useState(false);
+  // solve the puzzle once per session — coming back from a legal page skips it
+  const [entered, setEntered] = useState(() => {
+    try { return sessionStorage.getItem("way-entered") === "1"; } catch { return false; }
+  });
+  const enter = () => {
+    try { sessionStorage.setItem("way-entered", "1"); } catch { /* noop */ }
+    setEntered(true);
+  };
 
   useEffect(() => {
     const root = document.documentElement;
@@ -35,7 +42,7 @@ const Index = () => {
   return (
     <div className="relative min-h-screen bg-black text-foreground">
       <AnimatePresence>
-        {!entered && <IntroPuzzle key="intro" onComplete={() => setEntered(true)} />}
+        {!entered && <IntroPuzzle key="intro" onComplete={enter} />}
       </AnimatePresence>
 
       {entered && <SmoothScroll />}
@@ -50,14 +57,21 @@ const Index = () => {
         <Hero />
         {/* clean, compact fade from the black hero into the white section */}
         <div className="h-16 w-full bg-gradient-to-b from-black to-white sm:h-20" />
-        <Approach />
+        <SectionFade>
+          <Approach />
+        </SectionFade>
         {/* fade back from white into the black storytelling section */}
         <div className="h-16 w-full bg-gradient-to-b from-white to-black sm:h-20" />
-        <StoryScroll />
-        <Realisations />
-        <Contact />
+        <SectionFade plain amount={0.02}>
+          <StoryScroll />
+        </SectionFade>
+        <SectionFade>
+          <Realisations />
+        </SectionFade>
+        <SectionFade>
+          <Contact />
+        </SectionFade>
       </main>
-      <CookieBanner />
     </div>
   );
 };
