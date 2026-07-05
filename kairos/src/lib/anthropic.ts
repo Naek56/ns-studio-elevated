@@ -12,6 +12,11 @@ import type { KairosClient, KairosMessage, KairosRapport, Screenshot } from "./t
 
 export const MODEL = (process.env.ANTHROPIC_MODEL || "claude-opus-4-8").trim();
 
+// Modèle imposé pour la génération de rapport : jamais configurable via env,
+// jamais Opus — Sonnet est largement suffisant pour résumer des agrégats JSON
+// et coûte nettement moins cher.
+const REPORT_MODEL = "claude-sonnet-4-20250514";
+
 function client(): Anthropic {
   if (!process.env.ANTHROPIC_API_KEY) {
     throw new Error("ANTHROPIC_API_KEY est requis.");
@@ -155,12 +160,15 @@ Trafic réel : ${summary.sessions} sessions, ${summary.pagesVues} pages vues, du
 
 Génère le rapport complet selon la structure demandée.`;
 
-  const msg = await client().messages.create({
-    model: MODEL,
-    max_tokens: 1500,
-    system: RAPPORT_PROMPT,
-    messages: [{ role: "user", content: text }],
-  });
+  const msg = await client().messages.create(
+    {
+      model: REPORT_MODEL,
+      max_tokens: 1200,
+      system: RAPPORT_PROMPT,
+      messages: [{ role: "user", content: text }],
+    },
+    { maxRetries: 0 }
+  );
 
   return parseScore(extractText(msg));
 }
