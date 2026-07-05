@@ -20,8 +20,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        mono: ["var(--font-dm-mono)", "ui-monospace", "monospace"],
-        display: ["var(--font-cormorant)", "Georgia", "serif"],
+        mono: ["var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-serif)", "Georgia", "serif"],
       },
       keyframes: {
         "fade-in": {

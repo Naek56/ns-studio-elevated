@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import { DM_Mono, Cormorant_Garamond } from "next/font/google";
+import { Inter, Lora } from "next/font/google";
 import "./globals.css";
 
-const dmMono = DM_Mono({
-  weight: ["300", "400", "500"],
+const inter = Inter({
+  weight: ["400", "500", "600"],
   subsets: ["latin"],
-  variable: "--font-dm-mono",
+  variable: "--font-sans",
   display: "swap",
 });
 
-const cormorant = Cormorant_Garamond({
+const lora = Lora({
   weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
-  variable: "--font-cormorant",
+  variable: "--font-serif",
   display: "swap",
 });
 
@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={`${dmMono.variable} ${cormorant.variable}`}>
+    <html lang="fr" className={`${inter.variable} ${lora.variable}`}>
       <body className="bg-kairos-bg text-kairos-text antialiased">{children}</body>
     </html>
   );
