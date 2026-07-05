@@ -57,30 +57,18 @@ export default function IntroPuzzle({ onComplete }: { onComplete: () => void }) 
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-black"
       style={{ pointerEvents: solved ? "none" : "auto" }}
       initial={{ opacity: 1 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 1.06 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      // deterministic exit: the burst plays, then the overlay fades itself out
+      // right before Index unmounts it (no AnimatePresence exit to get stuck)
+      animate={{ opacity: solved ? 0 : 1, scale: solved ? 1.05 : 1 }}
+      transition={{ duration: 0.6, delay: solved ? 1.05 : 0, ease: [0.16, 1, 0.3, 1] }}
     >
-      {/* soft white light */}
+      {/* soft white light — discreet */}
       <motion.div
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[70vh] w-[70vh] -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style={{ background: "radial-gradient(closest-side, rgba(255,255,255,0.16), transparent 70%)", filter: "blur(30px)" }}
-        animate={{ opacity: solved ? 0.9 : 0.5, scale: solved ? 1.2 : 1 }}
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[60vh] w-[60vh] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{ background: "radial-gradient(closest-side, rgba(255,255,255,0.1), transparent 70%)", filter: "blur(30px)" }}
+        animate={{ opacity: solved ? 0.9 : 0.45, scale: solved ? 1.2 : 1 }}
         transition={{ duration: 0.8 }}
       />
-
-      {/* instruction */}
-      <motion.div
-        className="absolute top-[16%] px-6 text-center"
-        animate={{ opacity: 1, y: 0 }}
-        initial={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-      >
-        <p className="label">WAY Creative Agency</p>
-        <p className="mt-4 text-base text-white/70 sm:text-lg">
-          {solved ? "Bienvenue." : "Reconstituez le logo. Glissez le W dans le cercle."}
-        </p>
-      </motion.div>
 
       {/* puzzle stage */}
       <div className="relative" style={{ width: SIZE, height: SIZE }}>
@@ -135,16 +123,16 @@ export default function IntroPuzzle({ onComplete }: { onComplete: () => void }) 
         </motion.svg>
       </div>
 
-      {/* hint */}
-      {!solved && (
-        <motion.p
-          className="absolute bottom-[14%] text-xs uppercase tracking-[0.3em] text-white/35"
-          animate={{ opacity: [0.25, 0.6, 0.25] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          Glissez le W
-        </motion.p>
-      )}
+      {/* single, minimal caption */}
+      <motion.p
+        key={solved ? "done" : "hint"}
+        className="absolute bottom-[16%] px-6 text-center text-[11px] uppercase tracking-[0.32em] text-white/40"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.9, delay: solved ? 0 : 0.6 }}
+      >
+        {solved ? "Bienvenue" : "Glissez le W dans le cercle"}
+      </motion.p>
     </motion.div>
   );
 }

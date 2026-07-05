@@ -25,15 +25,33 @@ export function setConsent(value: ConsentValue) {
   } catch {
     /* storage unavailable — the banner will simply show again */
   }
-  if (value === "accepted") startKairosTracking();
+  if (value === "accepted") {
+    startKairosTracking();
+  } else {
+    // revocation: clear the tracker's own consent key so it stays silent
+    // from the next page load on (the script only reads, never re-sets it)
+    try { localStorage.removeItem("kairos_consent"); } catch { /* noop */ }
+    (window as KairosWindow).__kairosConsent = false;
+  }
 }
 
+type KairosWindow = Window & { kairosGrantConsent?: () => void; __kairosConsent?: boolean };
+
 let tracking = false;
-/** Kairos analytics only ever start with an explicit "accepted" consent. */
+/** Kairos analytics (public/kairos-tracker.js) only ever start with an explicit "accepted" consent. */
 export function startKairosTracking() {
   if (tracking || getConsent() !== "accepted") return;
   tracking = true;
-  // Kairos tracking bootstrap goes here (clicks, scrolls, pages, durée de visite).
+  const w = window as KairosWindow;
+  if (typeof w.kairosGrantConsent === "function") {
+    // grants the tracker's consent flag and starts collection immediately
+    w.kairosGrantConsent();
+  } else {
+    // tracker not parsed yet (defer): raise the flags it polls/listens for
+    w.__kairosConsent = true;
+    try { localStorage.setItem("kairos_consent", "granted"); } catch { /* noop */ }
+    document.dispatchEvent(new Event("kairos:consent"));
+  }
 }
 
 export function openCookieBanner() {

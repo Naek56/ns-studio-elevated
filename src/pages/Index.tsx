@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence } from "framer-motion";
 import IntroPuzzle from "@/components/site/IntroPuzzle";
 import SectionFade from "@/components/site/SectionFade";
 import SmoothScroll from "@/components/site/SmoothScroll";
@@ -41,9 +40,7 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen bg-black text-foreground">
-      <AnimatePresence>
-        {!entered && <IntroPuzzle key="intro" onComplete={enter} />}
-      </AnimatePresence>
+      {!entered && <IntroPuzzle onComplete={enter} />}
 
       {entered && <SmoothScroll />}
       {entered && <CursorFollower />}
