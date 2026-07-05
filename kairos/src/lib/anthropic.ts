@@ -157,7 +157,7 @@ Génère le rapport complet selon la structure demandée.`;
 
   const msg = await client().messages.create({
     model: MODEL,
-    max_tokens: 4000,
+    max_tokens: 1500,
     system: RAPPORT_PROMPT,
     messages: [{ role: "user", content: text }],
   });

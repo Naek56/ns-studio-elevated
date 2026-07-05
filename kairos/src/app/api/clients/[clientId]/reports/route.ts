@@ -7,7 +7,7 @@ import type { KairosClient, KairosEvent } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 type Params = { params: { clientId: string } };
 
@@ -43,17 +43,17 @@ export async function POST(_req: Request, { params }: Params) {
     return NextResponse.json({ error: "Client introuvable" }, { status: 404 });
   }
 
-  // 1. Events des 7 derniers jours
+  // 1. Les 50 events les plus récents (sur les 7 derniers jours)
   const since = new Date(Date.now() - 7 * 86_400_000).toISOString();
   const { data: events } = await admin
     .from("kairos_events")
     .select("*")
     .eq("client_id", client.client_id)
     .gte("created_at", since)
-    .order("created_at", { ascending: true })
-    .limit(5000);
+    .order("created_at", { ascending: false })
+    .limit(50);
 
-  const summary = summarizeEvents((events || []) as KairosEvent[], 7);
+  const summary = summarizeEvents(((events || []) as KairosEvent[]).reverse(), 7);
 
   try {
     // 2. Appel Claude unique
