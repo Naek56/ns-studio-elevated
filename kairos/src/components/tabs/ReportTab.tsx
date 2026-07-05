@@ -76,7 +76,7 @@ export default function ReportTab({ client }: { client: KairosClient }) {
         <div>
           <h2 className="font-display text-2xl text-white">Rapport d'analyse</h2>
           <p className="mt-1 font-mono text-xs text-kairos-muted">
-            Observation → Analyse → Stratégie, en 3 passes Claude.
+            Analyse comportementale complète générée par Kairos.
           </p>
         </div>
         <button
@@ -95,8 +95,7 @@ export default function ReportTab({ client }: { client: KairosClient }) {
 
       {generating && (
         <p className="mt-4 font-mono text-xs text-kairos-muted">
-          Capture des pages, lecture des events des 7 derniers jours et
-          raisonnement de Kairos… cela peut prendre une à deux minutes.
+          Lecture des events des 7 derniers jours et raisonnement de Kairos…
         </p>
       )}
       {error && <p className="mt-4 font-mono text-xs text-kairos-red">{error}</p>}

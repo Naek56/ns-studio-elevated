@@ -3,6 +3,7 @@ import {
   OBSERVATEUR_PROMPT,
   ANALYSTE_PROMPT,
   STRATEGE_PROMPT,
+  RAPPORT_PROMPT,
   VEILLEUR_PROMPT,
   chatSystemPrompt,
 } from "./prompts";
@@ -135,6 +136,33 @@ Génère maintenant le rapport complet selon la structure demandée.`,
 
   const raw = extractText(msg);
   return parseScore(raw);
+}
+
+// ─── Version simplifiée temporaire (1 appel, sans screenshots) ─────────
+
+/** Génère le rapport complet en un seul appel Claude, sans screenshots. */
+export async function runRapportComplet(
+  c: KairosClient,
+  summary: EventsSummary
+): Promise<{ rapport: string; score: number | null }> {
+  const text = `Client analysé :
+${clientProfileText(c)}
+
+Données comportementales agrégées des ${summary.periodeJours} derniers jours (JSON) :
+${JSON.stringify(summary, null, 2)}
+
+Trafic réel : ${summary.sessions} sessions, ${summary.pagesVues} pages vues, durée de session moyenne ${summary.dureeSessionMoyenneSec}s, taux de rebond estimé ${summary.tauxRebondEstime}%.
+
+Génère le rapport complet selon la structure demandée.`;
+
+  const msg = await client().messages.create({
+    model: MODEL,
+    max_tokens: 4000,
+    system: RAPPORT_PROMPT,
+    messages: [{ role: "user", content: text }],
+  });
+
+  return parseScore(extractText(msg));
 }
 
 /** Extrait la ligne SCORE_SANTE: NN et la retire du corps du rapport. */
