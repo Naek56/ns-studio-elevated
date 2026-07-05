@@ -9,7 +9,7 @@ import {
 import type { EventsSummary } from "./events";
 import type { KairosClient, KairosMessage, KairosRapport, Screenshot } from "./types";
 
-export const MODEL = process.env.ANTHROPIC_MODEL || "claude-opus-4-8";
+export const MODEL = (process.env.ANTHROPIC_MODEL || "claude-opus-4-8").trim();
 
 function client(): Anthropic {
   if (!process.env.ANTHROPIC_API_KEY) {
