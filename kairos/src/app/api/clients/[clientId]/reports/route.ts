@@ -88,8 +88,9 @@ export async function POST(_req: Request, { params }: Params) {
   }
 }
 
-/** Construit la liste d'URLs à screenshotter (accueil + top pages), max 6. */
+/** Construit la liste d'URLs à screenshotter (accueil + top pages), max 3. */
 function pagesToCapture(client: KairosClient, topPaths: string[]): string[] {
+  const MAX_PAGES = 3;
   const urls: string[] = [client.url];
   let origin = "";
   try {
@@ -106,7 +107,7 @@ function pagesToCapture(client: KairosClient, topPaths: string[]): string[] {
     } else if (origin) {
       urls.push(`${origin}${p.startsWith("/") ? "" : "/"}${p}`);
     }
-    if (urls.length >= 6) break;
+    if (urls.length >= MAX_PAGES) break;
   }
-  return Array.from(new Set(urls)).slice(0, 6);
+  return Array.from(new Set(urls)).slice(0, MAX_PAGES);
 }
