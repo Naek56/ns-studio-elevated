@@ -15,7 +15,7 @@ export const MODEL = (process.env.ANTHROPIC_MODEL || "claude-opus-4-8").trim();
 // Modèle imposé pour la génération de rapport : jamais configurable via env,
 // jamais Opus — Sonnet est largement suffisant pour résumer des agrégats JSON
 // et coûte nettement moins cher.
-const REPORT_MODEL = "claude-sonnet-4-20250514";
+const REPORT_MODEL = "claude-sonnet-5";
 
 function client(): Anthropic {
   if (!process.env.ANTHROPIC_API_KEY) {
