@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import HeroParticles from "./HeroParticles";
+import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
 
 const WORDS = ["AVEUGLE", "MUET", "SEUL", "PERDU"];
 
-function useTypewriter(words: string[]) {
+function useTypewriter(words: string[], active: boolean) {
   const [text, setText] = useState("");
   const wi = useRef(0);
   const ci = useRef(0);
   const deleting = useRef(false);
 
   useEffect(() => {
+    if (!active) return;
     let timer: number;
     const tick = () => {
       const word = words[wi.current % words.length];
@@ -34,91 +36,94 @@ function useTypewriter(words: string[]) {
         timer = window.setTimeout(tick, 55);
       }
     };
-    timer = window.setTimeout(tick, 700);
+    timer = window.setTimeout(tick, 900);
     return () => window.clearTimeout(timer);
-  }, [words]);
+  }, [words, active]);
 
   return text;
 }
 
-export default function Hero() {
-  const typed = useTypewriter(WORDS);
-  const ref = useRef<HTMLElement>(null);
-  const reduced = useReducedMotion();
+export default function Hero({ play }: { play: boolean }) {
+  const typed = useTypewriter(WORDS, play);
+  const root = useRef<HTMLElement>(null);
 
-  // cinematic camera: while scrolling away, the title zooms toward the
-  // viewer and dissolves; the light layers drift at different speeds
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const titleScale = useTransform(scrollYProgress, [0, 1], [1, reduced ? 1 : 1.35]);
-  const titleY = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : -60]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.55, 0.85], [1, 0.9, 0]);
-  const lightsFar = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : 120]);
-  const lightsNear = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : 260]);
-  const hintOpacity = useTransform(scrollYProgress, [0, 0.18], [1, 0]);
+  useEffect(() => {
+    if (!play || !root.current) return;
+    const ctx = gsap.context(() => {
+      /* ------- sequenced entrance (line draws, then the words arrive) ------- */
+      const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
+      if (REDUCED) {
+        intro.set([".h-line", ".h-title", ".h-sub", ".h-hint"], { opacity: 1, scaleX: 1, y: 0 });
+      } else {
+        intro
+          .fromTo(".h-line", { scaleX: 0, opacity: 1 }, { scaleX: 1, duration: 1.1, ease: "expo.inOut" })
+          .fromTo(".h-title", { y: 64, opacity: 0 }, { y: 0, opacity: 1, duration: 1.1 }, "-=0.45")
+          .fromTo(".h-sub", { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9 }, "-=0.55")
+          .fromTo(".h-hint", { opacity: 0 }, { opacity: 1, duration: 0.9 }, "-=0.4");
+      }
+
+      /* ------- cinematic scrub: the title flies past the camera ------------- */
+      if (!REDUCED) {
+        gsap.timeline({
+          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
+        })
+          .to(".h-stage", { scale: 1.3, y: -70, opacity: 0, ease: "none" }, 0)
+          .to(".h-far", { y: 110, ease: "none" }, 0)
+          .to(".h-near", { y: 240, ease: "none" }, 0)
+          .to(".h-hint", { opacity: 0, ease: "none" }, 0);
+      }
+    }, root);
+    return () => ctx.revert();
+  }, [play]);
 
   return (
-    <section ref={ref} id="accueil" className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-6 text-center">
-      {/* far light layer — drifts slowly (deep background) */}
-      <motion.div className="pointer-events-none absolute inset-0" style={{ y: lightsFar, willChange: "transform" }}>
+    <section ref={root} id="accueil" className="relative flex h-[100svh] items-center justify-center overflow-hidden bg-black px-6 text-center">
+      <HeroParticles />
+
+      {/* far / near light layers (depth parallax) */}
+      <div className="h-far pointer-events-none absolute inset-0 will-change-transform">
         <div className="light-orb absolute left-[12%] top-[18%] h-[34vh] w-[34vh] animate-drift" />
         <div className="light-orb absolute right-[10%] top-[12%] h-[28vh] w-[28vh] animate-float" />
-        <div className="light-orb absolute left-1/2 top-1/2 h-[26vh] w-[26vh] -translate-x-1/2 -translate-y-1/2 animate-float" />
-      </motion.div>
-      {/* near light layer — drifts faster (foreground depth) */}
-      <motion.div className="pointer-events-none absolute inset-0" style={{ y: lightsNear, willChange: "transform" }}>
+      </div>
+      <div className="h-near pointer-events-none absolute inset-0 will-change-transform">
         <div className="light-orb absolute left-[20%] bottom-[14%] h-[30vh] w-[30vh] animate-drift-slow" />
         <div className="light-orb absolute right-[16%] bottom-[18%] h-[36vh] w-[36vh] animate-glow-pulse" />
-      </motion.div>
+      </div>
 
-      {/* large soft base light + tighter core glow on the title */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[85vh] w-[95vw] max-w-[1400px] -translate-x-1/2 -translate-y-1/2 hero-glow-wide" />
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[58vh] w-[80vw] max-w-[1100px] -translate-x-1/2 -translate-y-1/2 hero-glow animate-glow-pulse" />
 
-      <motion.div
-        className="relative z-10 mx-auto max-w-5xl"
-        style={{ scale: titleScale, y: titleY, opacity: titleOpacity, willChange: "transform, opacity" }}
-      >
-        <motion.h1
-          id="hero-title"
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="display-xl text-balance text-[2.6rem] font-semibold leading-tight text-white sm:text-6xl md:text-7xl lg:text-[5.5rem]"
-          style={{ textShadow: "0 0 40px rgba(255,255,255,0.25)" }}
+      <div className="h-stage relative z-10 mx-auto max-w-6xl will-change-transform">
+        <div className="h-line mx-auto mb-10 h-px w-24 bg-white/50 opacity-0 sm:w-36" />
+
+        <h1
+          className="h-title display-serif text-balance text-white opacity-0"
+          style={{ fontSize: "clamp(3.4rem, 11vw, 9.5rem)", textShadow: "0 0 50px rgba(255,255,255,0.22)" }}
         >
-          <span id="hero-line1" className="block">Votre site est</span>
-          <span className="mt-3 block">
-            <span id="hero-word" className="word-glow">{typed}</span>
-            <motion.span
+          <span className="block">Votre site est</span>
+          <span className="mt-1 block italic">
+            <span className="word-glow">{typed}</span>
+            <span
               aria-hidden
-              className="ml-1 inline-block w-[0.06em] rounded-full bg-white align-baseline"
-              style={{ height: "0.82em", boxShadow: "0 0 18px rgba(255,255,255,0.9)" }}
-              animate={{ opacity: [1, 0.15, 1] }}
-              transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+              className="ml-2 inline-block w-[0.045em] animate-pulse rounded-full bg-white align-baseline"
+              style={{ height: "0.78em", boxShadow: "0 0 18px rgba(255,255,255,0.9)" }}
             />
           </span>
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className="mx-auto mt-8 max-w-md text-base text-white/55 sm:text-lg"
-        >
+        <p className="h-sub mx-auto mt-9 max-w-md text-base tracking-wide text-white/55 opacity-0 sm:text-lg">
           Kairos change ça.
-        </motion.p>
-      </motion.div>
+        </p>
+      </div>
 
-      <motion.div style={{ opacity: hintOpacity }} className="absolute bottom-10 left-1/2 -translate-x-1/2">
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.1 }}
-          className="text-xs uppercase tracking-[0.3em] text-white/35"
-        >
-          Défiler
-        </motion.p>
-      </motion.div>
+      <div className="h-hint absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3 opacity-0">
+        <span className="text-[11px] uppercase tracking-[0.32em] text-white/35">Défiler</span>
+        <span className="relative block h-9 w-px overflow-hidden bg-white/15">
+          <span className="absolute left-0 top-0 h-3 w-px animate-[scrollcue_1.8s_ease-in-out_infinite] bg-white/70" />
+        </span>
+      </div>
+
+      <style>{`@keyframes scrollcue { 0% { transform: translateY(-100%); } 100% { transform: translateY(400%); } }`}</style>
     </section>
   );
 }

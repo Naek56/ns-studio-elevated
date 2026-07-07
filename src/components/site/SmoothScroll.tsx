@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
+import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
 
-// Buttery inertia scrolling (the signature feel of immersive sites).
+// Lenis inertia scrolling, driven by GSAP's ticker so ScrollTrigger and the
+// smooth scroll share one clock (the standard Lenis+GSAP integration).
 export default function SmoothScroll() {
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (REDUCED) return;
 
     const lenis = new Lenis({
       duration: 1.15,
@@ -13,15 +15,17 @@ export default function SmoothScroll() {
     });
     (window as unknown as { lenis?: Lenis }).lenis = lenis;
 
-    let raf = 0;
-    const loop = (time: number) => {
-      lenis.raf(time);
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
+    lenis.on("scroll", ScrollTrigger.update);
+    const tick = (time: number) => lenis.raf(time * 1000);
+    gsap.ticker.add(tick);
+    gsap.ticker.lagSmoothing(0);
+
+    // layout settles after webfonts load
+    const refresh = () => ScrollTrigger.refresh();
+    (document as Document & { fonts?: FontFaceSet }).fonts?.ready.then(refresh).catch(() => {});
 
     return () => {
-      cancelAnimationFrame(raf);
+      gsap.ticker.remove(tick);
       lenis.destroy();
       (window as unknown as { lenis?: Lenis }).lenis = undefined;
     };

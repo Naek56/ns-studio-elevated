@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import IntroPuzzle from "@/components/site/IntroPuzzle";
-import SectionFade from "@/components/site/SectionFade";
 import ScrollProgress from "@/components/site/ScrollProgress";
 import SmoothScroll from "@/components/site/SmoothScroll";
 import CursorFollower from "@/components/site/CursorFollower";
 import ContactModal from "@/components/site/ContactModal";
 import TopNav from "@/components/site/TopNav";
 import Hero from "@/components/site/Hero";
-import Approach from "@/components/site/Approach";
-import StoryScroll from "@/components/site/StoryScroll";
-import Realisations from "@/components/site/Realisations";
+import Narrative from "@/components/site/Narrative";
+import Impact from "@/components/site/Impact";
+import Way from "@/components/site/Way";
+import KairosSection from "@/components/site/KairosSection";
 import Contact from "@/components/site/Contact";
+import { ScrollTrigger } from "@/lib/gsapSetup";
 
 const Index = () => {
   // solve the puzzle once per session — coming back from a legal page skips it
@@ -32,6 +33,8 @@ const Index = () => {
     } else {
       root.style.overflow = "";
       document.body.style.overflow = "";
+      // pinned sections need a fresh measure once the page unlocks
+      requestAnimationFrame(() => ScrollTrigger.refresh());
     }
     return () => {
       root.style.overflow = "";
@@ -53,23 +56,12 @@ const Index = () => {
       <TopNav />
       <ContactModal />
       <main>
-        <Hero />
-        {/* clean, compact fade from the black hero into the white section */}
-        <div className="h-16 w-full bg-gradient-to-b from-black to-white sm:h-20" />
-        <SectionFade>
-          <Approach />
-        </SectionFade>
-        {/* fade back from white into the black storytelling section */}
-        <div className="h-16 w-full bg-gradient-to-b from-white to-black sm:h-20" />
-        <SectionFade plain amount={0.02}>
-          <StoryScroll />
-        </SectionFade>
-        <SectionFade>
-          <Realisations />
-        </SectionFade>
-        <SectionFade>
-          <Contact />
-        </SectionFade>
+        <Hero play={entered} />
+        <Narrative />
+        <Impact />
+        <Way />
+        <KairosSection />
+        <Contact />
       </main>
     </div>
   );

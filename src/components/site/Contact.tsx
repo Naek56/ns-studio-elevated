@@ -1,44 +1,51 @@
-import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 import Footer from "./Footer";
-import WordReveal from "./WordReveal";
-import Parallax from "./Parallax";
 import { openContact } from "./ContactModal";
+import { gsap, REDUCED } from "@/lib/gsapSetup";
 
 export default function Contact() {
+  const root = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const ctx = gsap.context(() => {
+      if (REDUCED) {
+        gsap.set(".c-in", { opacity: 1, y: 0 });
+        return;
+      }
+      gsap.fromTo(".c-in", { opacity: 0, y: 52 }, {
+        opacity: 1, y: 0, duration: 1.05, stagger: 0.16, ease: "power3.out",
+        scrollTrigger: { trigger: el, start: "top 66%", once: true },
+      });
+      gsap.fromTo(".c-glow", { y: 90 }, {
+        y: -90, ease: "none",
+        scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true },
+      });
+    }, root);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="contact" className="relative flex min-h-screen flex-col justify-between overflow-hidden bg-black px-6 pt-32 pb-12 text-center">
-      <Parallax speed={80} className="pointer-events-none absolute left-1/2 top-1/2 h-[50vh] w-[70vw] max-w-[900px] -translate-x-1/2 -translate-y-1/2">
+    <section ref={root} id="contact" className="relative flex min-h-[100svh] flex-col justify-between overflow-hidden bg-black px-6 pt-32 pb-12 text-center">
+      <div className="c-glow pointer-events-none absolute left-1/2 top-1/2 h-[50vh] w-[70vw] max-w-[900px] -translate-x-1/2 -translate-y-1/2 will-change-transform">
         <div className="hero-glow h-full w-full" />
-      </Parallax>
+      </div>
 
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center">
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-          className="label"
-        >
+        <p className="c-in text-[11px] font-medium uppercase tracking-[0.34em] text-white/40 opacity-0">
           Parlons de votre projet
-        </motion.p>
+        </p>
 
-        <WordReveal
-          text="Vous ne le regretterez pas."
-          className="display-xl mt-6 max-w-3xl text-4xl font-semibold text-white sm:text-6xl md:text-7xl"
-        />
+        <h2 className="c-in display-serif mt-8 max-w-4xl text-white opacity-0" style={{ fontSize: "clamp(3rem, 9vw, 7.5rem)" }}>
+          Vous ne le regretterez pas.
+        </h2>
 
-        <motion.button
-          onClick={openContact}
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.15 }}
-          className="btn-glass group mt-10 px-8 py-3.5 text-base"
-        >
+        <button onClick={openContact} className="c-in btn-glass group mt-12 px-8 py-3.5 text-base opacity-0">
           Démarrer un projet
           <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        </motion.button>
+        </button>
       </div>
 
       <Footer />
