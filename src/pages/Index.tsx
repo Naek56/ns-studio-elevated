@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import IntroPuzzle from "@/components/site/IntroPuzzle";
 import SectionFade from "@/components/site/SectionFade";
+import ScrollProgress from "@/components/site/ScrollProgress";
 import SmoothScroll from "@/components/site/SmoothScroll";
 import CursorFollower from "@/components/site/CursorFollower";
 import ContactModal from "@/components/site/ContactModal";
@@ -43,6 +44,7 @@ const Index = () => {
       {!entered && <IntroPuzzle onComplete={enter} />}
 
       {entered && <SmoothScroll />}
+      {entered && <ScrollProgress />}
       {entered && <CursorFollower />}
 
       {/* filmic grain over the whole site for a premium texture */}
