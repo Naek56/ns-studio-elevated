@@ -2,10 +2,9 @@ import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
 /**
- * Entrance played when a section reaches the viewport: a clean curtain
- * reveal (the section un-masks from the center) with a slight rise.
- * `plain` limits it to a simple fade for sections relying on
- * position: sticky, which clip/transforms could disturb.
+ * Section entrance: a buttery, organic rise on a soft spring (no bezier
+ * cut-off, no blur) — the section glides up and settles naturally while
+ * the opacity eases in. `plain` = fade only, for sticky sections.
  */
 export default function SectionFade({
   children,
@@ -18,18 +17,18 @@ export default function SectionFade({
 }) {
   return (
     <motion.div
-      initial={
-        plain
-          ? { opacity: 0 }
-          : { opacity: 0, y: 32, clipPath: "inset(12% 8% 12% 8% round 28px)" }
-      }
-      whileInView={
-        plain
-          ? { opacity: 1 }
-          : { opacity: 1, y: 0, clipPath: "inset(0% 0% 0% 0% round 0px)" }
-      }
+      style={{ willChange: "transform, opacity" }}
+      initial={plain ? { opacity: 0 } : { opacity: 0, y: 110 }}
+      whileInView={plain ? { opacity: 1 } : { opacity: 1, y: 0 }}
       viewport={{ once: true, amount }}
-      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+      transition={
+        plain
+          ? { duration: 1.1, ease: "easeOut" }
+          : {
+              y: { type: "spring", stiffness: 52, damping: 17, mass: 1.1 },
+              opacity: { duration: 1.1, ease: [0.25, 0.46, 0.45, 0.94] },
+            }
+      }
     >
       {children}
     </motion.div>

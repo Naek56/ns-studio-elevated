@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence } from "framer-motion";
 import IntroPuzzle from "@/components/site/IntroPuzzle";
 import SectionFade from "@/components/site/SectionFade";
+import ScrollProgress from "@/components/site/ScrollProgress";
 import SmoothScroll from "@/components/site/SmoothScroll";
 import CursorFollower from "@/components/site/CursorFollower";
 import ContactModal from "@/components/site/ContactModal";
@@ -41,11 +41,10 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen bg-black text-foreground">
-      <AnimatePresence>
-        {!entered && <IntroPuzzle key="intro" onComplete={enter} />}
-      </AnimatePresence>
+      {!entered && <IntroPuzzle onComplete={enter} />}
 
       {entered && <SmoothScroll />}
+      {entered && <ScrollProgress />}
       {entered && <CursorFollower />}
 
       {/* filmic grain over the whole site for a premium texture */}

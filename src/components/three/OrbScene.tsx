@@ -2,102 +2,49 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
 /* ============================================================================
-   L'Œil — l'œil Kairos en particules blanches. Il suit le curseur, cligne
-   de temps en temps, et relie quatre points lumineux (les rôles du système).
-   Chaque point (et l'œil lui-même) est cliquable : carte d'information.
-   Typo des libellés et cartes : Poppins (la police de base du site).
+   L'Orbite — composition minimale et centrée : un cœur lumineux (Kairos)
+   entouré de trois anneaux de particules qui tournent lentement. Les quatre
+   rôles sont des points posés sur les anneaux, reliés au cœur. Survol :
+   libellé ; clic : carte d'information (Poppins).
 ============================================================================ */
 
-type Node = { title: string; text: string; pos: [number, number, number]; eye?: boolean };
+type Node = { title: string; text: string; angle: number; radius: number; core?: boolean };
 
 const NODES: Node[] = [
   {
     title: "Kairos AI",
     text: "L'intelligence artificielle qui se connecte à votre site et devient le cerveau de votre business. Automatiquement.",
-    pos: [0, 0, 0], eye: true,
+    angle: 0, radius: 0, core: true,
   },
   {
     title: "L'Analyste",
     text: "Observe chaque visiteur de votre site. Clics, scrolls, hésitations. Il comprend le comportement humain derrière chaque donnée.",
-    pos: [-3.9, 1.7, -0.4],
+    angle: 148, radius: 1.9,
   },
   {
     title: "Le Stratège",
     text: "Traduit les données en décisions business. Chaque recommandation a un impact estimé en euros réels.",
-    pos: [-3.4, -1.9, 0.2],
+    angle: 216, radius: 2.6,
   },
   {
     title: "Le Veilleur",
     text: "Surveille votre marché, vos concurrents, votre réputation. Il vous alerte avant que vous en ayez besoin.",
-    pos: [3.6, 1.9, -0.3],
+    angle: 33, radius: 1.9,
   },
   {
     title: "WAY Agency",
     text: "On construit votre site. Kairos le fait performer. Ensemble on fait croître votre business.",
-    pos: [3.9, -1.6, 0.3],
+    angle: 327, radius: 2.6,
   },
 ];
 
+const RINGS = [1.2, 1.9, 2.6];
 const FONT = "'Poppins', system-ui, sans-serif";
 
-/* the hand-drawn eye: almond outline with a left tail, SPIRAL iris, and
-   lashes fanning out from the upper lid (matches the sketch reference) */
-function shapeEye(p: Float32Array, count: number) {
-  const W = 1.9;
-  const thick = 0.045; // stroke thickness (marker feel)
-  let i = 0;
-  const put = (x: number, y: number) => {
-    p[i * 3] = x + (Math.random() - 0.5) * thick * 2;
-    p[i * 3 + 1] = y + (Math.random() - 0.5) * thick * 2;
-    p[i * 3 + 2] = (Math.random() - 0.5) * 0.08;
-    i++;
-  };
-
-  const nOut = Math.floor(count * 0.32);
-  const nSpi = Math.floor(count * 0.36);
-  // outline: upper curve (55%), lower curve (33%), left tail (12%)
-  for (let k = 0; k < nOut && i < count; k++) {
-    const r = Math.random();
-    if (r < 0.55) {
-      const t = Math.random();
-      put(-W + 2 * W * t, 0.68 * Math.sin(Math.PI * t));
-    } else if (r < 0.88) {
-      const t = Math.random();
-      put(-W + 2 * W * t, -0.52 * Math.sin(Math.PI * t));
-    } else {
-      const s = Math.random() * 0.55; // the swooping tail, lower-left
-      put(-W - s * 0.55, -s * 0.38);
-    }
-  }
-  // spiral iris — big, ~2.6 turns with clearly separated coils (like the sketch)
-  const turns = 2.6, cx = -0.02, cy = 0.03;
-  for (let k = 0; k < nSpi && i < count; k++) {
-    const u = Math.sqrt(Math.random()); // uniform along the coil length
-    const th = u * turns * Math.PI * 2;
-    const r = 0.07 + 0.43 * u;
-    put(cx + Math.cos(th) * r, cy + Math.sin(th) * r * 0.92);
-  }
-  // lashes fanning from the upper lid
-  const LASH_T = [0.13, 0.27, 0.41, 0.55, 0.69, 0.82];
-  const per = Math.max(1, Math.floor((count - i) / LASH_T.length));
-  for (const t of LASH_T) {
-    const bx = -W + 2 * W * t;
-    const by = 0.68 * Math.sin(Math.PI * t) + 0.02;
-    // radiate away from a point below the eye so the fan opens outward
-    const dx = bx - 0, dy = by + 1.1;
-    const len = Math.hypot(dx, dy);
-    const ux = dx / len, uy = dy / len;
-    const L = 0.3 + 0.22 * Math.sin(Math.PI * t);
-    for (let k = 0; k < per && i < count; k++) {
-      const s = 0.06 + Math.random() * L;
-      put(bx + ux * s, by + uy * s);
-    }
-  }
-  while (i < count) { // safety fill on the outline
-    const t = Math.random();
-    put(-W + 2 * W * t, 0.68 * Math.sin(Math.PI * t));
-  }
-}
+const nodeXY = (n: Node): [number, number, number] => {
+  const a = (n.angle * Math.PI) / 180;
+  return [Math.cos(a) * n.radius, Math.sin(a) * n.radius, 0];
+};
 
 const vert = /* glsl */ `
   uniform float uTime, uSize, uPixel;
@@ -105,11 +52,11 @@ const vert = /* glsl */ `
   varying float vShade;
   void main() {
     vec3 p = position;
-    p += 0.015 * vec3(sin(uTime*0.6 + aPhase), cos(uTime*0.5 + aPhase*1.3), sin(uTime*0.4 + aPhase));
+    p += 0.012 * vec3(sin(uTime*0.6 + aPhase), cos(uTime*0.5 + aPhase*1.3), sin(uTime*0.4 + aPhase));
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     gl_Position = projectionMatrix * mv;
     gl_PointSize = (uSize * (0.5 + aRand)) * uPixel / -mv.z;
-    vShade = mix(0.45, 1.0, aRand);
+    vShade = mix(0.4, 1.0, aRand);
   }
 `;
 const frag = /* glsl */ `
@@ -136,7 +83,32 @@ function glowTexture() {
   return new THREE.CanvasTexture(c);
 }
 
-export default function EyeScene() {
+function makePoints(builder: (p: Float32Array, n: number) => void, n: number, size: number) {
+  const pos = new Float32Array(n * 3);
+  builder(pos, n);
+  const rand = new Float32Array(n);
+  const phase = new Float32Array(n);
+  for (let i = 0; i < n; i++) { rand[i] = Math.random(); phase[i] = Math.random() * Math.PI * 2; }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute("aRand", new THREE.BufferAttribute(rand, 1));
+  geo.setAttribute("aPhase", new THREE.BufferAttribute(phase, 1));
+  const mat = new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0 },
+      uSize: { value: size },
+      uPixel: { value: Math.min(window.devicePixelRatio || 1, 2) },
+    },
+    vertexShader: vert,
+    fragmentShader: frag,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+  return { points: new THREE.Points(geo, mat), geo, mat };
+}
+
+export default function OrbScene() {
   const mountRef = useRef<HTMLDivElement>(null);
   const [card, setCard] = useState<{ i: number; x: number; y: number } | null>(null);
   const [hover, setHover] = useState<{ i: number; x: number; y: number } | null>(null);
@@ -156,80 +128,92 @@ export default function EyeScene() {
     const disposables: { dispose: () => void }[] = [];
     const isMobile = () => window.innerWidth < 768;
     const lowPower = isMobile() || window.matchMedia("(pointer: coarse)").matches;
+    const group = new THREE.Group();
+    scene.add(group);
 
-    // on phone: satellites sit above/below the eye instead of far left/right
-    const nodePos: [number, number, number][] = isMobile()
-      ? [[0, 0, 0], [-1.5, 2.5, -0.2], [-1.5, -2.5, 0.2], [1.5, 2.5, -0.2], [1.5, -2.5, 0.2]]
-      : NODES.map((n) => n.pos);
-
-    /* --------------------------------- l'œil -------------------------------- */
-    const eyeGroup = new THREE.Group();
-    scene.add(eyeGroup);
-    const count = lowPower ? 5000 : 9000;
-    const pos = new Float32Array(count * 3);
-    shapeEye(pos, count);
-    const rand = new Float32Array(count);
-    const phase = new Float32Array(count);
-    for (let i = 0; i < count; i++) { rand[i] = Math.random(); phase[i] = Math.random() * Math.PI * 2; }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-    geo.setAttribute("aRand", new THREE.BufferAttribute(rand, 1));
-    geo.setAttribute("aPhase", new THREE.BufferAttribute(phase, 1));
-    const mat = new THREE.ShaderMaterial({
-      uniforms: {
-        uTime: { value: 0 },
-        uSize: { value: lowPower ? 13 : 15 },
-        uPixel: { value: Math.min(window.devicePixelRatio || 1, 2) },
-      },
-      vertexShader: vert,
-      fragmentShader: frag,
-      transparent: true,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
+    /* ------------------------------ les anneaux ------------------------------ */
+    const total = lowPower ? 5200 : 9000;
+    const ringMats: THREE.ShaderMaterial[] = [];
+    const ringObjs: THREE.Points[] = [];
+    const circumSum = RINGS.reduce((s, r) => s + r, 0);
+    const nCore = Math.floor(total * 0.3);
+    RINGS.forEach((R) => {
+      const n = Math.floor((total - nCore) * (R / circumSum));
+      const { points, geo, mat } = makePoints((p, m) => {
+        for (let i = 0; i < m; i++) {
+          const a = Math.random() * Math.PI * 2;
+          const rr = R + (Math.random() - 0.5) * 0.035;
+          p[i * 3] = Math.cos(a) * rr;
+          p[i * 3 + 1] = Math.sin(a) * rr;
+          p[i * 3 + 2] = (Math.random() - 0.5) * 0.05;
+        }
+      }, n, lowPower ? 11 : 13);
+      group.add(points);
+      ringObjs.push(points);
+      ringMats.push(mat);
+      disposables.push(geo, mat);
     });
-    const eye = new THREE.Points(geo, mat);
-    eye.scale.setScalar(1.35);
-    eyeGroup.add(eye);
-    disposables.push(geo, mat);
 
-    /* ------------------------- liens + points satellites --------------------- */
-    const linkPts: number[] = [];
-    for (let i = 1; i < NODES.length; i++) linkPts.push(0, 0, 0, ...nodePos[i]);
-    const linkGeo = new THREE.BufferGeometry();
-    linkGeo.setAttribute("position", new THREE.Float32BufferAttribute(linkPts, 3));
-    const linkMat = new THREE.LineBasicMaterial({ color: 0xe8f0ff, transparent: true, opacity: 0.14 });
-    scene.add(new THREE.LineSegments(linkGeo, linkMat));
-    disposables.push(linkGeo, linkMat);
+    /* -------------------------------- le cœur -------------------------------- */
+    const core = makePoints((p, m) => {
+      for (let i = 0; i < m; i++) {
+        // fibonacci sphere surface, softly jittered
+        const t = (i + 0.5) / m;
+        const incl = Math.acos(1 - 2 * t);
+        const az = i * Math.PI * (3 - Math.sqrt(5));
+        const r = 0.48 * (0.94 + Math.random() * 0.12);
+        p[i * 3] = Math.sin(incl) * Math.cos(az) * r;
+        p[i * 3 + 1] = Math.cos(incl) * r;
+        p[i * 3 + 2] = Math.sin(incl) * Math.sin(az) * r;
+      }
+    }, nCore, lowPower ? 12 : 14);
+    group.add(core.points);
+    disposables.push(core.geo, core.mat);
 
+    // soft glow behind the core
     const tex = glowTexture();
     disposables.push(tex);
+    const coreGlowMat = new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending });
+    const coreGlow = new THREE.Sprite(coreGlowMat);
+    coreGlow.scale.setScalar(2.6);
+    group.add(coreGlow);
+    disposables.push(coreGlowMat);
+
+    /* -------------------------- liens + points des rôles ---------------------- */
+    const nodeWorld = NODES.map((n) => new THREE.Vector3(...nodeXY(n)));
+    const linkPts: number[] = [];
+    for (let i = 1; i < NODES.length; i++) linkPts.push(0, 0, 0, ...nodeXY(NODES[i]));
+    const linkGeo = new THREE.BufferGeometry();
+    linkGeo.setAttribute("position", new THREE.Float32BufferAttribute(linkPts, 3));
+    const linkMat = new THREE.LineBasicMaterial({ color: 0xe8f0ff, transparent: true, opacity: 0.1 });
+    group.add(new THREE.LineSegments(linkGeo, linkMat));
+    disposables.push(linkGeo, linkMat);
+
     const glows: THREE.Sprite[] = [];
     const hits: THREE.Mesh[] = [];
-    const nodeWorld = nodePos.map((p3) => new THREE.Vector3(...p3));
-
     NODES.forEach((n, i) => {
-      if (!n.eye) {
-        const gm = new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: 0.85, depthWrite: false, blending: THREE.AdditiveBlending });
+      if (!n.core) {
+        const gm = new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: 0.8, depthWrite: false, blending: THREE.AdditiveBlending });
         const s = new THREE.Sprite(gm);
-        s.position.set(...nodePos[i]);
-        s.scale.setScalar(0.9);
-        scene.add(s);
+        s.position.copy(nodeWorld[i]);
+        s.scale.setScalar(0.7);
+        group.add(s);
         glows.push(s);
         disposables.push(gm);
 
-        const cg = new THREE.SphereGeometry(0.05, 12, 12);
+        const cg = new THREE.SphereGeometry(0.045, 12, 12);
         const cm = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        const core = new THREE.Mesh(cg, cm);
-        core.position.set(...nodePos[i]);
-        scene.add(core);
+        const dot = new THREE.Mesh(cg, cm);
+        dot.position.copy(nodeWorld[i]);
+        group.add(dot);
         disposables.push(cg, cm);
       }
-      const hg = new THREE.SphereGeometry(n.eye ? 1.5 : 0.6, 12, 12);
+      const hg = new THREE.SphereGeometry(n.core ? 0.9 : 0.55, 12, 12);
       const hm = new THREE.MeshBasicMaterial({ visible: false });
       const hit = new THREE.Mesh(hg, hm);
-      hit.position.set(...nodePos[i]);
+      hit.position.copy(nodeWorld[i]);
       hit.userData.i = i;
-      scene.add(hit);
+      group.add(hit);
       hits.push(hit);
       disposables.push(hg, hm);
     });
@@ -240,7 +224,10 @@ export default function EyeScene() {
       renderer.setSize(w, h, false);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       camera.aspect = w / h;
-      camera.position.set(0, 0, isMobile() ? 12.5 : 8.6);
+      const tan = Math.tan(THREE.MathUtils.degToRad(22.5));
+      // fit the outer ring (+ margin) in both axes
+      const need = 3.2;
+      camera.position.set(0, 0, Math.max(need / tan / camera.aspect, need / tan) + 1);
       camera.lookAt(0, 0, 0);
       camera.updateProjectionMatrix();
       setMobile(isMobile());
@@ -250,7 +237,9 @@ export default function EyeScene() {
 
     const project = (p: THREE.Vector3) => {
       const r = renderer.domElement.getBoundingClientRect();
-      const v = p.clone().project(camera);
+      const v = p.clone();
+      group.localToWorld(v);
+      v.project(camera);
       return { x: (v.x * 0.5 + 0.5) * r.width, y: (-v.y * 0.5 + 0.5) * r.height };
     };
 
@@ -290,37 +279,39 @@ export default function EyeScene() {
 
     /* --------------------------------- animer -------------------------------- */
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const phases2 = NODES.map(() => Math.random() * Math.PI * 2);
+    const speeds = [0.055, -0.038, 0.024];
+    const phases = NODES.map(() => Math.random() * Math.PI * 2);
     const clock = new THREE.Clock();
     let raf = 0;
-    let nextBlink = 3 + Math.random() * 3;
     const loop = () => {
       const dt = Math.min(clock.getDelta(), 0.05);
       const t = clock.elapsedTime;
-      mat.uniforms.uTime.value = t;
+      ringMats.forEach((m) => (m.uniforms.uTime.value = t));
+      core.mat.uniforms.uTime.value = t;
 
-      // l'œil suit le curseur (rotation douce), avec une petite dérive au repos
-      const tx = -mouse.y * 0.28 + Math.sin(t * 0.4) * 0.04;
-      const ty = mouse.x * 0.45 + Math.cos(t * 0.3) * 0.05;
-      eyeGroup.rotation.x += (tx - eyeGroup.rotation.x) * Math.min(1, dt * 4);
-      eyeGroup.rotation.y += (ty - eyeGroup.rotation.y) * Math.min(1, dt * 4);
+      // slow in-plane rotation of each ring (circles stay circles)
+      if (!reduced) ringObjs.forEach((r, ri) => { r.rotation.z += speeds[ri] * dt; });
 
-      // clignement naturel
-      if (!reduced) {
-        nextBlink -= dt;
-        if (nextBlink <= 0) nextBlink = 3.5 + Math.random() * 3.5;
-        const b = nextBlink < 0.24 ? Math.abs(Math.sin((0.24 - nextBlink) / 0.24 * Math.PI)) : 0;
-        eyeGroup.scale.y = 1 - b * 0.85;
-      }
+      // core breathing
+      const cs = 1 + Math.sin(t * 0.8) * 0.045;
+      core.points.scale.setScalar(cs);
+      coreGlowMat.opacity = 0.5 + Math.sin(t * 0.8) * 0.08 + (hoveredIdx === 0 ? 0.25 : 0);
+      coreGlow.scale.setScalar(2.6 * cs + (hoveredIdx === 0 ? 0.5 : 0));
 
-      // respiration des points satellites (+ boost au survol)
+      // gentle parallax
+      const tx = -mouse.y * 0.16;
+      const ty = mouse.x * 0.22;
+      group.rotation.x += (tx - group.rotation.x) * Math.min(1, dt * 3);
+      group.rotation.y += (ty - group.rotation.y) * Math.min(1, dt * 3);
+
+      // satellites breathing (+ hover boost)
       glows.forEach((g, gi) => {
-        const nodeIdx = gi + 1; // glows exclude the eye (index 0)
-        const base = 0.9 * (1 + Math.sin(t * 0.7 + phases2[nodeIdx]) * 0.08);
-        const target = hoveredIdx === nodeIdx ? base * 1.5 : base;
+        const nodeIdx = gi + 1;
+        const base = 0.7 * (1 + Math.sin(t * 0.7 + phases[nodeIdx]) * 0.08);
+        const target = hoveredIdx === nodeIdx ? base * 1.6 : base;
         g.scale.setScalar(g.scale.x + (target - g.scale.x) * Math.min(1, dt * 8));
       });
-      linkMat.opacity = 0.11 + Math.sin(t * 0.6) * 0.04;
+      linkMat.opacity = 0.08 + Math.sin(t * 0.5) * 0.03;
 
       renderer.render(scene, camera);
       raf = requestAnimationFrame(loop);
@@ -365,7 +356,7 @@ export default function EyeScene() {
         <div
           className="pointer-events-none absolute select-none"
           style={{
-            left: hover.x, top: hover.y - (NODES[hover.i].eye ? 96 : 26),
+            left: hover.x, top: hover.y - (NODES[hover.i].core ? 60 : 24),
             transform: "translate(-50%, -100%)",
             fontFamily: FONT, fontSize: 12, fontWeight: 500, letterSpacing: "0.14em",
             textTransform: "uppercase",
@@ -376,7 +367,7 @@ export default function EyeScene() {
         </div>
       )}
 
-      {/* carte d'information — Poppins (police de base) */}
+      {/* carte d'information — Poppins */}
       {node && (
         <div
           key={card!.i}
