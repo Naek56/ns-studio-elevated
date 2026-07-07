@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html,
+body {
+  background-color: #0a0a0a;
+  color: #e8e6e0;
+}
+
+body {
+  font-family: "DM Mono", ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #262626 transparent;
+}
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 9999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a;
+}
+
+/* Rendu Markdown des rapports */
+.kairos-prose {
+  color: #e8e6e0;
+  line-height: 1.7;
+}
+.kairos-prose h1,
+.kairos-prose h2,
+.kairos-prose h3 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+}
+.kairos-prose h2 {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #262626;
+  color: #ff6b2b;
+}
+.kairos-prose h3 {
+  font-size: 1.2rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.kairos-prose p {
+  margin: 0.6rem 0;
+}
+.kairos-prose ul,
+.kairos-prose ol {
+  margin: 0.6rem 0;
+  padding-left: 1.4rem;
+}
+.kairos-prose li {
+  margin: 0.3rem 0;
+}
+.kairos-prose strong {
+  color: #ffffff;
+  font-weight: 500;
+}
+.kairos-prose a {
+  color: #ff6b2b;
+  text-decoration: underline;
+}
+.kairos-prose code {
+  background: #1a1a1a;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+.kairos-prose blockquote {
+  border-left: 2px solid #ff6b2b;
+  padding-left: 1rem;
+  color: #8a877e;
+  margin: 0.8rem 0;
+}

@@ -1,0 +1,6 @@
+project_id = "kairos"
+
+# Endpoint public d'ingestion appelé par kairos-tracker.js depuis les sites
+# externes : pas de vérification de JWT Supabase.
+[functions.kairos-track]
+verify_jwt = false
