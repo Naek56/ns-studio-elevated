@@ -69,7 +69,7 @@ export default function HorizontalStory() {
               0{i + 1}
             </span>
             <div className="relative max-w-3xl text-center">
-              <p className="hs-in type-body text-xs font-semibold uppercase tracking-[0.34em] text-neutral-600">{b.kicker}</p>
+              <p className="hs-in type-body text-xs font-semibold uppercase tracking-[0.34em] text-white/70">{b.kicker}</p>
               <h2 className="hs-in type-strong mt-6" style={{ fontSize: "clamp(2.4rem, 7vw, 5.6rem)" }}>
                 <span className="block">{b.l1}</span>
                 <span className="block">{b.l2}</span>
@@ -77,7 +77,7 @@ export default function HorizontalStory() {
               {b.captions.length > 0 && (
                 <div className="mt-8 space-y-1.5">
                   {b.captions.map((c) => (
-                    <p key={c} className="hs-in type-body text-sm text-neutral-700">{c}</p>
+                    <p key={c} className="hs-in type-body text-sm text-white/75">{c}</p>
                   ))}
                 </div>
               )}

@@ -1,36 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 1000" preserveAspectRatio="xMidYMid slice">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" preserveAspectRatio="xMidYMid slice">
   <defs>
-    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#f4f4f2"/>
-      <stop offset="1" stop-color="#e9e9e7"/>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="0.55">
+      <stop offset="0" stop-color="#2c4a86"/>
+      <stop offset="0.34" stop-color="#3b6ba6"/>
+      <stop offset="0.52" stop-color="#4f97c6"/>
+      <stop offset="0.72" stop-color="#9db9d6"/>
+      <stop offset="1" stop-color="#d5deec"/>
     </linearGradient>
-    <radialGradient id="blobTL" cx="18%" cy="20%" r="60%">
-      <stop offset="0" stop-color="#000000"/>
-      <stop offset="55%" stop-color="#000000" stop-opacity="0.9"/>
-      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    <radialGradient id="glowTL" cx="12%" cy="18%" r="55%">
+      <stop offset="0" stop-color="#22407a" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#22407a" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="band" cx="60%" cy="52%" r="55%">
-      <stop offset="0" stop-color="#000000" stop-opacity="0.92"/>
-      <stop offset="60%" stop-color="#050505" stop-opacity="0.5"/>
-      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    <radialGradient id="beam" cx="48%" cy="30%" r="42%">
+      <stop offset="0" stop-color="#63b3dd" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#63b3dd" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="blobBL" cx="22%" cy="86%" r="45%">
-      <stop offset="0" stop-color="#0a0a0a" stop-opacity="0.7"/>
-      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    <radialGradient id="lightR" cx="88%" cy="26%" r="55%">
+      <stop offset="0" stop-color="#e6edf6" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#e6edf6" stop-opacity="0"/>
     </radialGradient>
     <filter id="grain">
-      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="n"/>
-      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.5 0"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0"/>
     </filter>
-    <filter id="soft"><feGaussianBlur stdDeviation="26"/></filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="34"/></filter>
   </defs>
 
-  <rect width="1536" height="1000" fill="url(#base)"/>
+  <rect width="1536" height="864" fill="url(#base)"/>
   <g filter="url(#soft)">
-    <rect width="1536" height="1000" fill="url(#blobTL)"/>
-    <rect width="1536" height="1000" fill="url(#band)"/>
-    <rect width="1536" height="1000" fill="url(#blobBL)"/>
+    <rect width="1536" height="864" fill="url(#glowTL)"/>
+    <rect width="1536" height="864" fill="url(#beam)"/>
+    <rect width="1536" height="864" fill="url(#lightR)"/>
   </g>
-  <!-- film grain overlay -->
-  <rect width="1536" height="1000" filter="url(#grain)" opacity="0.22"/>
+  <!-- film / paper grain -->
+  <rect width="1536" height="864" filter="url(#grain)" opacity="0.16"/>
 </svg>

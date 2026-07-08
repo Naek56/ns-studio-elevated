@@ -40,6 +40,8 @@ const Index = () => {
   return (
     <div className="relative min-h-screen text-neutral-900">
       <PaperBackground />
+      {/* grain papier global (par-dessus la photo, sous le contenu) */}
+      <div aria-hidden className="grain pointer-events-none fixed inset-0 -z-[5] opacity-[0.12] mix-blend-overlay" />
       {!revealed && <PixelIntro onDone={done} />}
 
       {revealed && <SmoothScroll />}

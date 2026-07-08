@@ -121,14 +121,8 @@
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 1.02;
-    background-image: linear-gradient(165deg, #3d7bff 0%, #1d4ed8 40%, #0a0f1f 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    /* halo léger pour rester lisible autant sur les zones claires que
-       sombres de la photo de fond */
-    filter: drop-shadow(0 1px 10px rgba(61, 123, 255, 0.35))
-            drop-shadow(0 2px 2px rgba(255, 255, 255, 0.22));
+    color: #ffffff;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
   }
   .type-body {
     font-family: 'Work Sans', system-ui, sans-serif;
@@ -147,13 +141,16 @@
                 0 10px 30px -16px rgba(0, 0, 0, 0.6);
   }
 
-  /* nappe de lumière derrière un bloc de texte pour rester lisible sur les
-     zones sombres de la photo, sans masquer la photo autour */
+  /* nappe sombre derrière un bloc de texte blanc : garantit le contraste
+     sur les zones claires de la photo, sans la masquer autour */
   .read-pool {
     background: radial-gradient(ellipse 58% 54% at 50% 50%,
-      rgba(247, 247, 244, 0.82), rgba(247, 247, 244, 0.4) 44%, transparent 76%);
-    filter: blur(26px);
+      rgba(10, 20, 40, 0.42), rgba(10, 20, 40, 0.18) 46%, transparent 76%);
+    filter: blur(30px);
   }
+
+  /* curseur natif masqué quand le curseur personnalisé est actif */
+  .cursor-none, .cursor-none * { cursor: none !important; }
   .paper-grain::after {
     content: "";
     position: absolute;
