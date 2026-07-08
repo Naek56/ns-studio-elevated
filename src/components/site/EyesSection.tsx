@@ -76,7 +76,7 @@ export default function EyesSection() {
   );
 
   return (
-    <section ref={root} className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-6 py-24">
+    <section ref={root} id="question" className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-6 py-24">
       <div aria-hidden className="read-pool pointer-events-none absolute left-1/2 top-1/2 h-[60vh] w-[92vw] max-w-[1100px] -translate-x-1/2 -translate-y-1/2" />
 
       {/* desktop : yeux de part et d'autre de la question ; mobile : au-dessus */}
@@ -86,7 +86,7 @@ export default function EyesSection() {
       </div>
 
       <div className="relative mx-auto mt-24 max-w-3xl text-center md:mt-0">
-        <p className="q-lead type-body text-lg font-medium text-neutral-800 opacity-0 sm:text-2xl">
+        <p className="q-lead type-body text-lg font-medium text-white opacity-0 sm:text-2xl">
           Tes futurs clients te cherchent déjà.
         </p>
         <h2 className="q-punch type-strong mt-6 opacity-0" style={{ fontSize: "clamp(2rem, 6vw, 4.6rem)" }}>

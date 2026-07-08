@@ -25,7 +25,7 @@ export default function Contact() {
       <div aria-hidden className="read-pool pointer-events-none absolute left-1/2 top-1/2 h-[60vh] w-[92vw] max-w-[1100px] -translate-x-1/2 -translate-y-1/2" />
 
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center">
-        <p className="c-in type-body text-xs font-semibold uppercase tracking-[0.34em] text-neutral-600 opacity-0">
+        <p className="c-in type-body text-xs font-semibold uppercase tracking-[0.34em] text-white/70 opacity-0">
           Parlons de votre projet
         </p>
         <h2 className="c-in type-strong mt-8 max-w-4xl opacity-0" style={{ fontSize: "clamp(2.8rem, 8vw, 6.4rem)" }}>
