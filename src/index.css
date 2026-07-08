@@ -151,6 +151,20 @@
 
   /* curseur natif masqué quand le curseur personnalisé est actif */
   .cursor-none, .cursor-none * { cursor: none !important; }
+
+  /* soulignement animé des liens de navigation */
+  .nav-underline { position: relative; }
+  .nav-underline::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: -4px;
+    height: 1px; width: 100%;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-underline:hover::after { transform: scaleX(1); }
   .paper-grain::after {
     content: "";
     position: absolute;

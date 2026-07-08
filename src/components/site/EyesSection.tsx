@@ -22,6 +22,8 @@ export default function EyesSection() {
           .fromTo(".eye", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.9, stagger: 0.12 })
           .fromTo(".q-lead", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.8 }, "-=0.5")
           .fromTo(".q-punch", { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: 0.9 }, "-=0.5");
+        // léger flottement continu des yeux
+        gsap.to(".eye", { y: -8, duration: 2.2, ease: "sine.inOut", repeat: -1, yoyo: true, stagger: 0.4 });
       }
     }, root);
 
@@ -76,7 +78,7 @@ export default function EyesSection() {
   );
 
   return (
-    <section ref={root} id="question" className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-6 py-24">
+    <section ref={root} id="question" className="relative flex min-h-[82svh] items-center justify-center overflow-hidden px-6 py-20">
       <div aria-hidden className="read-pool pointer-events-none absolute left-1/2 top-1/2 h-[60vh] w-[92vw] max-w-[1100px] -translate-x-1/2 -translate-y-1/2" />
 
       {/* desktop : yeux de part et d'autre de la question ; mobile : au-dessus */}
@@ -86,10 +88,10 @@ export default function EyesSection() {
       </div>
 
       <div className="relative mx-auto mt-24 max-w-3xl text-center md:mt-0">
-        <p className="q-lead type-body text-lg font-medium text-white opacity-0 sm:text-2xl">
+        <p className="q-lead type-body text-base font-medium text-white opacity-0 sm:text-lg">
           Tes futurs clients te cherchent déjà.
         </p>
-        <h2 className="q-punch type-strong mt-6 opacity-0" style={{ fontSize: "clamp(2rem, 6vw, 4.6rem)" }}>
+        <h2 className="q-punch type-strong mt-5 opacity-0" style={{ fontSize: "clamp(1.5rem, 4vw, 3rem)" }}>
           La vraie question est : vont-ils te trouver ?
         </h2>
       </div>
