@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Intro « pixel par pixel » : un écran noir plein cadre qui se dissout en
- * petits blocs (ordre aléatoire) pour révéler le site en dessous, puis
- * disparaît. Fondu rapide si prefers-reduced-motion.
+ * Intro « pixel par pixel » aux couleurs du site : un voile reprenant le
+ * dégradé bleu du fond, découpé en blocs légèrement nuancés (mosaïque),
+ * qui se résolvent bloc par bloc pour révéler le site parfaitement en
+ * place. Aucun noir. Fondu rapide si prefers-reduced-motion.
  */
 export default function PixelIntro({ onDone }: { onDone: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -17,11 +18,7 @@ export default function PixelIntro({ onDone }: { onDone: () => void }) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const finish = () => {
-      if (done.current) return;
-      done.current = true;
-      onDone();
-    };
+    const finish = () => { if (done.current) return; done.current = true; onDone(); };
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -31,9 +28,32 @@ export default function PixelIntro({ onDone }: { onDone: () => void }) {
     canvas.height = Math.floor(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // fill black, then erase blocks to reveal the page behind
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, w, h);
+    const cell = w < 640 ? 22 : 30;
+    const cols = Math.ceil(w / cell);
+    const rows = Math.ceil(h / cell);
+
+    // dégradé bleu identique au fond du site (diagonale sombre → clair)
+    const grad = ctx.createLinearGradient(0, 0, w, h * 0.55);
+    grad.addColorStop(0, "#2c4a86");
+    grad.addColorStop(0.34, "#3b6ba6");
+    grad.addColorStop(0.52, "#4f97c6");
+    grad.addColorStop(0.72, "#9db9d6");
+    grad.addColorStop(1, "#d5deec");
+
+    // peint la mosaïque : dégradé + légère variation de luminosité par bloc
+    const paintMosaic = () => {
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const v = (Math.sin((c * 12.9898 + r * 78.233)) * 43758.5453) % 1;
+          const a = (Math.abs(v) - 0.5) * 0.14; // -0.07..0.07
+          ctx.fillStyle = a >= 0 ? `rgba(255,255,255,${a})` : `rgba(10,20,45,${-a})`;
+          ctx.fillRect(c * cell, r * cell, cell + 1, cell + 1);
+        }
+      }
+    };
+    paintMosaic();
 
     if (reduced) {
       root.style.transition = "opacity 0.45s ease";
@@ -42,29 +62,22 @@ export default function PixelIntro({ onDone }: { onDone: () => void }) {
       return () => window.clearTimeout(t);
     }
 
-    const cell = w < 640 ? 20 : 26;
-    const cols = Math.ceil(w / cell);
-    const rows = Math.ceil(h / cell);
     const order: number[] = [];
     for (let i = 0; i < cols * rows; i++) order.push(i);
-    // Fisher–Yates shuffle (index-varied, no Math.random dependency for seed)
     for (let i = order.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [order[i], order[j]] = [order[j], order[i]];
     }
 
-    const DURATION = 1500; // ms
-    const HOLD = 260; // brief black hold before dissolving
-    let start = 0;
-    let raf = 0;
-    let cleared = 0;
+    const DURATION = 1500;
+    const HOLD = 220;
+    let start = 0, raf = 0, cleared = 0;
 
     const step = (now: number) => {
       if (!start) start = now;
       const elapsed = now - start - HOLD;
       if (elapsed < 0) { raf = requestAnimationFrame(step); return; }
       const progress = Math.min(1, elapsed / DURATION);
-      // ease-out so it accelerates then settles
       const eased = 1 - Math.pow(1 - progress, 3);
       const target = Math.floor(eased * order.length);
       for (; cleared < target; cleared++) {

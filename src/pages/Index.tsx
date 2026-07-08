@@ -8,7 +8,7 @@ import ContactModal from "@/components/site/ContactModal";
 import AwarenessHero from "@/components/site/AwarenessHero";
 import EyesSection from "@/components/site/EyesSection";
 import KairosIntro from "@/components/site/KairosIntro";
-import HorizontalStory from "@/components/site/HorizontalStory";
+import StorySection from "@/components/site/StorySection";
 import Contact from "@/components/site/Contact";
 import { ScrollTrigger } from "@/lib/gsapSetup";
 
@@ -54,7 +54,7 @@ const Index = () => {
         <AwarenessHero play={revealed} />
         <EyesSection />
         <KairosIntro />
-        <HorizontalStory />
+        <StorySection />
         <Contact />
       </main>
     </div>
