@@ -33,7 +33,7 @@ export default function Contact() {
         </h2>
         <button
           onClick={openContact}
-          className="c-in type-body group mt-9 inline-flex items-center gap-2 rounded-full bg-neutral-900 px-7 py-3.5 text-base font-medium text-neutral-50 opacity-0 transition-transform duration-300 hover:scale-[1.03] active:scale-95"
+          className="c-in type-body group mt-9 inline-flex items-center gap-2 rounded-full border border-white/45 px-7 py-3.5 text-base font-medium text-white opacity-0 transition-colors duration-300 hover:bg-white hover:text-neutral-900"
         >
           Démarrer un projet
           <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

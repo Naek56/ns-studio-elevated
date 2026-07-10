@@ -40,12 +40,14 @@ export default function ContactModal() {
     }
     root.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
+    root.classList.add("modal-open"); // rend le curseur natif visible sur le formulaire
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
     window.addEventListener("keydown", onKey);
     return () => {
       window.removeEventListener("keydown", onKey);
       root.style.overflow = "";
       document.body.style.overflow = "";
+      root.classList.remove("modal-open");
     };
   }, [open]);
 

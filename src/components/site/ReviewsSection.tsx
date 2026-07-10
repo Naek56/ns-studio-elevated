@@ -5,13 +5,15 @@ import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
    faux avis Google « Je ne vous trouve pas en ligne ? », 2 de chaque côté,
    à des hauteurs différentes et dans l'ombre (secondaires). */
 
-type Review = { name: string; initial: string; color: string; stars: number; text: string; pos: string };
+type Review = { name: string; initial: string; color: string; stars: number; text: string; cls: string };
 
 const REVIEWS: Review[] = [
-  { name: "Julien M.", initial: "J", color: "#c0392b", stars: 1, text: "Je ne vous trouve pas en ligne ?", pos: "left-[3%] top-[18%] -rotate-3" },
-  { name: "Sarah L.",  initial: "S", color: "#2e86c1", stars: 2, text: "Vous avez un site au moins ?", pos: "left-[8%] top-[57%] rotate-2" },
-  { name: "Marc D.",   initial: "M", color: "#8e44ad", stars: 1, text: "Impossible de vous trouver sur Google…", pos: "right-[4%] top-[26%] rotate-3" },
-  { name: "Léa P.",    initial: "L", color: "#e67e22", stars: 3, text: "J'ai fini par appeler un concurrent.", pos: "right-[9%] top-[62%] -rotate-2" },
+  // visible aussi sur mobile (petit, en haut à gauche)
+  { name: "Julien M.", initial: "J", color: "#c0392b", stars: 1, text: "Je ne vous trouve pas en ligne ?", cls: "left-[3%] top-[4%] scale-[0.6] md:left-[3%] md:top-[18%] md:scale-100 -rotate-3" },
+  { name: "Sarah L.",  initial: "S", color: "#2e86c1", stars: 2, text: "Vous avez un site au moins ?", cls: "hidden md:block md:left-[8%] md:top-[57%] rotate-2" },
+  { name: "Marc D.",   initial: "M", color: "#8e44ad", stars: 1, text: "Impossible de vous trouver sur Google…", cls: "hidden md:block md:right-[4%] md:top-[26%] rotate-3" },
+  // visible aussi sur mobile (petit, en bas à droite)
+  { name: "Léa P.",    initial: "L", color: "#e67e22", stars: 3, text: "J'ai fini par appeler un concurrent.", cls: "right-[3%] bottom-[4%] scale-[0.6] md:right-[9%] md:bottom-auto md:top-[62%] md:scale-100 -rotate-2" },
 ];
 
 function Stars({ n }: { n: number }) {
@@ -40,7 +42,7 @@ function GoogleG() {
 function ReviewCard({ r }: { r: Review }) {
   return (
     <div
-      className={`review-card pointer-events-none absolute hidden w-[228px] rounded-xl bg-white/95 p-4 text-left shadow-2xl md:block ${r.pos}`}
+      className={`review-card pointer-events-none absolute w-[228px] rounded-xl bg-white/95 p-4 text-left shadow-2xl ${r.cls}`}
       style={{ opacity: 0 }}
     >
       <div className="flex items-center gap-2.5">
@@ -75,7 +77,7 @@ export default function ReviewsSection() {
       }
       gsap.timeline({ scrollTrigger: { trigger: el, start: "top 64%", once: true }, defaults: { ease: "power3.out" } })
         // les avis (secondaires, dans l'ombre) arrivent d'abord, discrètement
-        .fromTo(".review-card", { opacity: 0, y: 24, scale: 0.92 }, { opacity: 0.42, y: 0, scale: 1, duration: 0.9, stagger: 0.12 })
+        .fromTo(".review-card", { opacity: 0, y: 24 }, { opacity: 0.42, y: 0, duration: 0.9, stagger: 0.12 })
         // le message central s'impose ensuite, net et lumineux
         .fromTo(".rv-l1", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.9 }, "-=0.4")
         .fromTo(".rv-l2", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.9 }, "-=0.55");
