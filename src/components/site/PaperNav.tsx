@@ -6,7 +6,10 @@ type Lenis = { scrollTo: (t: Element | number, o?: Record<string, unknown>) => v
 
 const LINKS = [
   { id: "#accueil", label: "Accueil" },
+  { id: "#reveil", label: "Le réveil" },
   { id: "#question", label: "Le constat" },
+  { id: "#kairos", label: "Kairos" },
+  { id: "#story", label: "Histoire" },
 ];
 
 /* Navbar minimaliste (transparente, texte blanc) : logo, quelques liens,

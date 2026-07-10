@@ -152,6 +152,15 @@
   /* curseur natif masqué quand le curseur personnalisé est actif */
   .cursor-none, .cursor-none * { cursor: none !important; }
 
+  /* flèches courbées qui se dessinent (déclenché par la classe .drawn) */
+  .a-draw { stroke-dasharray: 200; stroke-dashoffset: 200; }
+  .a-sub.drawn .a-draw { animation: adraw 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+  @keyframes adraw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { .a-draw { stroke-dashoffset: 0; animation: none; } }
+
+  /* point actif de la ligne d'avancement du storytelling */
+  .sy-dot.sy-on { background: #ffffff; border-color: #ffffff; box-shadow: 0 0 10px rgba(255,255,255,0.8); }
+
   /* soulignement animé des liens de navigation */
   .nav-underline { position: relative; }
   .nav-underline::after {

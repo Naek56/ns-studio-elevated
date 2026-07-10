@@ -1,99 +1,118 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
 
-/* Section 2 — la question, encadrée de deux yeux qui apparaissent à l'arrivée
-   et suivent le curseur (dartent tout seuls sur mobile / tactile). */
+/* Section 2 — deux yeux « doodle » (contour amande + cils tout autour +
+   iris + pupille) qui clignent, errent dans une zone définie et dont l'iris
+   balaie de droite à gauche (et suit le curseur sur desktop). */
+
+// cils répartis tout autour de l'œil (points sur une ellipse, vers l'extérieur)
+const CX = 120, CY = 85, RX = 95, RY = 46;
+const LASHES = Array.from({ length: 16 }, (_, i) => {
+  const a = (i / 16) * Math.PI * 2 - Math.PI / 2;
+  const sx = CX + Math.cos(a) * RX, sy = CY + Math.sin(a) * RY;
+  const dx = Math.cos(a), dy = Math.sin(a);
+  const len = 22 + (i % 2) * 4;
+  return { x1: sx, y1: sy, x2: sx + dx * len, y2: sy + dy * len };
+});
+
 export default function EyesSection() {
   const root = useRef<HTMLElement>(null);
-  const pupils = useRef<HTMLElement[]>([]);
+  const irises = useRef<HTMLElement[]>([]);
   const eyes = useRef<HTMLElement[]>([]);
 
   useEffect(() => {
     const el = root.current;
     if (!el) return;
-    pupils.current = gsap.utils.toArray<HTMLElement>(".eye-pupil");
+    irises.current = gsap.utils.toArray<HTMLElement>(".eye-iris");
     eyes.current = gsap.utils.toArray<HTMLElement>(".eye");
 
     const ctx = gsap.context(() => {
       if (REDUCED) {
-        gsap.set([".eye", ".q-lead", ".q-punch"], { opacity: 1, scale: 1, y: 0 });
+        gsap.set([".eye", ".q-big", ".q-small"], { opacity: 1, scale: 1, y: 0 });
+        return;
+      }
+      gsap.timeline({ scrollTrigger: { trigger: el, start: "top 64%", once: true }, defaults: { ease: "power3.out" } })
+        .fromTo(".eye", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.9, stagger: 0.12 })
+        .fromTo(".q-big", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.9 }, "-=0.5")
+        .fromTo(".q-small", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.8 }, "-=0.55");
+
+      const coarse = window.matchMedia("(pointer: coarse)").matches;
+
+      eyes.current.forEach((eye, i) => {
+        // errance dans une zone bornée (± quelques px)
+        gsap.to(eye, { x: () => gsap.utils.random(-26, 26), y: () => gsap.utils.random(-20, 20),
+          duration: 3 + i, ease: "sine.inOut", repeat: -1, yoyo: true, repeatRefresh: true, delay: i * 0.5 });
+        // clignement périodique (squash vertical rapide)
+        const blink = () => {
+          gsap.timeline({ onComplete: () => gsap.delayedCall(gsap.utils.random(2.4, 5), blink) })
+            .to(eye, { scaleY: 0.08, duration: 0.09, ease: "power2.in", transformOrigin: "center" })
+            .to(eye, { scaleY: 1, duration: 0.14, ease: "power2.out" });
+        };
+        gsap.delayedCall(1.5 + i * 0.7, blink);
+      });
+
+      // iris : balayage droite → gauche en continu (+ un peu de vertical)
+      if (coarse) {
+        irises.current.forEach((ir, i) => {
+          gsap.to(ir, { x: 13, duration: 1.8, ease: "sine.inOut", repeat: -1, yoyo: true, delay: i * 0.25 });
+          gsap.to(ir, { y: () => gsap.utils.random(-6, 6), duration: 2.4, ease: "sine.inOut", repeat: -1, yoyo: true, repeatRefresh: true });
+        });
       } else {
-        gsap.timeline({ scrollTrigger: { trigger: el, start: "top 62%", once: true }, defaults: { ease: "power3.out" } })
-          .fromTo(".eye", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.9, stagger: 0.12 })
-          .fromTo(".q-lead", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.8 }, "-=0.5")
-          .fromTo(".q-punch", { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: 0.9 }, "-=0.5");
-        // léger flottement continu des yeux
-        gsap.to(".eye", { y: -8, duration: 2.2, ease: "sine.inOut", repeat: -1, yoyo: true, stagger: 0.4 });
+        irises.current.forEach((ir) => gsap.to(ir, { x: 12, duration: 2, ease: "sine.inOut", repeat: -1, yoyo: true }));
       }
     }, root);
 
-    // pupil tracking
-    const MAX = 9;
-    const move = (cx: number, cy: number) => {
+    // suivi du curseur (desktop) : prend le dessus sur le balayage
+    const move = (e: PointerEvent) => {
       eyes.current.forEach((eye, i) => {
         const r = eye.getBoundingClientRect();
-        const ex = r.left + r.width / 2;
-        const ey = r.top + r.height / 2;
-        const a = Math.atan2(cy - ey, cx - ex);
-        const d = Math.min(MAX, Math.hypot(cx - ex, cy - ey) / 12);
-        const p = pupils.current[i];
-        if (p) gsap.to(p, { x: Math.cos(a) * d, y: Math.sin(a) * d, duration: 0.4, ease: "power2.out", overwrite: true });
+        const a = Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2));
+        const ir = irises.current[i];
+        if (ir) gsap.to(ir, { x: Math.cos(a) * 14, y: Math.sin(a) * 9, duration: 0.4, ease: "power2.out", overwrite: "auto" });
       });
     };
-    const onMove = (e: PointerEvent) => move(e.clientX, e.clientY);
-
-    const coarse = window.matchMedia("(pointer: coarse)").matches;
-    let darter: gsap.core.Tween | null = null;
-    if (!coarse && !REDUCED) {
-      window.addEventListener("pointermove", onMove);
-    } else if (!REDUCED) {
-      // touch: eyes glance around on their own
-      const dart = () => {
-        const a = Math.random() * Math.PI * 2;
-        pupils.current.forEach((p) => gsap.to(p, { x: Math.cos(a) * MAX, y: Math.sin(a) * MAX, duration: 0.5, ease: "power2.out" }));
-        darter = gsap.delayedCall(1.1 + Math.random(), dart) as unknown as gsap.core.Tween;
-      };
-      dart();
-    }
+    const fine = window.matchMedia("(pointer: fine)").matches;
+    if (fine && !REDUCED) window.addEventListener("pointermove", move);
 
     return () => {
-      window.removeEventListener("pointermove", onMove);
-      darter?.kill();
+      window.removeEventListener("pointermove", move);
       ctx.revert();
       ScrollTrigger.getAll().forEach((s) => { if (s.trigger === el) s.kill(); });
     };
   }, []);
 
   const Eye = () => (
-    <div className="eye relative" style={{ width: "clamp(62px, 12vw, 150px)" }}>
-      <svg viewBox="0 0 120 80" className="w-full" aria-hidden>
-        <path d="M6 40 C 30 8, 90 8, 114 40 C 90 72, 30 72, 6 40 Z" fill="#f6f6f4" stroke="#141414" strokeWidth="3" />
-        <g className="eye-pupil" style={{ transformBox: "fill-box", transformOrigin: "center" }}>
-          <circle cx="60" cy="40" r="19" fill="#1d4ed8" />
-          <circle cx="60" cy="40" r="9" fill="#0a0f1f" />
-          <circle cx="54" cy="34" r="4" fill="#ffffff" opacity="0.9" />
+    <div className="eye relative will-change-transform" style={{ width: "clamp(96px, 15vw, 180px)" }}>
+      <svg viewBox="0 0 240 170" className="w-full overflow-visible" aria-hidden>
+        {LASHES.map((l, i) => (
+          <line key={i} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} stroke="#ffffff" strokeWidth="4.5" strokeLinecap="round" />
+        ))}
+        <path d="M18 85 Q120 22 222 85 Q120 148 18 85 Z" fill="none" stroke="#ffffff" strokeWidth="6" strokeLinejoin="round" />
+        <g className="eye-iris" style={{ transformBox: "fill-box", transformOrigin: "center" }}>
+          <circle cx="120" cy="85" r="34" fill="none" stroke="#ffffff" strokeWidth="6" />
+          <circle cx="120" cy="85" r="15" fill="#ffffff" />
         </g>
       </svg>
     </div>
   );
 
   return (
-    <section ref={root} id="question" className="relative flex min-h-[82svh] items-center justify-center overflow-hidden px-6 py-20">
-      <div aria-hidden className="read-pool pointer-events-none absolute left-1/2 top-1/2 h-[60vh] w-[92vw] max-w-[1100px] -translate-x-1/2 -translate-y-1/2" />
+    <section ref={root} id="question" className="relative flex min-h-[86svh] items-center justify-center overflow-hidden px-6 py-20">
+      <div aria-hidden className="read-pool pointer-events-none absolute left-1/2 top-1/2 h-[62vh] w-[92vw] max-w-[1100px] -translate-x-1/2 -translate-y-1/2" />
 
-      {/* desktop : yeux de part et d'autre de la question ; mobile : au-dessus */}
-      <div className="pointer-events-none absolute inset-x-0 top-[16%] flex justify-center gap-16 md:inset-0 md:top-0 md:items-center md:justify-between md:gap-0 md:px-[8vw]">
+      {/* desktop : yeux de part et d'autre ; mobile : au-dessus */}
+      <div className="pointer-events-none absolute inset-x-0 top-[13%] flex justify-center gap-14 md:inset-0 md:top-0 md:items-center md:justify-between md:gap-0 md:px-[6vw]">
         <Eye />
         <Eye />
       </div>
 
-      <div className="relative mx-auto mt-24 max-w-3xl text-center md:mt-0">
-        <p className="q-lead type-body text-base font-medium text-white opacity-0 sm:text-lg">
-          Tes futurs clients te cherchent déjà.
-        </p>
-        <h2 className="q-punch type-strong mt-5 opacity-0" style={{ fontSize: "clamp(1.5rem, 4vw, 3rem)" }}>
-          La vraie question est : vont-ils te trouver ?
+      <div className="relative mx-auto mt-28 max-w-3xl text-center md:mt-0">
+        <h2 className="q-big type-strong opacity-0" style={{ fontSize: "clamp(2.1rem, 5.8vw, 4.2rem)" }}>
+          Tes futurs clients te cherchent déjà
         </h2>
+        <p className="q-small type-strong mt-5 text-white/90 opacity-0" style={{ fontSize: "clamp(1.15rem, 2.8vw, 1.9rem)" }}>
+          Mais vont-ils te trouver ?
+        </p>
       </div>
     </section>
   );
