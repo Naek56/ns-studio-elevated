@@ -63,7 +63,7 @@ export default function Hero({ play }: { play: boolean }) {
             <span aria-hidden className="ml-1 inline-block w-[0.05em] animate-pulse rounded-full bg-white align-baseline" style={{ height: "0.82em", boxShadow: "0 0 16px rgba(255,255,255,0.8)" }} />
           </span>
         </h1>
-        <p className="h-sub mt-8 text-base text-white/70 opacity-0 sm:text-lg">Kairos change ça.</p>
+        <p className="h-sub mt-8 text-base text-white/70 opacity-0 sm:text-lg">On change ça.</p>
       </div>
 
       <span className="h-hint type-body absolute bottom-8 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-[0.32em] text-white/70 opacity-0">

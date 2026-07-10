@@ -5,13 +5,13 @@ import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
    faux avis Google « Je ne vous trouve pas en ligne ? », 2 de chaque côté,
    à des hauteurs différentes et dans l'ombre (secondaires). */
 
-type Review = { name: string; initial: string; color: string; stars: number; pos: string };
+type Review = { name: string; initial: string; color: string; stars: number; text: string; pos: string };
 
 const REVIEWS: Review[] = [
-  { name: "Julien M.", initial: "J", color: "#c0392b", stars: 1, pos: "left-[3%] top-[18%] -rotate-3" },
-  { name: "Sarah L.",  initial: "S", color: "#2e86c1", stars: 2, pos: "left-[8%] top-[57%] rotate-2" },
-  { name: "Marc D.",   initial: "M", color: "#8e44ad", stars: 1, pos: "right-[4%] top-[26%] rotate-3" },
-  { name: "Léa P.",    initial: "L", color: "#16a085", stars: 2, pos: "right-[9%] top-[62%] -rotate-2" },
+  { name: "Julien M.", initial: "J", color: "#c0392b", stars: 1, text: "Je ne vous trouve pas en ligne ?", pos: "left-[3%] top-[18%] -rotate-3" },
+  { name: "Sarah L.",  initial: "S", color: "#2e86c1", stars: 2, text: "Vous avez un site au moins ?", pos: "left-[8%] top-[57%] rotate-2" },
+  { name: "Marc D.",   initial: "M", color: "#8e44ad", stars: 1, text: "Impossible de vous trouver sur Google…", pos: "right-[4%] top-[26%] rotate-3" },
+  { name: "Léa P.",    initial: "L", color: "#e67e22", stars: 3, text: "J'ai fini par appeler un concurrent.", pos: "right-[9%] top-[62%] -rotate-2" },
 ];
 
 function Stars({ n }: { n: number }) {
@@ -56,7 +56,7 @@ function ReviewCard({ r }: { r: Review }) {
       <div className="mt-2">
         <Stars n={r.stars} />
       </div>
-      <p className="mt-1.5 text-[13px] leading-snug text-neutral-700">« Je ne vous trouve pas en ligne ? »</p>
+      <p className="mt-1.5 text-[13px] leading-snug text-neutral-700">« {r.text} »</p>
     </div>
   );
 }
