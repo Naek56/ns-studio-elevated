@@ -8,8 +8,6 @@ const LINKS = [
   { id: "#accueil", label: "Accueil" },
   { id: "#reveil", label: "Le réveil" },
   { id: "#question", label: "Le constat" },
-  { id: "#kairos", label: "Kairos" },
-  { id: "#story", label: "Histoire" },
 ];
 
 /* Navbar minimaliste (transparente, texte blanc) : logo, quelques liens,
@@ -31,8 +29,9 @@ export default function PaperNav() {
     const el = ref.current;
     if (!el || REDUCED) return;
     const st = ScrollTrigger.create({
-      trigger: "#kairos",
-      start: "top 78%",
+      // disparaît juste après le titre (dès qu'on quitte l'accueil)
+      trigger: "#reveil",
+      start: "top 82%",
       onEnter: () => gsap.to(el, { yPercent: -140, opacity: 0, filter: "blur(6px)", duration: 0.55, ease: "power3.in", pointerEvents: "none" }),
       onLeaveBack: () => gsap.to(el, { yPercent: 0, opacity: 1, filter: "blur(0px)", duration: 0.55, ease: "power3.out", pointerEvents: "auto" }),
     });
@@ -47,7 +46,10 @@ export default function PaperNav() {
             <circle cx="24" cy="24" r="22" stroke="currentColor" strokeWidth="2.5" />
             <path d="M13 17.5 L18.5 31 L24 20 L29.5 31 L35 17.5" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span className="type-body text-sm font-semibold tracking-[0.22em]">WAY</span>
+          <span className="type-body leading-none">
+            <span className="block text-sm font-semibold tracking-[0.22em]">WAY</span>
+            <span className="mt-1 block text-[0.5rem] font-medium tracking-[0.32em] text-white/70">AGENCE WEB</span>
+          </span>
         </a>
 
         <nav className="type-body hidden items-center gap-8 text-sm text-white/80 sm:flex">
