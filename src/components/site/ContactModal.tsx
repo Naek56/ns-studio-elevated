@@ -112,7 +112,7 @@ export default function ContactModal() {
           value={form[key]}
           onChange={(e) => set(key, e.target.value)}
           placeholder={opts.placeholder}
-          className="w-full resize-none rounded-md border border-white/15 bg-white/[0.03] px-3.5 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/25 focus:border-white/50"
+          className="w-full resize-none rounded-md border border-white/20 bg-white/[0.06] px-3.5 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/25 focus:border-[#63b3dd]"
         />
       ) : (
         <input
@@ -120,7 +120,7 @@ export default function ContactModal() {
           value={form[key]}
           onChange={(e) => set(key, e.target.value)}
           placeholder={opts.placeholder}
-          className="w-full rounded-md border border-white/15 bg-white/[0.03] px-3.5 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/25 focus:border-white/50"
+          className="w-full rounded-md border border-white/20 bg-white/[0.06] px-3.5 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/25 focus:border-[#63b3dd]"
           style={errors[key] ? { borderColor: "rgba(248,113,113,0.7)" } : undefined}
         />
       )}
@@ -137,10 +137,11 @@ export default function ContactModal() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={close} />
+          <div className="absolute inset-0 backdrop-blur-md" style={{ background: "rgba(8,21,43,0.75)" }} onClick={close} />
 
           <motion.div
-            className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-white/12 bg-[#0b0b0d] p-7 shadow-2xl sm:p-9"
+            className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-white/15 p-7 shadow-2xl sm:p-9"
+            style={{ background: "linear-gradient(160deg, #16305a 0%, #0e1e3a 60%, #0a1730 100%)" }}
             initial={{ opacity: 0, y: 24, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.98 }}
@@ -157,7 +158,7 @@ export default function ContactModal() {
                 </span>
                 <h3 className="display-xl mt-6 text-2xl font-semibold text-white">Message envoyé.</h3>
                 <p className="mt-2 text-sm text-white/55">On revient vers vous très vite.</p>
-                <button onClick={close} className="btn-line mt-8 text-sm">Fermer</button>
+                <button onClick={close} className="mt-8 rounded-full border border-white/40 px-6 py-2.5 text-sm text-white transition-colors hover:bg-white hover:text-[#0e1e3a]">Fermer</button>
               </div>
             ) : (
               <>
@@ -180,7 +181,8 @@ export default function ContactModal() {
                   <button
                     type="submit"
                     disabled={status === "sending"}
-                    className="btn-line group w-full justify-center text-sm disabled:opacity-60"
+                    className="group flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium text-white transition-colors duration-300 hover:brightness-110 disabled:opacity-60"
+                    style={{ background: "linear-gradient(90deg, #3b6ba6, #4f97c6)" }}
                   >
                     {status === "sending" ? "Envoi…" : "Envoyer la demande"}
                     {status !== "sending" && <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />}

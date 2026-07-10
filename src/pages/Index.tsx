@@ -5,6 +5,7 @@ import PaperNav from "@/components/site/PaperNav";
 import SmoothScroll from "@/components/site/SmoothScroll";
 import CursorFollower from "@/components/site/CursorFollower";
 import ContactModal from "@/components/site/ContactModal";
+import Hero from "@/components/site/Hero";
 import AwarenessHero from "@/components/site/AwarenessHero";
 import EyesSection from "@/components/site/EyesSection";
 import KairosIntro from "@/components/site/KairosIntro";
@@ -51,7 +52,8 @@ const Index = () => {
       <ContactModal />
 
       <main>
-        <AwarenessHero play={revealed} />
+        <Hero play={revealed} />
+        <AwarenessHero />
         <EyesSection />
         <KairosIntro />
         <StorySection />
