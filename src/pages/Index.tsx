@@ -7,7 +7,7 @@ import CursorFollower from "@/components/site/CursorFollower";
 import ContactModal from "@/components/site/ContactModal";
 import Hero from "@/components/site/Hero";
 import AwarenessHero from "@/components/site/AwarenessHero";
-import EyesSection from "@/components/site/EyesSection";
+import ReviewsSection from "@/components/site/ReviewsSection";
 import KairosIntro from "@/components/site/KairosIntro";
 import StorySection from "@/components/site/StorySection";
 import Contact from "@/components/site/Contact";
@@ -54,7 +54,7 @@ const Index = () => {
       <main>
         <Hero play={revealed} />
         <AwarenessHero />
-        <EyesSection />
+        <ReviewsSection />
         <KairosIntro />
         <StorySection />
         <Contact />
