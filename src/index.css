@@ -151,6 +151,11 @@
 
   /* curseur natif masqué quand le curseur personnalisé est actif */
   .cursor-none, .cursor-none * { cursor: none !important; }
+  /* …sauf quand une modale est ouverte : on rend le curseur natif et on
+     masque le curseur perso (sinon on ne voit rien sur le formulaire) */
+  html.modal-open, html.modal-open * { cursor: auto !important; }
+  html.modal-open input, html.modal-open textarea { cursor: text !important; }
+  html.modal-open .custom-cursor { display: none !important; }
 
   /* flèches courbées qui se dessinent (déclenché par la classe .drawn) */
   .a-draw { stroke-dasharray: 200; stroke-dashoffset: 200; }

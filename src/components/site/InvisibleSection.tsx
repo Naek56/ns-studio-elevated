@@ -9,48 +9,54 @@ const STROKE = { fill: "none", stroke: "#fff", strokeWidth: 3, strokeLinecap: "r
 
 function Trophy() {
   return (
-    <svg viewBox="0 0 80 80" width="60" height="60" {...STROKE}>
-      <path d="M26 16 h28 v10 a14 14 0 0 1 -28 0 z" />
-      <path d="M26 20 h-8 a8 8 0 0 0 8 10 M54 20 h8 a8 8 0 0 1 -8 10" />
-      <path d="M40 40 v10 M32 58 h16 M36 50 h8" />
+    <svg viewBox="0 0 64 64" width="58" height="58" {...STROKE}>
+      <path d="M20 12 h24 v10 a12 12 0 0 1 -24 0 z" />
+      <path d="M20 15 h-7 a7 7 0 0 0 7 9" />
+      <path d="M44 15 h7 a7 7 0 0 1 -7 9" />
+      <path d="M32 34 v8" />
+      <path d="M24 51 h16 l-2 -9 h-12 z" />
     </svg>
   );
 }
-function RoadBlocked() {
+function Barrier() {
+  // barrière de chantier rayée
   return (
-    <svg viewBox="0 0 80 80" width="60" height="60" {...STROKE}>
-      <path d="M22 74 L34 30 M58 74 L46 30" />
-      <path d="M40 70 L40 40" strokeDasharray="3 7" />
-      <rect x="26" y="34" width="28" height="7" rx="1" />
-      <path d="M30 34 v12 M50 34 v12" />
+    <svg viewBox="0 0 64 64" width="58" height="58" {...STROKE}>
+      <rect x="10" y="24" width="44" height="11" rx="1.5" />
+      <path d="M17 35 v18 M47 35 v18" />
+      <path d="M14 35 L23 24 M26 35 L35 24 M38 35 L47 24 M50 35 L54 27" />
     </svg>
   );
 }
-function OfflinePin() {
+function WifiOff() {
   return (
-    <svg viewBox="0 0 80 80" width="58" height="58" {...STROKE}>
-      <path d="M40 18 a14 14 0 0 1 14 14 c0 11 -14 26 -14 26 c0 0 -14 -15 -14 -26 a14 14 0 0 1 14 -14 z" />
-      <circle cx="40" cy="32" r="4" />
-      <path d="M20 20 L60 60" />
+    <svg viewBox="0 0 64 64" width="58" height="58" {...STROKE}>
+      <path d="M13 27 a28 28 0 0 1 38 0" />
+      <path d="M21 35 a17 17 0 0 1 22 0" />
+      <path d="M28 43 a7 7 0 0 1 8 0" />
+      <circle cx="32" cy="49" r="1.6" fill="#fff" stroke="none" />
+      <path d="M14 14 L50 50" />
     </svg>
   );
 }
-function Invisible() {
+function EyeOff() {
   return (
-    <svg viewBox="0 0 80 80" width="60" height="60" {...STROKE}>
-      <path d="M14 40 C 24 26, 56 26, 66 40 C 56 54, 24 54, 14 40 Z" strokeDasharray="4 6" />
-      <circle cx="40" cy="40" r="8" strokeDasharray="3 5" />
-      <path d="M18 20 L62 60" />
+    <svg viewBox="0 0 64 64" width="58" height="58" {...STROKE}>
+      <path d="M9 32 C 19 20, 45 20, 55 32 C 45 44, 19 44, 9 32 Z" />
+      <circle cx="32" cy="32" r="7" />
+      <path d="M13 13 L51 51" />
     </svg>
   );
 }
 
-type Motif = { el: React.ReactNode; caption: string; pos: string };
+type Motif = { el: React.ReactNode; caption: string; cls: string };
 const MOTIFS: Motif[] = [
-  { el: <Trophy />, caption: "Du talent", pos: "left-[4%] top-[16%] -rotate-3" },
-  { el: <RoadBlocked />, caption: "Route barrée", pos: "left-[7%] top-[60%] rotate-2" },
-  { el: <OfflinePin />, caption: "Hors ligne", pos: "right-[5%] top-[20%] rotate-3" },
-  { el: <Invisible />, caption: "Invisible", pos: "right-[6%] top-[62%] -rotate-2" },
+  // visible aussi sur mobile
+  { el: <Trophy />, caption: "Du talent", cls: "left-[5%] top-[5%] scale-90 md:left-[4%] md:top-[16%] md:scale-100 -rotate-3" },
+  { el: <Barrier />, caption: "Route barrée", cls: "hidden md:flex md:left-[7%] md:top-[60%] rotate-2" },
+  { el: <WifiOff />, caption: "Hors ligne", cls: "hidden md:flex md:right-[5%] md:top-[20%] rotate-3" },
+  // visible aussi sur mobile
+  { el: <EyeOff />, caption: "Invisible", cls: "right-[5%] bottom-[5%] scale-90 md:right-[6%] md:bottom-auto md:top-[62%] md:scale-100 -rotate-2" },
 ];
 
 export default function InvisibleSection() {
@@ -66,7 +72,7 @@ export default function InvisibleSection() {
         return;
       }
       gsap.timeline({ scrollTrigger: { trigger: el, start: "top 62%", once: true }, defaults: { ease: "power3.out" } })
-        .fromTo(".iv-motif", { opacity: 0, y: 20, scale: 0.9 }, { opacity: 0.4, y: 0, scale: 1, duration: 0.9, stagger: 0.1 })
+        .fromTo(".iv-motif", { opacity: 0, y: 20 }, { opacity: 0.4, y: 0, duration: 0.9, stagger: 0.1 })
         .fromTo(".iv-line", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.85, stagger: 0.22 }, "-=0.3");
     }, root);
     return () => { ctx.revert(); ScrollTrigger.getAll().forEach((s) => { if (s.trigger === el) s.kill(); }); };
@@ -76,7 +82,7 @@ export default function InvisibleSection() {
     <section ref={root} id="invisible" className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-6 py-24">
       {/* motifs discrets sur les côtés (dans l'ombre) */}
       {MOTIFS.map((m) => (
-        <div key={m.caption} className={`iv-motif pointer-events-none absolute hidden flex-col items-center gap-2 text-white md:flex ${m.pos}`} style={{ opacity: 0 }}>
+        <div key={m.caption} className={`iv-motif pointer-events-none absolute flex flex-col items-center gap-2 text-white ${m.cls}`} style={{ opacity: 0 }}>
           {m.el}
           <span className="type-body text-[11px] uppercase tracking-[0.2em] text-white/80">{m.caption}</span>
         </div>
@@ -91,7 +97,7 @@ export default function InvisibleSection() {
         <p className="iv-line type-body mx-auto mt-6 max-w-2xl text-white/85 opacity-0" style={{ fontSize: "clamp(1rem, 2.2vw, 1.35rem)" }}>
           Ils ont des clients fidèles. Des produits de qualité. Des années de travail derrière eux.
         </p>
-        <p className="iv-line type-strong mt-8 opacity-0" style={{ fontSize: "clamp(1.6rem, 4vw, 2.8rem)" }}>
+        <p className="iv-line type-strong mt-16 opacity-0 md:mt-28" style={{ fontSize: "clamp(1.6rem, 4vw, 2.8rem)" }}>
           Mais en ligne, ils sont invisibles.
         </p>
         <p className="iv-line type-strong mt-6 text-white opacity-0" style={{ fontSize: "clamp(1.9rem, 5vw, 3.6rem)" }}>

@@ -45,7 +45,7 @@ export default function CursorFollower() {
   }, []);
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[80] hidden mix-blend-difference lg:block">
+    <div className="custom-cursor pointer-events-none fixed inset-0 z-[80] hidden mix-blend-difference lg:block">
       <div ref={ring} className="absolute left-0 top-0 h-10 w-10 rounded-full border border-white/80" style={{ willChange: "transform" }} />
       <div ref={dot} className="absolute left-0 top-0 h-1.5 w-1.5 rounded-full bg-white" style={{ willChange: "transform" }} />
     </div>
