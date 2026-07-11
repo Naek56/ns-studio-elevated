@@ -1,12 +1,13 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
+import { IconStrategy, IconDesign, IconPerformance } from "./AnimatedIcons";
 
 /* Section Agence — « On ne livre pas des sites. On construit des présences. »
-   Design : le logo WAY en grand filigrane. Trois piliers. */
+   Design : le logo WAY en grand filigrane. Trois piliers illustrés (animés). */
 const PILLARS = [
-  { t: "Stratégie", d: "Avant de toucher au design on comprend. Votre marché, vos clients, ce qui vous différencie. Chaque décision part de là." },
-  { t: "Design", d: "Pas de templates. Pas de copier-coller. Chaque site est construit pour vous, autour de vous, avec une direction artistique qui vous ressemble." },
-  { t: "Performance", d: "Un site beau qui ne convertit pas est une décoration. On s'assure que le vôtre travaille vraiment." },
+  { t: "Stratégie", icon: <IconStrategy /> },
+  { t: "Design", icon: <IconDesign /> },
+  { t: "Performance", icon: <IconPerformance /> },
 ];
 
 export default function AgencySection() {
@@ -49,12 +50,15 @@ export default function AgencySection() {
           WAY Agency est une agence web créative basée à Strasbourg. On travaille avec des businesses qui ont quelque chose à dire et qui veulent être entendus.
         </p>
 
-        <div className="ag-grid mt-16 grid grid-cols-1 gap-10 text-left sm:grid-cols-3 md:mt-20 md:gap-8">
+        <div className="ag-grid mt-16 grid grid-cols-1 gap-5 sm:grid-cols-3 md:mt-20">
           {PILLARS.map((p) => (
-            <div key={p.t} className="ag-pillar opacity-0">
+            <div
+              key={p.t}
+              className="ag-pillar flex flex-col items-center gap-5 rounded-2xl border border-white/12 p-8 opacity-0 md:p-10"
+              style={{ background: "rgba(10,20,40,0.28)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
+            >
+              {p.icon}
               <h3 className="type-strong text-xl text-white md:text-2xl">{p.t}</h3>
-              <span className="mt-3 block h-px w-10 bg-white/30" />
-              <p className="type-body mt-4 text-sm leading-relaxed text-white/75">{p.d}</p>
             </div>
           ))}
         </div>
