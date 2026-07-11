@@ -163,6 +163,34 @@
   @keyframes adraw { to { stroke-dashoffset: 0; } }
   @media (prefers-reduced-motion: reduce) { .a-draw { stroke-dashoffset: 0; animation: none; } }
 
+  /* ── Illustrations animées (icônes « Lottie-like ») ─────────────────── */
+  .il-spin   { animation: il-spin 9s linear infinite; transform-box: fill-box; transform-origin: center; }
+  .il-spin-r { animation: il-spin 14s linear infinite reverse; transform-box: fill-box; transform-origin: center; }
+  .il-pulse  { animation: il-pulse 2.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .il-bar    { animation: il-bar 1.8s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom; }
+  .il-scanx  { animation: il-scanx 3s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .il-scany  { animation: il-scany 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .il-twinkle{ animation: il-twinkle 2.4s ease-in-out infinite; }
+  .il-blink  { animation: il-blink 4.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .il-float  { animation: il-float 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .il-draw   { stroke-dasharray: var(--len, 200); animation: il-draw 4.5s ease-in-out infinite; }
+  .il-dash   { animation: il-dash 1.1s linear infinite; }
+
+  @keyframes il-spin   { to { transform: rotate(360deg); } }
+  @keyframes il-pulse  { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.35; } }
+  @keyframes il-bar    { 0%,100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+  @keyframes il-scanx  { 0%,100% { transform: translateX(-13px); } 50% { transform: translateX(13px); } }
+  @keyframes il-scany  { 0%,100% { transform: translateY(-12px); opacity: 0.2; } 50% { transform: translateY(12px); opacity: 0.8; } }
+  @keyframes il-twinkle{ 0%,100% { opacity: 0.25; } 50% { opacity: 1; } }
+  @keyframes il-blink  { 0%,90%,100% { transform: scaleY(1); } 95% { transform: scaleY(0.08); } }
+  @keyframes il-float  { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  @keyframes il-draw   { 0% { stroke-dashoffset: var(--len, 200); } 55%,100% { stroke-dashoffset: 0; } }
+  @keyframes il-dash   { to { stroke-dashoffset: -40; } }
+  @media (prefers-reduced-motion: reduce) {
+    [class^="il-"], [class*=" il-"] { animation: none !important; }
+    .il-draw { stroke-dashoffset: 0; }
+  }
+
   /* point actif de la ligne d'avancement du storytelling */
   .sy-dot.sy-on { background: #ffffff; border-color: #ffffff; box-shadow: 0 0 10px rgba(255,255,255,0.8); }
 

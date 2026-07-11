@@ -1,12 +1,13 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
+import { IconObserve, IconUnderstand, IconAnalyze } from "./AnimatedIcons";
 
 /* Section Kairos — « Et après la livraison ? ». Design : un motif d'IA
-   (réseau neuronal) animé. Trois piliers : observe / comprend / analyse. */
+   (réseau neuronal) animé. Trois piliers illustrés (animés). */
 const PILLARS = [
-  { n: "01", t: "Il observe", d: "Kairos s'intègre invisiblement à votre site. Vos visiteurs ne savent pas qu'il est là. Lui voit tout — chaque clic, chaque hésitation, chaque abandon." },
-  { n: "02", t: "Il comprend", d: "Il ne compte pas des clics. Il comprend des comportements. Pourquoi un visiteur est parti. Ce qu'il cherchait sans le trouver. Le moment exact où il a perdu confiance." },
-  { n: "03", t: "Il analyse", d: "Chaque semaine Kairos croise toutes ces données. Il identifie les frictions invisibles, les opportunités manquées, ce qui vous fait perdre des clients sans que vous le sachiez." },
+  { n: "01", t: "Il observe", icon: <IconObserve /> },
+  { n: "02", t: "Il comprend", icon: <IconUnderstand /> },
+  { n: "03", t: "Il analyse", icon: <IconAnalyze /> },
 ];
 
 // réseau neuronal : 3 couches de nœuds + connexions
@@ -68,13 +69,16 @@ export default function KairosSection() {
           La plupart des agences livrent et disparaissent. Nous on reste. Parce qu'on a créé Kairos une intelligence artificielle qui se connecte à votre site et observe ce que vos visiteurs font vraiment.
         </p>
 
-        <div className="ka-grid mt-16 grid grid-cols-1 gap-10 text-left sm:grid-cols-3 md:mt-20 md:gap-8">
+        <div className="ka-grid mt-16 grid grid-cols-1 gap-5 sm:grid-cols-3 md:mt-20">
           {PILLARS.map((p) => (
-            <div key={p.n} className="ka-pillar opacity-0">
+            <div
+              key={p.n}
+              className="ka-pillar flex flex-col items-center gap-4 rounded-2xl border border-white/12 p-8 opacity-0 md:p-10"
+              style={{ background: "rgba(10,20,40,0.28)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
+            >
+              {p.icon}
               <p className="type-body text-sm font-semibold tabular-nums text-white/50">{p.n}</p>
-              <h3 className="type-strong mt-2 text-xl text-white md:text-2xl">{p.t}</h3>
-              <span className="mt-3 block h-px w-10 bg-white/30" />
-              <p className="type-body mt-4 text-sm leading-relaxed text-white/75">{p.d}</p>
+              <h3 className="type-strong text-xl text-white md:text-2xl">{p.t}</h3>
             </div>
           ))}
         </div>

@@ -9,42 +9,52 @@ const STROKE = { fill: "none", stroke: "#fff", strokeWidth: 3, strokeLinecap: "r
 
 function Trophy() {
   return (
-    <svg viewBox="0 0 64 64" width="58" height="58" {...STROKE}>
-      <path d="M20 12 h24 v10 a12 12 0 0 1 -24 0 z" />
-      <path d="M20 15 h-7 a7 7 0 0 0 7 9" />
-      <path d="M44 15 h7 a7 7 0 0 1 -7 9" />
-      <path d="M32 34 v8" />
-      <path d="M24 51 h16 l-2 -9 h-12 z" />
+    <svg viewBox="0 0 64 64" width="60" height="60" {...STROKE}>
+      <path d="M20 11 h24 v9 a12 12 0 0 1 -24 0 z" />
+      <path d="M20 14 h-7 a7 7 0 0 0 7 9" />
+      <path d="M44 14 h7 a7 7 0 0 1 -7 9" />
+      <path d="M32 32 v8" />
+      <path d="M27 48 h10 M23 54 h18 l-2 -6 h-14 z" />
+      <path d="M32 14.5 l1.6 3.3 3.6 .5 -2.6 2.5 .6 3.6 -3.2 -1.7 -3.2 1.7 .6 -3.6 -2.6 -2.5 3.6 -.5 z" stroke="#f5b301" strokeWidth="1.2" />
+      <g stroke="#fff" className="il-twinkle">
+        <path d="M50 12 v5 M47.5 14.5 h5" />
+      </g>
     </svg>
   );
 }
 function Barrier() {
-  // barrière de chantier rayée
+  // barrière de chantier rayée + gyrophare
   return (
-    <svg viewBox="0 0 64 64" width="58" height="58" {...STROKE}>
-      <rect x="10" y="24" width="44" height="11" rx="1.5" />
-      <path d="M17 35 v18 M47 35 v18" />
-      <path d="M14 35 L23 24 M26 35 L35 24 M38 35 L47 24 M50 35 L54 27" />
+    <svg viewBox="0 0 64 64" width="60" height="60" {...STROKE}>
+      <circle cx="32" cy="15" r="2.6" fill="#e0563f" stroke="none" className="il-twinkle" />
+      <path d="M32 17 v6" />
+      <rect x="10" y="26" width="44" height="11" rx="1.5" />
+      <path d="M17 37 v20 M47 37 v20 M13 57 h8 M43 57 h8" />
+      <path d="M14 37 L23 26 M26 37 L35 26 M38 37 L47 26 M50 37 L54 29" />
     </svg>
   );
 }
 function WifiOff() {
   return (
-    <svg viewBox="0 0 64 64" width="58" height="58" {...STROKE}>
-      <path d="M13 27 a28 28 0 0 1 38 0" />
-      <path d="M21 35 a17 17 0 0 1 22 0" />
-      <path d="M28 43 a7 7 0 0 1 8 0" />
-      <circle cx="32" cy="49" r="1.6" fill="#fff" stroke="none" />
-      <path d="M14 14 L50 50" />
+    <svg viewBox="0 0 64 64" width="60" height="60" {...STROKE}>
+      <path className="il-twinkle" d="M13 27 a28 28 0 0 1 38 0" style={{ animationDelay: "0.6s" }} />
+      <path className="il-twinkle" d="M20 34 a18 18 0 0 1 24 0" style={{ animationDelay: "0.3s" }} />
+      <path className="il-twinkle" d="M27 41 a8 8 0 0 1 10 0" />
+      <circle cx="32" cy="48" r="1.8" fill="#fff" stroke="none" />
+      <path d="M13 13 L51 51" stroke="#e0563f" />
     </svg>
   );
 }
 function EyeOff() {
   return (
-    <svg viewBox="0 0 64 64" width="58" height="58" {...STROKE}>
-      <path d="M9 32 C 19 20, 45 20, 55 32 C 45 44, 19 44, 9 32 Z" />
-      <circle cx="32" cy="32" r="7" />
-      <path d="M13 13 L51 51" />
+    <svg viewBox="0 0 64 64" width="60" height="60" {...STROKE}>
+      <g className="il-blink">
+        <path d="M8 32 C 18 19, 46 19, 56 32 C 46 45, 18 45, 8 32 Z" />
+        <circle cx="32" cy="32" r="7.5" />
+        <circle cx="32" cy="32" r="2.6" fill="#fff" stroke="none" />
+      </g>
+      <path d="M14 44 l-3 4 M32 47 v5 M50 44 l3 4" strokeWidth="2" />
+      <path d="M12 12 L52 52" stroke="#e0563f" />
     </svg>
   );
 }
