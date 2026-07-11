@@ -9,12 +9,30 @@ export default function CookieBanner() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const stored = getConsent();
-    if (stored === null) setOpen(true);
-    else if (stored === "accepted") startKairosTracking();
+    // le tracking reste piloté par le choix déjà mémorisé
+    if (getConsent() === "accepted") startKairosTracking();
+
+    // la bannière s'affiche à CHAQUE visite (même si un choix existe déjà),
+    // juste APRÈS l'animation pixel du début
+    const show = () => setOpen(true);
+    const onHome = window.location.pathname === "/";
+    let introDone = true;
+    try { introDone = sessionStorage.getItem("way-revealed") === "1"; } catch { /* noop */ }
+
+    let t: number | undefined;
+    if (onHome && !introDone) {
+      window.addEventListener("way:revealed", show, { once: true });
+    } else {
+      t = window.setTimeout(show, 400); // pages légales / retour après l'intro
+    }
+
     const reopen = () => setOpen(true);
     window.addEventListener("way:openCookies", reopen);
-    return () => window.removeEventListener("way:openCookies", reopen);
+    return () => {
+      window.removeEventListener("way:openCookies", reopen);
+      window.removeEventListener("way:revealed", show);
+      if (t) window.clearTimeout(t);
+    };
   }, []);
 
   const choose = (value: ConsentValue) => {
