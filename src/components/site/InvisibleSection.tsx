@@ -94,10 +94,7 @@ export default function InvisibleSection() {
         <p className="iv-line type-strong opacity-0" style={{ fontSize: "clamp(1.7rem, 4.4vw, 3.2rem)" }}>
           Ces businesses existent dans le monde réel.
         </p>
-        <p className="iv-line type-body mx-auto mt-6 max-w-2xl text-white/85 opacity-0" style={{ fontSize: "clamp(1rem, 2.2vw, 1.35rem)" }}>
-          Ils ont des clients fidèles. Des produits de qualité. Des années de travail derrière eux.
-        </p>
-        <p className="iv-line type-strong mt-16 opacity-0 md:mt-28" style={{ fontSize: "clamp(1.6rem, 4vw, 2.8rem)" }}>
+        <p className="iv-line type-strong mt-14 opacity-0 md:mt-20" style={{ fontSize: "clamp(1.6rem, 4vw, 2.8rem)" }}>
           Mais en ligne, ils sont invisibles.
         </p>
         <p className="iv-line type-strong mt-6 text-white opacity-0" style={{ fontSize: "clamp(1.9rem, 5vw, 3.6rem)" }}>
