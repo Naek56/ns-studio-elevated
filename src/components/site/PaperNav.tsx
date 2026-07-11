@@ -8,6 +8,9 @@ const LINKS = [
   { id: "#accueil", label: "Accueil" },
   { id: "#reveil", label: "Le réveil" },
   { id: "#question", label: "Le constat" },
+  { id: "#invisible", label: "L'enjeu" },
+  { id: "#agence", label: "L'agence" },
+  { id: "#kairos", label: "Kairos" },
 ];
 
 /* Navbar minimaliste (transparente, texte blanc) : logo, quelques liens,

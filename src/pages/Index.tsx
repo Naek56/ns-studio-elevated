@@ -9,6 +9,8 @@ import Hero from "@/components/site/Hero";
 import AwarenessHero from "@/components/site/AwarenessHero";
 import ReviewsSection from "@/components/site/ReviewsSection";
 import InvisibleSection from "@/components/site/InvisibleSection";
+import AgencySection from "@/components/site/AgencySection";
+import KairosSection from "@/components/site/KairosSection";
 import Contact from "@/components/site/Contact";
 import { ScrollTrigger } from "@/lib/gsapSetup";
 
@@ -55,6 +57,8 @@ const Index = () => {
         <AwarenessHero />
         <ReviewsSection />
         <InvisibleSection />
+        <AgencySection />
+        <KairosSection />
         <Contact />
       </main>
     </div>
