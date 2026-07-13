@@ -9,7 +9,11 @@ import { X, ArrowRight, Check } from "lucide-react";
   FormSubmit (aucun serveur requis). La toute première demande déclenche un mail
   de confirmation à cette adresse : clique le lien pour activer la réception.
 */
-const CONTACT_EMAIL = "REMPLACE-MOI@exemple.com";
+// Adresse qui reçoit les demandes du formulaire (via FormSubmit, sans serveur).
+// ⚠️ Elle est visible dans le code du site. Pour éviter le spam, tu peux la
+// remplacer par ton alias FormSubmit (formsubmit.co → « Get random URL ») ou une
+// adresse pro dédiée. Le tout premier envoi déclenche un mail de confirmation.
+const CONTACT_EMAIL = "samsonnae10@gmail.com";
 
 export function openContact() {
   window.dispatchEvent(new Event("way:openContact"));
