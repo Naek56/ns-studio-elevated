@@ -35,6 +35,8 @@ const Index = () => {
       root.style.overflow = "";
       document.body.style.overflow = "";
       requestAnimationFrame(() => ScrollTrigger.refresh());
+      // signale la fin de l'intro pixel → la bannière cookies peut s'afficher
+      window.dispatchEvent(new Event("way:revealed"));
     }
     return () => { root.style.overflow = ""; document.body.style.overflow = ""; };
   }, [revealed]);
