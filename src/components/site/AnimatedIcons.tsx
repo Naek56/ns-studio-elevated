@@ -56,7 +56,7 @@ export function IconDesign() {
       <circle cx="30" cy="18" r="1.5" fill="#fff" fillOpacity="0.4" />
       <path className="il-draw" d="M26 62 C 40 24, 58 68, 74 30" stroke="url(#dz-curve)" strokeWidth="3.4" strokeLinecap="round" filter="url(#dz-glow)" style={{ ["--len" as string]: 130 }} />
       <path className="il-draw" d="M26 62 C 40 24, 58 68, 74 30" stroke="#fff" strokeOpacity="0.8" strokeWidth="1.4" strokeLinecap="round" style={{ ["--len" as string]: 130 }} />
-      <g className="il-float">
+      <g className="il-pen">
         <path d="M74 30 l8 -8 5 5 -8 8 z" fill="#fff" />
         <path d="M74 30 l5 5" stroke="#4a90ff" strokeWidth="2.2" strokeLinecap="round" />
         <circle cx="74" cy="30" r="1.6" fill="#4a90ff" />
@@ -122,8 +122,8 @@ export function IconObserve() {
         <circle cx="50" cy="50" r="14" stroke="#8ecbe8" strokeWidth="1.6" />
         <circle cx="50" cy="50" r="6" fill="#0b1830" />
         <circle cx="46" cy="46" r="2.4" fill="#fff" />
+        <line className="il-scanx" x1="50" y1="32" x2="50" y2="68" stroke="url(#ob-scan)" strokeWidth="3" filter="url(#ob-glow)" />
       </g>
-      <line className="il-scanx" x1="50" y1="30" x2="50" y2="70" stroke="url(#ob-scan)" strokeWidth="3" filter="url(#ob-glow)" />
       <circle cx="27" cy="66" r="2.4" fill="#8ecbe8" className="il-twinkle" filter="url(#ob-glow)" />
       <circle cx="72" cy="34" r="2.4" fill="#8ecbe8" className="il-twinkle" style={{ animationDelay: "0.7s" }} filter="url(#ob-glow)" />
     </svg>
@@ -140,7 +140,7 @@ export function IconUnderstand() {
           <stop offset="1" stopColor="#f5d06b" stopOpacity="0" />
         </radialGradient>
       </defs>
-      <circle cx="50" cy="46" r="26" fill="url(#un-glow)" className="il-twinkle" />
+      <circle cx="50" cy="46" r="26" fill="url(#un-glow)" className="il-glowpulse" />
       <g stroke="#f5b301" strokeWidth="2.6" strokeLinecap="round">
         <line className="il-twinkle" x1="50" y1="6" x2="50" y2="14" />
         <line className="il-twinkle" style={{ animationDelay: "0.25s" }} x1="22" y1="16" x2="27" y2="22" />
@@ -174,11 +174,11 @@ export function IconAnalyze() {
       </defs>
       <rect x="12" y="18" width="76" height="60" rx="7" stroke="#fff" strokeOpacity="0.28" strokeWidth="1.4" />
       <path d="M12 46 H88 M12 62 H88" stroke="#fff" strokeOpacity="0.08" strokeWidth="1" />
-      <path d="M20 60 L34 48 L46 54 L58 36 L76 44 L76 70 L20 70 Z" fill="url(#an-area)" />
+      <path className="il-area" d="M20 60 L34 48 L46 54 L58 36 L76 44 L76 70 L20 70 Z" fill="url(#an-area)" />
       <path className="il-draw" d="M20 60 L34 48 L46 54 L58 36 L76 44" stroke="#8ecbe8" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" filter="url(#an-glow)" style={{ ["--len" as string]: 120 }} />
       <path className="il-draw" d="M20 60 L34 48 L46 54 L58 36 L76 44" stroke="#eaf6fc" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" style={{ ["--len" as string]: 120 }} />
-      <circle cx="34" cy="48" r="2.6" fill="#fff" className="il-twinkle" />
-      <circle cx="58" cy="36" r="2.6" fill="#fff" className="il-twinkle" style={{ animationDelay: "0.6s" }} />
+      <circle cx="34" cy="48" r="2.6" fill="#fff" className="il-area" />
+      <circle cx="58" cy="36" r="2.6" fill="#fff" className="il-area" />
       <g className="il-scanx">
         <circle cx="50" cy="50" r="10" fill="#f5b301" fillOpacity="0.08" stroke="#f5b301" strokeWidth="2.6" />
         <line x1="58" y1="58" x2="66" y2="66" stroke="#f5b301" strokeWidth="2.8" strokeLinecap="round" />
