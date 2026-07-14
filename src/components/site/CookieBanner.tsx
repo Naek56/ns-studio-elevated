@@ -46,13 +46,13 @@ export default function CookieBanner() {
           <div
             className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-white/15 p-5 sm:p-6"
             style={{
-              background: "linear-gradient(160deg, #16305a 0%, #0e1e3a 60%, #0a1730 100%)",
+              background: "linear-gradient(160deg, #16161a 0%, #0c0c10 60%, #060608 100%)",
               boxShadow: "0 20px 50px -20px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08)",
             }}
           >
             {/* halo décoratif */}
             <div aria-hidden className="pointer-events-none absolute -right-10 -top-14 h-40 w-40 rounded-full"
-              style={{ background: "radial-gradient(closest-side, rgba(99,179,221,0.35), transparent 70%)" }} />
+              style={{ background: "radial-gradient(closest-side, rgba(255,255,255,0.14), transparent 70%)" }} />
 
             <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/15" style={{ background: "rgba(255,255,255,0.06)" }}>
@@ -78,8 +78,8 @@ export default function CookieBanner() {
                 </button>
                 <button
                   onClick={() => choose("accepted")}
-                  className="type-body group inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#0e1e3a] transition-all duration-300 hover:brightness-105"
-                  style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.5), 0 10px 26px -8px rgba(142,203,232,0.65)" }}
+                  className="type-body group inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-neutral-900 transition-all duration-300 hover:brightness-105"
+                  style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.5), 0 10px 26px -8px rgba(255,255,255,0.4)" }}
                 >
                   <Check className="h-4 w-4" />
                   Accepter
