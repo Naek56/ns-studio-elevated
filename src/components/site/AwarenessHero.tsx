@@ -33,13 +33,23 @@ export default function AwarenessHero() {
     return () => { ctx.revert(); io.disconnect(); };
   }, []);
 
-  // flèche courbée qui se dessine (stroke-dashoffset animé en CSS)
+  // flèche esquissée à la main : courbe en S, double trait (repassée au
+  // feutre), pointe organique — se dessine à l'arrivée puis reste immobile
   const Arrow = ({ dir, delay }: { dir: "l" | "r"; delay: number }) => (
-    <svg width="104" height="36" viewBox="0 0 120 40" fill="none" aria-hidden
+    <svg width="116" height="44" viewBox="0 0 132 50" fill="none" aria-hidden
       style={{ transform: dir === "l" ? "scaleX(-1)" : undefined }}>
-      <path className="a-draw" d="M8 30 Q 64 6 106 20 M92 8 L112 20 L94 32"
-        stroke="#ffffff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"
+      {/* trait principal */}
+      <path className="a-draw" d="M6 38 C 34 14, 74 8, 104 22 M88 8 C 96 14, 104 18, 113 21 C 106 26, 99 32, 94 39"
+        stroke="#ffffff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"
         style={{ animationDelay: `${delay}s` }} />
+      {/* seconde passe plus fine, légèrement décalée (esquisse) */}
+      <path className="a-draw" d="M9 41 C 37 19, 74 13, 101 25"
+        stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" opacity="0.55"
+        style={{ animationDelay: `${delay + 0.15}s` }} />
+      {/* petite virgule d'élan au départ */}
+      <path className="a-draw" d="M8 30 C 12 33, 15 36, 17 40"
+        stroke="#ffffff" strokeWidth="2" strokeLinecap="round" opacity="0.7"
+        style={{ animationDelay: `${delay + 0.25}s` }} />
     </svg>
   );
 

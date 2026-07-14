@@ -72,12 +72,12 @@ export default function ReviewsSection() {
     const ctx = gsap.context(() => {
       if (REDUCED) {
         gsap.set([".rv-l1", ".rv-l2"], { opacity: 1, y: 0 });
-        gsap.set(".review-card", { opacity: 0.42 });
+        gsap.set(".review-card", { opacity: 0.68 });
         return;
       }
       gsap.timeline({ scrollTrigger: { trigger: el, start: "top 64%", once: true }, defaults: { ease: "power3.out" } })
         // les avis (secondaires, dans l'ombre) arrivent d'abord, discrètement
-        .fromTo(".review-card", { opacity: 0, y: 24 }, { opacity: 0.42, y: 0, duration: 0.9, stagger: 0.12 })
+        .fromTo(".review-card", { opacity: 0, y: 24 }, { opacity: 0.68, y: 0, duration: 0.9, stagger: 0.12 })
         // le message central s'impose ensuite, net et lumineux
         .fromTo(".rv-l1", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.9 }, "-=0.4")
         .fromTo(".rv-l2", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.9 }, "-=0.55");

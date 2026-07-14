@@ -54,8 +54,8 @@ export default function AgencySection() {
           {PILLARS.map((p) => (
             <div
               key={p.t}
-              className="ag-pillar flex flex-col items-center gap-5 rounded-2xl border border-white/12 p-8 opacity-0 md:p-10"
-              style={{ background: "rgba(10,20,40,0.28)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
+              className="ag-pillar flex flex-col items-center gap-5 rounded-2xl border border-white/20 p-8 opacity-0 md:p-10"
+              style={{ background: "linear-gradient(165deg, rgba(34,62,110,0.92) 0%, rgba(16,32,62,0.94) 60%, rgba(10,22,44,0.96) 100%)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.14), 0 18px 40px -18px rgba(0,0,0,0.55)" }}
             >
               {p.icon}
               <h3 className="type-strong text-xl text-white md:text-2xl">{p.t}</h3>
