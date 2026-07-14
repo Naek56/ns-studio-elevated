@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Cookie, Check } from "lucide-react";
 import { getConsent, setConsent, startKairosTracking, type ConsentValue } from "@/lib/consent";
+import { sfxTap, sfxSuccess } from "@/lib/sfx";
 
 export default function CookieBanner() {
   const [open, setOpen] = useState(false);
@@ -29,7 +30,7 @@ export default function CookieBanner() {
     };
   }, []);
 
-  const choose = (value: ConsentValue) => { setConsent(value); setOpen(false); };
+  const choose = (value: ConsentValue) => { if (value === "accepted") sfxSuccess(); else sfxTap(); setConsent(value); setOpen(false); };
 
   return (
     <AnimatePresence>

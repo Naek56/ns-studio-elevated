@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 import Footer from "./Footer";
 import { openContact } from "./ContactModal";
+import { sfxTap } from "@/lib/sfx";
 import { gsap, REDUCED } from "@/lib/gsapSetup";
 
 export default function Contact() {
@@ -32,7 +33,7 @@ export default function Contact() {
           Vous ne le regretterez pas.
         </h2>
         <button
-          onClick={openContact}
+          onClick={() => { sfxTap(); openContact(); }}
           className="c-in type-body group mt-9 inline-flex items-center gap-2 rounded-full border border-white/45 px-7 py-3.5 text-base font-medium text-white opacity-0 transition-colors duration-300 hover:bg-white hover:text-neutral-900"
         >
           Démarrer un projet

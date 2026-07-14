@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { openContact } from "./ContactModal";
+import { sfxTap } from "@/lib/sfx";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
 
 type Lenis = { scrollTo: (t: Element | number, o?: Record<string, unknown>) => void };
@@ -21,6 +22,7 @@ export default function PaperNav() {
 
   const goTo = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault();
+    sfxTap();
     const el = document.querySelector(id);
     if (!el) return;
     const lenis = (window as unknown as { lenis?: Lenis }).lenis;
@@ -64,7 +66,7 @@ export default function PaperNav() {
         </nav>
 
         <button
-          onClick={openContact}
+          onClick={() => { sfxTap(); openContact(); }}
           className="type-body rounded-full border border-white/45 px-5 py-2 text-sm font-medium text-white transition-colors duration-300 hover:bg-white hover:text-neutral-900"
         >
           Contact

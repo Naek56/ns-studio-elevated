@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import ScribbleButton from "./ScribbleButton";
 import PixelFill from "./PixelFill";
-import { sfxPop, sfxClick, sfxSuccess, sfxHmm, sfxWhoosh, sfxFinale, sfxPixels } from "@/lib/sfx";
+import { sfxPop, sfxTap, sfxSuccess, sfxHmm, sfxWhoosh, sfxFinale, sfxPixels } from "@/lib/sfx";
 
 /* L'expérience — un film interactif sur la mémoire.
    Chaque « beat » s'enchaîne automatiquement (un clic pendant un texte
@@ -104,7 +104,7 @@ export default function MemoryExperience() {
   };
 
   const answer = (c: string) => {
-    sfxClick();
+    sfxTap();
     if (c === "Rouge") { sfxSuccess(); setFeedback("Bonne réponse"); }
     else { sfxHmm(); setFeedback("Il était rouge."); }
   };
