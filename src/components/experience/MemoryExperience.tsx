@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import ScribbleButton from "./ScribbleButton";
+import PixelFill from "./PixelFill";
+import { sfxPop, sfxClick, sfxSuccess, sfxHmm, sfxWhoosh, sfxFinale, sfxPixels } from "@/lib/sfx";
 
 /* L'expérience — un film interactif sur la mémoire.
    Chaque « beat » s'enchaîne automatiquement (un clic pendant un texte
@@ -28,7 +31,7 @@ const SCRIPT: Beat[] = [
   { kind: "stack", lines: ["Depuis le début, ton cerveau essayait de retenir une seule chose.", "Un bouton.", "Une couleur.", "Une action."], hold: 2600 },
   { kind: "text", lines: ["Mais demande-toi quelque chose..."], hold: 2200 },
   { kind: "text", lines: ["Est-ce que tu te souviens réellement du bouton ?"], hold: 2400 },
-  { kind: "button2", hold: 3000 },
+  { kind: "button2", hold: 5000 },
   { kind: "silence", hold: 3000 },
   { kind: "text", lines: ["Chaque souvenir que tu possèdes est une reconstruction."], hold: 2600 },
   { kind: "text", lines: ["Ton cerveau ne conserve pas le monde."], hold: 2300 },
@@ -56,10 +59,19 @@ export default function MemoryExperience() {
   const [step, setStep] = useState(0);
   const [popping, setPopping] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null); // « Bonne réponse » / rappel
+  const [leaving, setLeaving] = useState(false); // transition pixels vers /agence
+  const navigate = useNavigate();
   const timer = useRef<number | undefined>(undefined);
   const beat = SCRIPT[step];
 
   const next = useCallback(() => setStep((s) => Math.min(s + 1, SCRIPT.length - 1)), []);
+
+  // sons liés aux beats passifs
+  useEffect(() => {
+    if (!beat) return;
+    if (beat.kind === "button2") sfxWhoosh();
+    if (beat.kind === "finale") sfxFinale();
+  }, [beat]);
 
   // enchaînement automatique des beats passifs
   useEffect(() => {
@@ -86,12 +98,15 @@ export default function MemoryExperience() {
 
   const popButton = () => {
     if (popping) return;
+    sfxPop();
     setPopping(true);
     window.setTimeout(() => { setPopping(false); setStep(2); }, 620);
   };
 
   const answer = (c: string) => {
-    setFeedback(c === "Rouge" ? "Bonne réponse" : "Il était rouge.");
+    sfxClick();
+    if (c === "Rouge") { sfxSuccess(); setFeedback("Bonne réponse"); }
+    else { sfxHmm(); setFeedback("Il était rouge."); }
   };
 
   // un clic pendant un texte / silence fait avancer (jamais pendant une interaction)
@@ -202,10 +217,15 @@ export default function MemoryExperience() {
           </motion.div>
         )}
 
-        {/* ── finale : logo + signature ── */}
+        {/* ── finale : logo en haut, texte au MILIEU, CTA sobre en dessous ── */}
         {beat.kind === "finale" && (
-          <motion.div key="fin" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} className="flex h-full w-full flex-col items-center justify-between py-14 sm:py-16">
-            <motion.div initial={{ opacity: 0, y: -18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} className="flex flex-col items-center gap-3 text-white">
+          <motion.div key="fin" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} className="flex h-full w-full flex-col items-center justify-center">
+            <motion.div
+              initial={{ opacity: 0, y: -18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.2 }}
+              className="absolute top-12 flex flex-col items-center gap-3 text-white sm:top-14"
+            >
               <svg viewBox="0 0 48 48" className="h-14 w-14 sm:h-16 sm:w-16" fill="none" aria-hidden>
                 <circle cx="24" cy="24" r="22" stroke="currentColor" strokeWidth="2.2" />
                 <path d="M13 17.5 L18.5 31 L24 20 L29.5 31 L35 17.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
@@ -218,14 +238,28 @@ export default function MemoryExperience() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.9 }}
               className="type-strong max-w-2xl"
-              style={{ fontSize: "clamp(1.3rem, 3.4vw, 2.2rem)" }}
+              style={{ fontSize: "clamp(1.4rem, 3.6vw, 2.4rem)" }}
             >
               Nous ne créons pas seulement des sites.
               <span className="mt-2 block">Nous créons des expériences qui restent.</span>
             </motion.p>
+
+            {/* bouton sobre (sans cartoon) vers le site de l'agence */}
+            <motion.button
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 1.7 }}
+              onClick={(e) => { e.stopPropagation(); if (!leaving) { sfxPixels(); setLeaving(true); } }}
+              className="type-body mt-12 rounded-full border border-white/45 px-8 py-3.5 text-base font-medium text-white transition-colors duration-300 hover:bg-white hover:text-neutral-900"
+            >
+              Découvrir l'agence
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* transition : écran noir → pixels bleus qui envahissent → site agence */}
+      {leaving && <PixelFill onDone={() => navigate("/agence")} />}
     </div>
   );
 }

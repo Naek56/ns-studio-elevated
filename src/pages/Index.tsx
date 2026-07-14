@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import MemoryExperience from "@/components/experience/MemoryExperience";
-import CursorFollower from "@/components/site/CursorFollower";
 
-/* Le site est une expérience : pas de navbar, pas de logo, pas de scroll.
-   (L'ancien site complet est conservé sur la branche backup/site-v1-bleu.) */
+/* Le site est une expérience : pas de navbar, pas de logo, curseur normal.
+   (Le site complet de l'agence vit sur /agence — sauvegarde : backup/site-v1-bleu.) */
 const Index = () => {
   useEffect(() => {
     // pas d'intro pixel ici : on libère tout de suite la bannière cookies
@@ -13,7 +12,6 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen bg-black">
-      <CursorFollower />
       <MemoryExperience />
     </div>
   );
