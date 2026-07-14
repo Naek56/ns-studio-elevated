@@ -78,11 +78,11 @@ export default function InvisibleSection() {
     const ctx = gsap.context(() => {
       if (REDUCED) {
         gsap.set(".iv-line", { opacity: 1, y: 0 });
-        gsap.set(".iv-motif", { opacity: 0.4 });
+        gsap.set(".iv-motif", { opacity: 0.85 });
         return;
       }
       gsap.timeline({ scrollTrigger: { trigger: el, start: "top 62%", once: true }, defaults: { ease: "power3.out" } })
-        .fromTo(".iv-motif", { opacity: 0, y: 20 }, { opacity: 0.4, y: 0, duration: 0.9, stagger: 0.1 })
+        .fromTo(".iv-motif", { opacity: 0, y: 20 }, { opacity: 0.85, y: 0, duration: 0.9, stagger: 0.1 })
         .fromTo(".iv-line", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.85, stagger: 0.22 }, "-=0.3");
     }, root);
     return () => { ctx.revert(); ScrollTrigger.getAll().forEach((s) => { if (s.trigger === el) s.kill(); }); };
@@ -92,9 +92,9 @@ export default function InvisibleSection() {
     <section ref={root} id="invisible" className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-6 py-24">
       {/* motifs discrets sur les côtés (dans l'ombre) */}
       {MOTIFS.map((m) => (
-        <div key={m.caption} className={`iv-motif pointer-events-none absolute flex flex-col items-center gap-2 text-white ${m.cls}`} style={{ opacity: 0 }}>
+        <div key={m.caption} className={`iv-motif pointer-events-none absolute flex flex-col items-center gap-2 text-white ${m.cls}`} style={{ opacity: 0, filter: "drop-shadow(0 0 10px rgba(160,200,255,0.35)) drop-shadow(0 2px 6px rgba(0,0,0,0.45))" }}>
           {m.el}
-          <span className="type-body text-[11px] uppercase tracking-[0.2em] text-white/80">{m.caption}</span>
+          <span className="type-body text-[11px] font-semibold uppercase tracking-[0.2em] text-white">{m.caption}</span>
         </div>
       ))}
 
