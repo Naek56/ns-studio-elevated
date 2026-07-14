@@ -1,10 +1,9 @@
-/* Bouton rond « aquarelle + fils gribouillés » (d'après les références) :
-   une pastille aquarelle au bord irrégulier (turbulence SVG), des nappes
-   de couleur qui se chevauchent, et par-dessus des fils circulaires
-   griffonnés qui vibrent (« boiling »). Ombre au sol + reflet + anneau
-   discret pour que ça reste clairement UN BOUTON.
-   `variant="alt"` = version nettement différente (orange, ovale, fils
-   horizontaux). */
+/* Bouton « dessiné au crayon rouge » : des cercles de traits granuleux qui
+   se superposent (comme un crayon repassé plusieurs fois), un léger
+   remplissage hachuré, et c'est tout. L'effet « boiling » (deux jeux de
+   traits qui alternent) le fait vibrer comme un dessin.
+   `variant="alt"` = version différente : crayon ORANGE, ovale, hachures
+   horizontales. */
 
 export default function ScribbleButton({
   onClick,
@@ -25,121 +24,85 @@ export default function ScribbleButton({
       style={{ WebkitTapHighlightColor: "transparent" }}
     >
       {!alt ? (
-        <svg viewBox="0 0 220 230" className="h-[150px] w-auto transition-transform duration-300 group-hover:scale-[1.05] group-active:scale-95 sm:h-[176px]" fill="none">
+        <svg viewBox="0 0 200 200" className="h-[140px] w-auto transition-transform duration-300 group-hover:scale-[1.06] group-active:scale-95 sm:h-[160px]" fill="none">
           <defs>
-            <radialGradient id="wc-base" cx="0.42" cy="0.38">
-              <stop offset="0" stopColor="#ef5a43" />
-              <stop offset="0.55" stopColor="#d92c18" />
-              <stop offset="1" stopColor="#a81505" />
-            </radialGradient>
-            <radialGradient id="wc-pool" cx="0.6" cy="0.7">
-              <stop offset="0" stopColor="#8f1204" stopOpacity="0.75" />
-              <stop offset="1" stopColor="#8f1204" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="wc-light" cx="0.3" cy="0.25">
-              <stop offset="0" stopColor="#ff9d8a" stopOpacity="0.9" />
-              <stop offset="1" stopColor="#ff9d8a" stopOpacity="0" />
-            </radialGradient>
-            {/* bord aquarelle irrégulier */}
-            <filter id="wc-edge" x="-20%" y="-20%" width="140%" height="140%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.032" numOctaves="3" seed="7" result="n" />
-              <feDisplacementMap in="SourceGraphic" in2="n" scale="14" />
+            {/* grain crayon : léger déplacement granuleux des traits */}
+            <filter id="pcl-a" x="-15%" y="-15%" width="130%" height="130%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="2" seed="4" result="n" />
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" />
             </filter>
-            <filter id="wc-edge2" x="-20%" y="-20%" width="140%" height="140%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="13" result="n" />
-              <feDisplacementMap in="SourceGraphic" in2="n" scale="18" />
+            <filter id="pcl-b" x="-15%" y="-15%" width="130%" height="130%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="2" seed="11" result="n" />
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" />
             </filter>
-            {/* grain papier dans la couleur */}
-            <filter id="wc-grain">
-              <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="n" />
-              <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.35 0" result="a" />
-              <feComposite in="a" in2="SourceGraphic" operator="in" />
-            </filter>
+            <clipPath id="pcl-clip"><circle cx="100" cy="100" r="64" /></clipPath>
           </defs>
 
-          {/* ombre au sol */}
-          <g className="sb-a"><ellipse cx="112" cy="212" rx="62" ry="8" fill="#000" opacity="0.4" /></g>
-          <g className="sb-b"><ellipse cx="108" cy="212" rx="66" ry="7" fill="#000" opacity="0.4" /></g>
+          {/* ombre discrète */}
+          <ellipse cx="100" cy="182" rx="46" ry="5" fill="#000" opacity="0.22" />
 
-          {/* pastille aquarelle : nappes superposées aux bords irréguliers */}
-          <circle cx="110" cy="104" r="86" fill="url(#wc-base)" filter="url(#wc-edge)" />
-          <circle cx="118" cy="118" r="66" fill="url(#wc-pool)" filter="url(#wc-edge2)" />
-          <circle cx="88" cy="80" r="46" fill="url(#wc-light)" filter="url(#wc-edge2)" opacity="0.8" />
-          {/* grain aquarelle */}
-          <circle cx="110" cy="104" r="84" filter="url(#wc-grain)" opacity="0.5" />
-
-          {/* fils griffonnés circulaires (boiling) */}
-          <g className="sb-a" stroke="#7d1103" strokeLinecap="round" fill="none">
-            <path d="M110 30 C 156 30, 186 62, 184 104 C 182 148, 152 178, 108 178 C 64 178, 36 146, 38 102 C 40 60, 68 32, 110 30 Z" strokeWidth="2" opacity="0.5" />
-            <path d="M112 42 C 148 44, 172 68, 171 104 C 170 140, 146 166, 110 165 C 74 164, 51 138, 52 102 C 53 68, 76 44, 112 42 Z" strokeWidth="1.6" opacity="0.4" />
-            <path d="M108 56 C 138 54, 158 76, 158 104 C 158 132, 138 152, 110 152 C 82 152, 64 132, 64 104 C 64 78, 80 58, 108 56 Z" strokeWidth="1.4" opacity="0.35" />
-          </g>
-          <g className="sb-b" stroke="#7d1103" strokeLinecap="round" fill="none">
-            <path d="M108 32 C 154 30, 184 60, 183 102 C 182 146, 154 176, 110 177 C 66 178, 37 148, 38 104 C 39 62, 66 34, 108 32 Z" strokeWidth="2" opacity="0.5" />
-            <path d="M110 44 C 146 42, 170 66, 170 102 C 170 138, 148 164, 112 164 C 76 164, 52 140, 53 104 C 54 70, 74 46, 110 44 Z" strokeWidth="1.6" opacity="0.4" />
-            <path d="M110 58 C 140 56, 159 78, 158 106 C 157 134, 136 153, 108 152 C 80 151, 63 130, 64 102 C 65 76, 82 60, 110 58 Z" strokeWidth="1.4" opacity="0.35" />
+          {/* remplissage : hachures crayon diagonales, légères */}
+          <g clipPath="url(#pcl-clip)">
+            <g className="sb-a" filter="url(#pcl-a)" stroke="#ff4530" strokeWidth="2.4" strokeLinecap="round" opacity="0.45">
+              <path d="M40 130 L120 40 M48 148 L142 44 M62 158 L156 52 M80 164 L166 66 M100 166 L172 84 M124 162 L174 106" />
+            </g>
+            <g className="sb-b" filter="url(#pcl-b)" stroke="#ff4530" strokeWidth="2.4" strokeLinecap="round" opacity="0.45">
+              <path d="M44 134 L124 42 M52 150 L146 46 M66 160 L160 56 M86 166 L168 70 M106 166 L174 90 M130 160 L175 112" />
+            </g>
+            {/* masse centrale très légère */}
+            <circle cx="100" cy="100" r="60" fill="#ff4530" opacity="0.2" />
           </g>
 
-          {/* reflet + étincelle */}
-          <path className="sb-a" d="M70 62 C 82 48, 104 40, 124 42" stroke="#ffd9d1" strokeWidth="5" strokeLinecap="round" opacity="0.75" />
-          <path className="sb-b" d="M72 60 C 86 47, 106 39, 126 41" stroke="#ffd9d1" strokeWidth="5" strokeLinecap="round" opacity="0.75" />
-          <g className="sb-a" stroke="#ffe9e5" strokeWidth="2.2" strokeLinecap="round"><path d="M172 44 v9 M167.5 48.5 h9" /></g>
-          <g className="sb-b" stroke="#ffe9e5" strokeWidth="2.2" strokeLinecap="round"><path d="M174 46 v9 M169.5 50.5 h9" /></g>
+          {/* cercles crayon repassés (boiling) */}
+          <g className="sb-a" filter="url(#pcl-a)" stroke="#ff4530" fill="none" strokeLinecap="round">
+            <path d="M100 34 C 140 34, 167 62, 166 100 C 165 140, 138 166, 99 166 C 60 166, 34 138, 35 99 C 36 62, 62 34, 100 34 Z" strokeWidth="3.4" opacity="0.9" />
+            <path d="M101 42 C 135 42, 158 66, 158 100 C 158 134, 134 158, 100 158 C 66 158, 43 134, 43 100 C 43 68, 67 42, 101 42 Z" strokeWidth="2.4" opacity="0.6" />
+            <path d="M98 28 C 143 26, 173 58, 172 100 C 171 145, 140 172, 98 172 C 56 172, 28 142, 29 98 C 30 56, 58 30, 98 28 Z" strokeWidth="1.8" opacity="0.4" />
+          </g>
+          <g className="sb-b" filter="url(#pcl-b)" stroke="#ff4530" fill="none" strokeLinecap="round">
+            <path d="M99 35 C 139 33, 166 60, 166 99 C 166 139, 139 167, 100 167 C 61 167, 34 140, 34 100 C 34 61, 61 37, 99 35 Z" strokeWidth="3.4" opacity="0.9" />
+            <path d="M100 43 C 134 41, 157 64, 157 99 C 157 133, 135 157, 101 157 C 67 157, 44 135, 44 101 C 44 67, 66 45, 100 43 Z" strokeWidth="2.4" opacity="0.6" />
+            <path d="M100 29 C 142 27, 171 56, 171 99 C 171 143, 142 171, 100 171 C 58 171, 29 143, 29 99 C 29 57, 58 31, 100 29 Z" strokeWidth="1.8" opacity="0.4" />
+          </g>
         </svg>
       ) : (
-        <svg viewBox="0 0 240 210" className="h-[150px] w-auto transition-transform duration-300 group-hover:scale-[1.05] group-active:scale-95 sm:h-[172px]" fill="none">
+        <svg viewBox="0 0 230 170" className="h-[130px] w-auto transition-transform duration-300 group-hover:scale-[1.06] group-active:scale-95 sm:h-[148px]" fill="none">
           <defs>
-            <radialGradient id="wca-base" cx="0.45" cy="0.4">
-              <stop offset="0" stopColor="#ffa25e" />
-              <stop offset="0.55" stopColor="#ff7a30" />
-              <stop offset="1" stopColor="#d85608" />
-            </radialGradient>
-            <radialGradient id="wca-pool" cx="0.62" cy="0.68">
-              <stop offset="0" stopColor="#a63c04" stopOpacity="0.7" />
-              <stop offset="1" stopColor="#a63c04" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="wca-light" cx="0.32" cy="0.28">
-              <stop offset="0" stopColor="#ffd2ae" stopOpacity="0.95" />
-              <stop offset="1" stopColor="#ffd2ae" stopOpacity="0" />
-            </radialGradient>
-            <filter id="wca-edge" x="-20%" y="-20%" width="140%" height="140%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="3" seed="21" result="n" />
-              <feDisplacementMap in="SourceGraphic" in2="n" scale="16" />
+            <filter id="pcla-a" x="-15%" y="-15%" width="130%" height="130%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="2" seed="17" result="n" />
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" />
             </filter>
-            <filter id="wca-grain">
-              <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="5" result="n" />
-              <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.35 0" result="a" />
-              <feComposite in="a" in2="SourceGraphic" operator="in" />
+            <filter id="pcla-b" x="-15%" y="-15%" width="130%" height="130%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="2" seed="23" result="n" />
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" />
             </filter>
+            <clipPath id="pcla-clip"><ellipse cx="115" cy="82" rx="86" ry="58" /></clipPath>
           </defs>
 
-          <g className="sb-a"><ellipse cx="122" cy="194" rx="74" ry="8" fill="#000" opacity="0.4" /></g>
-          <g className="sb-b"><ellipse cx="118" cy="194" rx="78" ry="7" fill="#000" opacity="0.4" /></g>
+          <ellipse cx="115" cy="156" rx="58" ry="5" fill="#000" opacity="0.22" />
 
-          {/* OVALE aquarelle (silhouette clairement différente) */}
-          <ellipse cx="120" cy="98" rx="100" ry="76" fill="url(#wca-base)" filter="url(#wca-edge)" />
-          <ellipse cx="132" cy="112" rx="72" ry="52" fill="url(#wca-pool)" filter="url(#wca-edge)" />
-          <ellipse cx="92" cy="74" rx="50" ry="36" fill="url(#wca-light)" filter="url(#wca-edge)" opacity="0.85" />
-          <ellipse cx="120" cy="98" rx="98" ry="74" filter="url(#wca-grain)" opacity="0.5" />
-
-          {/* fils HORIZONTAUX ondulés (différent des cercles) */}
-          <g className="sb-a" stroke="#a03a03" strokeLinecap="round" fill="none">
-            <path d="M34 76 C 80 66, 160 66, 206 78" strokeWidth="2" opacity="0.5" />
-            <path d="M28 98 C 80 88, 162 88, 212 100" strokeWidth="1.8" opacity="0.45" />
-            <path d="M34 120 C 84 112, 158 112, 206 120" strokeWidth="1.6" opacity="0.4" />
-            <path d="M48 140 C 92 134, 150 134, 192 140" strokeWidth="1.4" opacity="0.35" />
-          </g>
-          <g className="sb-b" stroke="#a03a03" strokeLinecap="round" fill="none">
-            <path d="M32 80 C 82 70, 160 70, 208 82" strokeWidth="2" opacity="0.5" />
-            <path d="M30 102 C 82 92, 160 92, 210 104" strokeWidth="1.8" opacity="0.45" />
-            <path d="M36 124 C 86 116, 156 116, 204 124" strokeWidth="1.6" opacity="0.4" />
-            <path d="M50 143 C 94 137, 148 137, 190 143" strokeWidth="1.4" opacity="0.35" />
+          {/* remplissage : hachures HORIZONTALES légères */}
+          <g clipPath="url(#pcla-clip)">
+            <g className="sb-a" filter="url(#pcla-a)" stroke="#ff8a3c" strokeWidth="2.4" strokeLinecap="round" opacity="0.45">
+              <path d="M32 52 H198 M28 70 H202 M26 88 H204 M30 106 H200 M40 124 H190" />
+            </g>
+            <g className="sb-b" filter="url(#pcla-b)" stroke="#ff8a3c" strokeWidth="2.4" strokeLinecap="round" opacity="0.45">
+              <path d="M34 56 H196 M30 74 H202 M28 92 H203 M33 110 H198 M44 127 H186" />
+            </g>
+            <ellipse cx="115" cy="82" rx="80" ry="52" fill="#ff8a3c" opacity="0.2" />
           </g>
 
-          <path className="sb-a" d="M62 56 C 80 42, 108 36, 132 38" stroke="#ffe3c9" strokeWidth="5.5" strokeLinecap="round" opacity="0.8" />
-          <path className="sb-b" d="M66 54 C 84 41, 110 35, 134 37" stroke="#ffe3c9" strokeWidth="5.5" strokeLinecap="round" opacity="0.8" />
-          <g className="sb-a" stroke="#fff1e2" strokeWidth="2.2" strokeLinecap="round"><path d="M196 40 v9 M191.5 44.5 h9" /></g>
-          <g className="sb-b" stroke="#fff1e2" strokeWidth="2.2" strokeLinecap="round"><path d="M198 42 v9 M193.5 46.5 h9" /></g>
+          {/* OVALES crayon orange repassés */}
+          <g className="sb-a" filter="url(#pcla-a)" stroke="#ff8a3c" fill="none" strokeLinecap="round">
+            <path d="M115 24 C 168 24, 202 50, 201 82 C 200 116, 166 140, 114 140 C 62 140, 29 114, 30 81 C 31 49, 63 24, 115 24 Z" strokeWidth="3.4" opacity="0.9" />
+            <path d="M115 32 C 160 32, 192 54, 191 82 C 190 112, 160 132, 114 132 C 68 132, 39 110, 40 81 C 41 53, 70 32, 115 32 Z" strokeWidth="2.4" opacity="0.6" />
+            <path d="M114 18 C 172 16, 208 46, 207 82 C 206 120, 170 146, 114 146 C 58 146, 23 118, 24 80 C 25 44, 60 20, 114 18 Z" strokeWidth="1.8" opacity="0.4" />
+          </g>
+          <g className="sb-b" filter="url(#pcla-b)" stroke="#ff8a3c" fill="none" strokeLinecap="round">
+            <path d="M114 25 C 167 23, 201 49, 201 81 C 201 115, 167 141, 115 141 C 63 141, 30 115, 30 82 C 30 50, 62 27, 114 25 Z" strokeWidth="3.4" opacity="0.9" />
+            <path d="M114 33 C 159 31, 191 53, 191 81 C 191 111, 161 133, 115 133 C 69 133, 40 111, 40 82 C 40 54, 69 35, 114 33 Z" strokeWidth="2.4" opacity="0.6" />
+            <path d="M115 19 C 171 17, 207 45, 206 81 C 205 119, 171 147, 115 147 C 59 147, 24 119, 25 81 C 26 45, 59 21, 115 19 Z" strokeWidth="1.8" opacity="0.4" />
+          </g>
         </svg>
       )}
     </button>

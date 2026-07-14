@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowRight, Check } from "lucide-react";
+import { sfxTap, sfxWhoosh, sfxSend } from "@/lib/sfx";
 
 /*
   Où arrivent les demandes :
@@ -44,6 +45,7 @@ export default function ContactModal() {
     }
     root.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
+    sfxWhoosh();
     root.classList.add("modal-open"); // rend le curseur natif visible sur le formulaire
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
     window.addEventListener("keydown", onKey);
@@ -56,6 +58,7 @@ export default function ContactModal() {
   }, [open]);
 
   const close = () => {
+    sfxTap();
     setOpen(false);
     window.setTimeout(() => { setStatus("idle"); setErrors({}); setForm({ ...empty }); }, 350);
   };
@@ -94,6 +97,7 @@ export default function ContactModal() {
         }),
       });
       if (!res.ok) throw new Error("bad status");
+      sfxSend();
       setStatus("sent");
     } catch {
       setStatus("error");
