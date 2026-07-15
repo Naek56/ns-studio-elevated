@@ -130,18 +130,31 @@
     letter-spacing: 0;
   }
 
-  /* mots accrocheurs de l'expérience : serif Fraunces, teinte ivoire chaude
-     (police ET couleur distinctes du reste du site) */
-  .exp-strong {
+  /* un ou deux MOTS ACCROCHEURS dans une phrase de l'expérience : eux seuls
+     passent en serif Fraunces + teinte ivoire chaude, en italique léger.
+     Le reste de la phrase garde la police normale (type-strong). */
+  .exp-accent {
     font-family: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
     font-optical-sizing: auto;
     font-weight: 600;
-    letter-spacing: -0.01em;
-    line-height: 1.08;
+    font-style: italic;
     color: #f4ecda;
-    text-shadow: 0 2px 34px rgba(0, 0, 0, 0.55), 0 1px 4px rgba(0, 0, 0, 0.45);
+    letter-spacing: 0;
   }
-  .exp-strong em, .exp-strong i { font-style: italic; font-weight: 500; }
+
+  /* « surlignage » façon sélection de texte sur ordinateur (pour copier /
+     supprimer) : un mot accrocheur posé sur un bloc bleu, texte en blanc.
+     box-decoration-break: clone → le fond suit le mot même sur 2 lignes. */
+  .mark-select {
+    background-color: #2f6df6;
+    color: #fff;
+    padding: 0.02em 0.14em;
+    margin: 0 0.02em;
+    border-radius: 2px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    text-shadow: none;
+  }
 
   /* texture carton/papier : même grain que la photo, tonalité claire fiable */
   .paper {

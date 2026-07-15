@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { gsap, REDUCED } from "@/lib/gsapSetup";
+import PixelIcon from "./PixelIcon";
 
 /* Section 1 — « Arrête de regarder ton écran ». Flèches COURBÉES qui se
    dessinent une fois à l'arrivée, puis restent immobiles. */
@@ -67,7 +68,7 @@ export default function AwarenessHero() {
             <Arrow dir="l" delay={0.12} />
             <Arrow dir="l" delay={0} />
           </div>
-          <span className="type-body text-base font-medium text-white sm:text-xl">Regarde autour de toi</span>
+          <span className="type-body flex items-center gap-2 text-base font-medium text-white sm:text-xl"><PixelIcon name="smiley" size={20} />Regarde <span className="mark-select">autour</span> de toi</span>
           <div className="flex items-center gap-1.5 sm:gap-2.5">
             <Arrow dir="r" delay={0} />
             <Arrow dir="r" delay={0.12} />

@@ -5,6 +5,7 @@ import PaperNav from "@/components/site/PaperNav";
 import SmoothScroll from "@/components/site/SmoothScroll";
 import ContactModal from "@/components/site/ContactModal";
 import Hero from "@/components/site/Hero";
+import CloudTransition from "@/components/site/CloudTransition";
 import AwarenessHero from "@/components/site/AwarenessHero";
 import ReviewsSection from "@/components/site/ReviewsSection";
 import InvisibleSection from "@/components/site/InvisibleSection";
@@ -48,6 +49,7 @@ const Agence = () => {
 
       <PaperNav />
       <ContactModal />
+      <CloudTransition active={revealed} />
 
       <main>
         <Hero play={revealed} />
