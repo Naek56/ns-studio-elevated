@@ -133,10 +133,10 @@ export default function MemoryExperience() {
         background: [
           // vignette sombre EN HAUT : assombrit les bords, cadre le bouton (contraste)
           "radial-gradient(115% 115% at 50% 45%, transparent 26%, rgba(1,3,8,0.5) 68%, rgba(0,1,4,0.82) 100%)",
-          // LA PHOTO (déposée dans /public sous le nom experience-bg.jpg).
+          // LA PHOTO (déposée dans /public sous le nom experience-bg.png).
           // Tant qu'elle n'est pas là, elle est simplement ignorée et le
           // dégradé ci-dessous s'affiche comme repli.
-          "url('/experience-bg.jpg') center / cover no-repeat",
+          "url('/experience-bg.png') center / cover no-repeat",
           // ── repli : recréation du dégradé bleu granuleux ──
           "radial-gradient(58% 50% at 33% 18%, rgba(224,246,255,0.95) 0%, rgba(120,210,250,0.45) 36%, rgba(50,160,230,0) 68%)",
           "radial-gradient(40% 76% at 81% 62%, rgba(60,190,255,0.9) 0%, rgba(28,140,225,0.3) 40%, rgba(12,70,150,0) 68%)",
