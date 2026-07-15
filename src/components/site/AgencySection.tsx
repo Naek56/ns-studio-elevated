@@ -1,12 +1,13 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
+import PixelIcon, { type PixelIconName } from "./PixelIcon";
 
 /* Section Agence — « On ne livre pas des sites. On construit des présences. »
    Design : le logo WAY en grand filigrane. Trois piliers numérotés. */
-const PILLARS = [
-  { n: "01", t: "Stratégie" },
-  { n: "02", t: "Design" },
-  { n: "03", t: "Performance" },
+const PILLARS: { n: string; t: string; icon: PixelIconName }[] = [
+  { n: "01", t: "Stratégie", icon: "diamond" },
+  { n: "02", t: "Design", icon: "star" },
+  { n: "03", t: "Performance", icon: "bulb" },
 ];
 
 export default function AgencySection() {
@@ -41,9 +42,11 @@ export default function AgencySection() {
       </svg>
 
       <div className="relative z-10 mx-auto max-w-[1100px]">
-        <p className="ag-in type-body text-xs font-semibold uppercase tracking-[0.32em] text-white/70 opacity-0">L'agence</p>
+        <p className="ag-in type-body flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.32em] text-white/70 opacity-0">
+          <PixelIcon name="sparkle" size={16} />L'agence<PixelIcon name="sparkle" size={16} />
+        </p>
         <h2 className="ag-in type-strong mx-auto mt-5 max-w-3xl opacity-0" style={{ fontSize: "clamp(2rem, 5.2vw, 4rem)" }}>
-          On ne livre pas des sites. On construit des présences.
+          On ne livre pas des sites. On construit des <span className="mark-select">présences</span>.
         </h2>
         <p className="ag-in type-body mx-auto mt-7 max-w-2xl text-white/80 opacity-0" style={{ fontSize: "clamp(0.95rem, 2vw, 1.2rem)" }}>
           WAY Agency est une agence web créative basée à Strasbourg. On travaille avec des businesses qui ont quelque chose à dire et qui veulent être entendus.
@@ -56,6 +59,7 @@ export default function AgencySection() {
               className="ag-pillar flex flex-col items-center gap-3 rounded-2xl border border-white/20 p-10 opacity-0 md:p-12"
               style={{ background: "linear-gradient(165deg, rgba(34,62,110,0.32) 0%, rgba(16,32,62,0.38) 60%, rgba(10,22,44,0.42) 100%)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 18px 40px -18px rgba(0,0,0,0.4)" }}
             >
+              <PixelIcon name={p.icon} size={30} />
               <p className="type-body text-sm font-semibold tabular-nums text-white/45">{p.n}</p>
               <h3 className="type-strong text-2xl text-white md:text-3xl">{p.t}</h3>
             </div>

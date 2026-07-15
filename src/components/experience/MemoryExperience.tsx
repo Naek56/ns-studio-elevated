@@ -19,32 +19,43 @@ type Beat =
   | { kind: "button2"; hold: number }     // le bouton, légèrement différent
   | { kind: "finale" };
 
+/* Les *mots* entourés d'astérisques sont les « mots accrocheurs » : eux seuls
+   passent en serif ivoire (accentize). Le reste garde la police normale. */
 const SCRIPT: Beat[] = [
   { kind: "button" },
   { kind: "pop" },
-  { kind: "text", lines: ["Parfait"], hold: 1500 },
-  { kind: "text", lines: ["Maintenant, essayons quelque chose."], hold: 2100 },
+  { kind: "text", lines: ["*Parfait*"], hold: 1500 },
+  { kind: "text", lines: ["Maintenant, *essayons* quelque chose."], hold: 2100 },
   { kind: "quiz" },
   // (la réponse insère son propre feedback)
-  { kind: "text", lines: ["Mais ce n'était pas le test."], hold: 2300 },
+  { kind: "text", lines: ["Mais ce n'était pas le *test*."], hold: 2300 },
   { kind: "silence", hold: 3000 },
-  { kind: "stack", lines: ["Depuis le début, ton cerveau essayait de retenir une seule chose.", "Un bouton.", "Une couleur.", "Une action."], hold: 2600 },
-  { kind: "text", lines: ["Mais demande-toi quelque chose..."], hold: 2200 },
-  { kind: "text", lines: ["Est-ce que tu te souviens réellement du bouton ?"], hold: 2400 },
+  { kind: "stack", lines: ["Depuis le début, ton *cerveau* essayait de retenir une seule chose.", "Un *bouton*.", "Une *couleur*.", "Une *action*."], hold: 2600 },
+  { kind: "text", lines: ["Mais *demande-toi* quelque chose..."], hold: 2200 },
+  { kind: "text", lines: ["Est-ce que tu te *souviens* réellement du bouton ?"], hold: 2400 },
   { kind: "button2", hold: 5000 },
   { kind: "silence", hold: 3000 },
-  { kind: "text", lines: ["Chaque souvenir que tu possèdes est une reconstruction."], hold: 2600 },
-  { kind: "text", lines: ["Ton cerveau ne conserve pas le monde."], hold: 2300 },
-  { kind: "text", lines: ["Il crée une version du monde."], hold: 2400 },
-  { kind: "text", lines: ["C'est aussi ce qui rend chaque personne unique."], hold: 2500 },
-  { kind: "text", lines: ["Deux personnes peuvent voir la même chose..."], hold: 2300 },
-  { kind: "text", lines: ["et repartir avec deux expériences complètement différentes."], hold: 2700 },
-  { kind: "text", lines: ["Un site fonctionne exactement comme un souvenir."], hold: 2600 },
-  { kind: "text", lines: ["Ce n'est pas seulement ce que les visiteurs voient qui compte."], hold: 2500 },
-  { kind: "text", lines: ["C'est ce qu'ils comprennent."], hold: 2100 },
-  { kind: "text", lines: ["Ce qu'ils retiennent."], hold: 2400 },
+  { kind: "text", lines: ["Chaque souvenir que tu possèdes est une *reconstruction*."], hold: 2600 },
+  { kind: "text", lines: ["Ton cerveau ne conserve pas le *monde*."], hold: 2300 },
+  { kind: "text", lines: ["Il crée une *version* du monde."], hold: 2400 },
+  { kind: "text", lines: ["C'est aussi ce qui rend chaque personne *unique*."], hold: 2500 },
+  { kind: "text", lines: ["Deux personnes peuvent voir la *même chose*..."], hold: 2300 },
+  { kind: "text", lines: ["et repartir avec deux expériences complètement *différentes*."], hold: 2700 },
+  { kind: "text", lines: ["Un site fonctionne exactement comme un *souvenir*."], hold: 2600 },
+  { kind: "text", lines: ["Ce n'est pas seulement ce que les visiteurs *voient* qui compte."], hold: 2500 },
+  { kind: "text", lines: ["C'est ce qu'ils *comprennent*."], hold: 2100 },
+  { kind: "text", lines: ["Ce qu'ils *retiennent*."], hold: 2400 },
   { kind: "finale" },
 ];
+
+/* transforme "un *mot* clé" en JSX avec les mots accrocheurs en serif ivoire */
+function accentize(s: string) {
+  return s.split(/(\*[^*]+\*)/g).map((part, i) =>
+    part.startsWith("*") && part.endsWith("*")
+      ? <span key={i} className="exp-accent">{part.slice(1, -1)}</span>
+      : <span key={i}>{part}</span>
+  );
+}
 
 const CHOICES = ["Bleu", "Blanc", "Rouge", "Noir"];
 
@@ -105,8 +116,8 @@ export default function MemoryExperience() {
 
   const answer = (c: string) => {
     sfxTap();
-    if (c === "Rouge") { sfxSuccess(); setFeedback("Bonne réponse"); }
-    else { sfxHmm(); setFeedback("Il était rouge."); }
+    if (c === "Rouge") { sfxSuccess(); setFeedback("*Bonne* réponse"); }
+    else { sfxHmm(); setFeedback("Il était *rouge*."); }
   };
 
   // un clic pendant un texte / silence fait avancer (jamais pendant une interaction)
@@ -120,15 +131,16 @@ export default function MemoryExperience() {
       className="fixed inset-0 flex items-center justify-center overflow-hidden px-6 text-center"
       style={{
         background: [
-          // vignette sombre : assombrit les bords et cadre le bouton (contraste)
+          // vignette sombre EN HAUT : assombrit les bords, cadre le bouton (contraste)
           "radial-gradient(115% 115% at 50% 45%, transparent 26%, rgba(1,3,8,0.5) 68%, rgba(0,1,4,0.82) 100%)",
-          // tache cyan lumineuse en haut à gauche (plus saturée, plus resserrée)
+          // LA PHOTO (déposée dans /public sous le nom experience-bg.png).
+          // Tant qu'elle n'est pas là, elle est simplement ignorée et le
+          // dégradé ci-dessous s'affiche comme repli.
+          "url('/experience-bg.png') center / cover no-repeat",
+          // ── repli : recréation du dégradé bleu granuleux ──
           "radial-gradient(58% 50% at 33% 18%, rgba(224,246,255,0.95) 0%, rgba(120,210,250,0.45) 36%, rgba(50,160,230,0) 68%)",
-          // traînée bleue vive à droite
           "radial-gradient(40% 76% at 81% 62%, rgba(60,190,255,0.9) 0%, rgba(28,140,225,0.3) 40%, rgba(12,70,150,0) 68%)",
-          // brume bleue centrale profonde
           "radial-gradient(88% 82% at 48% 42%, rgba(18,86,158,0.5) 0%, rgba(8,34,78,0.3) 45%, rgba(2,8,22,0) 74%)",
-          // base marine très sombre (noirs profonds → fort contraste)
           "linear-gradient(140deg, #020610 0%, #051428 38%, #030c1c 66%, #010409 100%)",
         ].join(", "),
       }}
@@ -163,8 +175,8 @@ export default function MemoryExperience() {
 
         {/* ── textes simples ── */}
         {beat.kind === "text" && (
-          <motion.p key={`t${step}`} {...fade} className="exp-strong max-w-3xl" style={{ fontSize: "clamp(1.6rem, 4.6vw, 3.1rem)" }}>
-            {beat.lines[0]}
+          <motion.p key={`t${step}`} {...fade} className="type-strong max-w-3xl" style={{ fontSize: "clamp(1.6rem, 4.6vw, 3.1rem)" }}>
+            {accentize(beat.lines[0])}
           </motion.p>
         )}
 
@@ -173,8 +185,8 @@ export default function MemoryExperience() {
           <motion.div key="quiz" {...fade} className="flex flex-col items-center">
             {feedback === null ? (
               <>
-                <p className="exp-strong max-w-2xl" style={{ fontSize: "clamp(1.6rem, 4.4vw, 2.9rem)" }}>
-                  De quelle couleur était le bouton ?
+                <p className="type-strong max-w-2xl" style={{ fontSize: "clamp(1.6rem, 4.4vw, 2.9rem)" }}>
+                  {accentize("De quelle *couleur* était le bouton ?")}
                 </p>
                 <div className="mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
                   {CHOICES.map((c) => (
@@ -189,8 +201,8 @@ export default function MemoryExperience() {
                 </div>
               </>
             ) : (
-              <motion.p key="fb" {...fade} className="exp-strong" style={{ fontSize: "clamp(1.6rem, 4.6vw, 3.1rem)" }}>
-                {feedback}
+              <motion.p key="fb" {...fade} className="type-strong" style={{ fontSize: "clamp(1.6rem, 4.6vw, 3.1rem)" }}>
+                {accentize(feedback)}
               </motion.p>
             )}
           </motion.div>
@@ -208,10 +220,10 @@ export default function MemoryExperience() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 1.0, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                className={i === 0 ? "exp-strong opacity-80" : "exp-strong"}
+                className={i === 0 ? "type-strong opacity-80" : "type-strong"}
                 style={{ fontSize: i === 0 ? "clamp(1.4rem, 3.6vw, 2.4rem)" : "clamp(1.6rem, 4.4vw, 3rem)" }}
               >
-                {l}
+                {accentize(l)}
               </motion.p>
             ))}
           </motion.div>
@@ -225,10 +237,10 @@ export default function MemoryExperience() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.2, duration: 0.7 }}
-              className="exp-strong mt-12 max-w-2xl"
+              className="type-strong mt-12 max-w-2xl"
               style={{ fontSize: "clamp(1.2rem, 3vw, 1.9rem)" }}
             >
-              Ou est-ce que ton cerveau vient simplement de reconstruire ce souvenir ?
+              {accentize("Ou est-ce que ton cerveau vient simplement de *reconstruire* ce souvenir ?")}
             </motion.p>
           </motion.div>
         )}
@@ -253,11 +265,11 @@ export default function MemoryExperience() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.9 }}
-              className="exp-strong max-w-2xl"
+              className="type-strong max-w-2xl"
               style={{ fontSize: "clamp(1.5rem, 3.8vw, 2.6rem)" }}
             >
-              Nous ne créons pas seulement des sites.
-              <span className="mt-2 block">Nous créons des expériences qui restent.</span>
+              {accentize("Nous ne créons pas seulement des sites.")}
+              <span className="mt-2 block">{accentize("Nous créons des *expériences* qui *restent*.")}</span>
             </motion.p>
 
             {/* bouton sobre (sans cartoon) vers le site de l'agence */}
