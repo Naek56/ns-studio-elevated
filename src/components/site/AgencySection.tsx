@@ -1,6 +1,14 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
 import PixelIcon, { type PixelIconName } from "./PixelIcon";
+import PixelScatter, { type Deco } from "./PixelScatter";
+
+const DECO: Deco[] = [
+  { name: "plus", top: "12%", left: "8%", size: 15, rotate: -8, opacity: 0.26, delay: 0.4 },
+  { name: "diamond", top: "18%", right: "10%", size: 16, rotate: 8, opacity: 0.26, delay: 1.3 },
+  { name: "sparkle", top: "46%", left: "5%", size: 18, rotate: 0, opacity: 0.24, delay: 0.9 },
+  { name: "star", top: "52%", right: "6%", size: 16, rotate: 6, opacity: 0.24, delay: 1.8 },
+];
 
 /* Section Agence — « On ne livre pas des sites. On construit des présences. »
    Design : le logo WAY en grand filigrane. Trois piliers numérotés. */
@@ -34,6 +42,7 @@ export default function AgencySection() {
 
   return (
     <section ref={root} id="agence" className="relative overflow-hidden px-6 py-24 text-center md:px-10 md:py-32">
+      <PixelScatter items={DECO} />
       {/* design : logo WAY en filigrane */}
       <svg aria-hidden viewBox="0 0 48 48" fill="none"
         className="ag-logo pointer-events-none absolute left-1/2 top-[38%] -z-0 h-[52vh] w-[52vh] max-h-[520px] max-w-[520px] -translate-x-1/2 -translate-y-1/2 text-white opacity-[0.05] will-change-transform">

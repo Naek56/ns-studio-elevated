@@ -1,6 +1,14 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
 import PixelIcon, { type PixelIconName } from "./PixelIcon";
+import PixelScatter, { type Deco } from "./PixelScatter";
+
+const DECO: Deco[] = [
+  { name: "diamond", top: "12%", left: "8%", size: 16, rotate: -8, opacity: 0.26, delay: 0.7 },
+  { name: "sparkle", top: "18%", right: "9%", size: 20, rotate: 6, opacity: 0.26, delay: 1.5 },
+  { name: "globe", top: "48%", left: "6%", size: 18, rotate: 0, opacity: 0.22, delay: 0.3 },
+  { name: "plus", top: "54%", right: "6%", size: 14, rotate: 8, opacity: 0.24, delay: 1.9 },
+];
 
 /* Section Kairos — « Et après la livraison ? ». Trois piliers numérotés. */
 const PILLARS: { n: string; t: string; icon: PixelIconName }[] = [
@@ -31,6 +39,7 @@ export default function KairosSection() {
 
   return (
     <section ref={root} id="kairos" className="relative overflow-hidden px-6 py-24 text-center md:px-10 md:py-32">
+      <PixelScatter items={DECO} />
       <div className="relative z-10 mx-auto max-w-[1100px]">
         <p className="ka-in type-body flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.32em] text-white/70 opacity-0">
           <PixelIcon name="globe" size={16} />Le cerveau<PixelIcon name="diamond" size={16} />

@@ -4,6 +4,14 @@ import Footer from "./Footer";
 import { openContact } from "./ContactModal";
 import { sfxTap } from "@/lib/sfx";
 import { gsap, REDUCED } from "@/lib/gsapSetup";
+import PixelScatter, { type Deco } from "./PixelScatter";
+
+const CONTACT_DECO: Deco[] = [
+  { name: "sparkle", top: "14%", left: "12%", size: 22, rotate: -8, opacity: 0.32, delay: 0.3 },
+  { name: "diamond", top: "22%", right: "13%", size: 16, rotate: 8, opacity: 0.28, delay: 1.2 },
+  { name: "star", top: "54%", left: "8%", size: 18, rotate: -6, opacity: 0.28, delay: 0.8 },
+  { name: "heart", top: "60%", right: "10%", size: 16, rotate: 10, opacity: 0.26, delay: 1.9 },
+];
 
 export default function Contact() {
   const root = useRef<HTMLElement>(null);
@@ -23,6 +31,7 @@ export default function Contact() {
 
   return (
     <section ref={root} id="contact" className="relative flex min-h-[85svh] flex-col justify-between overflow-hidden px-6 pt-28 pb-12 text-center">
+      <PixelScatter items={CONTACT_DECO} />
       <div aria-hidden className="read-pool pointer-events-none absolute left-1/2 top-1/2 h-[60vh] w-[92vw] max-w-[1100px] -translate-x-1/2 -translate-y-1/2" />
 
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center">
