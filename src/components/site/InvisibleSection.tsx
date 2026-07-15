@@ -108,7 +108,7 @@ export default function InvisibleSection() {
           Mais en ligne, ils sont invisibles.
         </p>
         <p className="iv-line type-strong mt-6 text-white opacity-0" style={{ fontSize: "clamp(1.9rem, 5vw, 3.6rem)" }}>
-          Et l'invisibilité coûte cher.
+          Et <span className="mark-select">l'invisibilité</span> coûte cher.
         </p>
       </div>
     </section>

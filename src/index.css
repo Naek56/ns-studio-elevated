@@ -138,19 +138,20 @@
     font-optical-sizing: auto;
     font-weight: 600;
     font-style: italic;
-    color: #f4ecda;
+    color: #5cb3ff; /* bleu électrique : couleur distincte de la police normale */
     letter-spacing: 0;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6), 0 0 3px rgba(0, 0, 0, 0.5);
   }
 
-  /* « surlignage » façon sélection de texte sur ordinateur (pour copier /
-     supprimer) : un mot accrocheur posé sur un bloc bleu, texte en blanc.
+  /* mot « sélectionné » façon sélection de texte d'ordinateur : un bloc bleu
+     translucide et RECTANGULAIRE qui couvre la hauteur de ligne, le texte
+     garde sa couleur — exactement comme quand on sélectionne un mot.
      box-decoration-break: clone → le fond suit le mot même sur 2 lignes. */
   .mark-select {
-    background-color: #2f6df6;
-    color: #fff;
-    padding: 0.02em 0.14em;
-    margin: 0 0.02em;
-    border-radius: 2px;
+    background-color: rgba(45, 121, 255, 0.5);
+    color: inherit;
+    padding: 0.08em 0.03em;
+    border-radius: 1px;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
     text-shadow: none;

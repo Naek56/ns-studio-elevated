@@ -30,7 +30,7 @@ export default function Contact() {
           Parlons de votre projet
         </p>
         <h2 className="c-in type-strong mt-6 max-w-3xl opacity-0" style={{ fontSize: "clamp(2rem, 5.4vw, 4rem)" }}>
-          Vous ne le regretterez pas.
+          Vous ne le <span className="mark-select">regretterez</span> pas.
         </h2>
         <button
           onClick={() => { sfxTap(); openContact(); }}
