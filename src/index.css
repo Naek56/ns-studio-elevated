@@ -130,6 +130,19 @@
     letter-spacing: 0;
   }
 
+  /* mots accrocheurs de l'expérience : serif Fraunces, teinte ivoire chaude
+     (police ET couleur distinctes du reste du site) */
+  .exp-strong {
+    font-family: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+    color: #f4ecda;
+    text-shadow: 0 2px 34px rgba(0, 0, 0, 0.55), 0 1px 4px rgba(0, 0, 0, 0.45);
+  }
+  .exp-strong em, .exp-strong i { font-style: italic; font-weight: 500; }
+
   /* texture carton/papier : même grain que la photo, tonalité claire fiable */
   .paper {
     background-color: #e9e6dd;

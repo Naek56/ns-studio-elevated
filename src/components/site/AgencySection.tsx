@@ -1,13 +1,12 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
-import { IconStrategy, IconDesign, IconPerformance } from "./AnimatedIcons";
 
 /* Section Agence — « On ne livre pas des sites. On construit des présences. »
-   Design : le logo WAY en grand filigrane. Trois piliers illustrés (animés). */
+   Design : le logo WAY en grand filigrane. Trois piliers numérotés. */
 const PILLARS = [
-  { t: "Stratégie", icon: <IconStrategy /> },
-  { t: "Design", icon: <IconDesign /> },
-  { t: "Performance", icon: <IconPerformance /> },
+  { n: "01", t: "Stratégie" },
+  { n: "02", t: "Design" },
+  { n: "03", t: "Performance" },
 ];
 
 export default function AgencySection() {
@@ -54,11 +53,11 @@ export default function AgencySection() {
           {PILLARS.map((p) => (
             <div
               key={p.t}
-              className="ag-pillar flex flex-col items-center gap-5 rounded-2xl border border-white/20 p-8 opacity-0 md:p-10"
+              className="ag-pillar flex flex-col items-center gap-3 rounded-2xl border border-white/20 p-10 opacity-0 md:p-12"
               style={{ background: "linear-gradient(165deg, rgba(34,62,110,0.32) 0%, rgba(16,32,62,0.38) 60%, rgba(10,22,44,0.42) 100%)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 18px 40px -18px rgba(0,0,0,0.4)" }}
             >
-              {p.icon}
-              <h3 className="type-strong text-xl text-white md:text-2xl">{p.t}</h3>
+              <p className="type-body text-sm font-semibold tabular-nums text-white/45">{p.n}</p>
+              <h3 className="type-strong text-2xl text-white md:text-3xl">{p.t}</h3>
             </div>
           ))}
         </div>
