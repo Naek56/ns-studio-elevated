@@ -118,9 +118,19 @@ export default function MemoryExperience() {
   return (
     <div
       className="fixed inset-0 flex items-center justify-center overflow-hidden px-6 text-center"
-      style={{ background: "radial-gradient(120% 120% at 50% 30%, #0b0d12 0%, #05060a 55%, #020204 100%)" }}
+      style={{
+        background: [
+          "radial-gradient(65% 55% at 33% 20%, rgba(214,242,255,0.92) 0%, rgba(150,222,252,0.5) 38%, rgba(70,180,240,0) 72%)",
+          "radial-gradient(42% 78% at 80% 62%, rgba(72,196,255,0.85) 0%, rgba(40,150,225,0.35) 40%, rgba(20,90,170,0) 70%)",
+          "radial-gradient(90% 85% at 48% 42%, rgba(24,96,168,0.55) 0%, rgba(12,44,92,0.3) 45%, rgba(4,12,30,0) 75%)",
+          "linear-gradient(140deg, #060b17 0%, #081a33 38%, #061426 66%, #04070f 100%)",
+        ].join(", "),
+      }}
       onClick={clickThrough}
     >
+      {/* grain photographique (film) par-dessus le dégradé */}
+      <div aria-hidden className="grain pointer-events-none absolute inset-0" style={{ opacity: 0.22, mixBlendMode: "overlay" }} />
+
       <AnimatePresence mode="wait">
 
         {/* ── 0. le bouton + « Ne l'oublie pas » ── */}
