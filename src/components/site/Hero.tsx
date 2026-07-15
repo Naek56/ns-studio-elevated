@@ -65,7 +65,7 @@ export default function Hero({ play }: { play: boolean }) {
           </span>
         </h1>
         <p className="h-sub mt-8 flex items-center justify-center gap-2 text-base text-white/70 opacity-0 sm:text-lg">
-          On <span className="mark-select">change</span> ça.<PixelIcon name="star" size={18} />
+          On change ça.<PixelIcon name="star" size={18} />
         </p>
       </div>
 

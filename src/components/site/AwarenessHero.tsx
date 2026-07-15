@@ -60,7 +60,7 @@ export default function AwarenessHero() {
 
       <div className="a-stage relative flex flex-col items-center will-change-transform">
         <h1 className="a-title type-strong max-w-4xl opacity-0" style={{ fontSize: "clamp(1.9rem, 5.4vw, 4.2rem)" }}>
-          Arrête de regarder ton écran
+          Arrête de regarder ton <span className="mark-select">écran</span>
         </h1>
 
         <div className="a-sub mt-9 flex flex-col items-center justify-center gap-5 opacity-0 sm:mt-11 sm:flex-row sm:gap-8">
@@ -68,7 +68,7 @@ export default function AwarenessHero() {
             <Arrow dir="l" delay={0.12} />
             <Arrow dir="l" delay={0} />
           </div>
-          <span className="type-body flex items-center gap-2 text-base font-medium text-white sm:text-xl"><PixelIcon name="smiley" size={20} />Regarde <span className="mark-select">autour</span> de toi</span>
+          <span className="type-body flex items-center gap-2 text-base font-medium text-white sm:text-xl"><PixelIcon name="smiley" size={20} />Regarde autour de toi</span>
           <div className="flex items-center gap-1.5 sm:gap-2.5">
             <Arrow dir="r" delay={0} />
             <Arrow dir="r" delay={0.12} />
