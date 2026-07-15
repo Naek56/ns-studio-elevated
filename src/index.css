@@ -150,12 +150,24 @@
   .mark-select {
     background-color: rgba(45, 121, 255, 0.5);
     color: inherit;
-    padding: 0.08em 0.03em;
-    border-radius: 1px;
+    padding: 0 0.09em;      /* pas de hauteur ajoutée → ne touche pas les lignes voisines */
+    margin: 0 0.06em;       /* petit écart → ne colle pas aux mots voisins */
+    border-radius: 2px;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
     text-shadow: none;
   }
+
+  /* petites décorations pixel qui flottent doucement (remplir les vides) */
+  .px-float {
+    animation: px-float 6s ease-in-out infinite;
+    will-change: transform, opacity;
+  }
+  @keyframes px-float {
+    0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); opacity: var(--op, 0.35); }
+    50%      { transform: translateY(-7px) rotate(var(--rot, 0deg)); opacity: calc(var(--op, 0.35) + 0.12); }
+  }
+  @media (prefers-reduced-motion: reduce) { .px-float { animation: none; } }
 
   /* texture carton/papier : même grain que la photo, tonalité claire fiable */
   .paper {

@@ -2,16 +2,16 @@ import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
 
 /* Transition « traverser un nuage » entre l'accueil (#accueil) et la première
-   section. On est AU-DESSUS des nuages et on les traverse : au scroll, des
-   bancs de nuages réalistes (feTurbulence SVG) défilent HORIZONTALEMENT à des
-   vitesses différentes (parallaxe), avec un cœur blanc laiteux au milieu (on
-   est dedans), puis ils sortent de l'écran → la section suivante apparaît.
+   section. Pas de blanc plein écran : un BANC de nuages (une bande, pas tout
+   l'écran) traverse la vue VERTICALEMENT et LINÉAIREMENT au scroll — on
+   descend en scrollant droit dans le nuage. Bords estompés (masque) pour que
+   le nuage se fonde, deux plans en parallaxe pour la profondeur.
 
-   100 % code (aucun fichier). Ciel bleu du site en fond → nuages blancs. */
+   100 % code (feTurbulence SVG, aucun fichier). Ciel bleu du site en fond. */
 
 function cloudUri(freq: number, seed: number, octaves: number, bias: number) {
   const svg =
-    `<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'>` +
+    `<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='700'>` +
     `<filter id='c' x='-20%' y='-20%' width='140%' height='140%'>` +
     `<feTurbulence type='fractalNoise' baseFrequency='${freq}' numOctaves='${octaves}' seed='${seed}' stitchTiles='stitch'/>` +
     `<feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 -1.6 ${bias}'/>` +
@@ -22,9 +22,7 @@ function cloudUri(freq: number, seed: number, octaves: number, bias: number) {
 
 export default function CloudTransition({ active }: { active: boolean }) {
   const root = useRef<HTMLDivElement>(null);
-  const veil = useRef<HTMLDivElement>(null);
   const far = useRef<HTMLDivElement>(null);
-  const mid = useRef<HTMLDivElement>(null);
   const near = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -32,66 +30,57 @@ export default function CloudTransition({ active }: { active: boolean }) {
     const accueil = document.getElementById("accueil");
     if (!accueil || !root.current) return;
 
-    let tl: gsap.core.Timeline | null = null;
     const ctx = gsap.context(() => {
-      tl = gsap.timeline({
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: accueil,
           start: "top top",
           end: "bottom top",
-          scrub: 0.6,
+          scrub: true, // couplage direct au scroll = linéaire
           invalidateOnRefresh: true,
         },
       });
 
-      // voile blanc laiteux : le cœur du nuage (pic au milieu)
-      tl.fromTo(veil.current, { opacity: 0 }, { opacity: 0.82, ease: "power1.inOut", duration: 0.5 }, 0)
-        .to(veil.current, { opacity: 0, ease: "power1.inOut", duration: 0.5 }, 0.5);
-
-      // un banc de nuages : défile horizontalement, apparaît puis disparaît.
-      // dx = déplacement horizontal total (en %), signe = sens.
-      const bank = (el: HTMLDivElement | null, peak: number, dx: number, drift: number) => {
+      // un banc : monte tout droit à travers la vue (bas → haut), linéaire.
+      const bank = (el: HTMLDivElement | null, yFrom: number, yTo: number, peak: number) => {
         if (!el) return;
-        gsap.set(el, { xPercent: -dx / 2, yPercent: -drift / 2 });
-        tl!
-          .fromTo(el, { opacity: 0 }, { opacity: peak, ease: "power1.in", duration: 0.5 }, 0)
-          .to(el, { opacity: 0, ease: "power1.out", duration: 0.5 }, 0.5)
-          .to(el, { xPercent: dx / 2, yPercent: drift / 2, ease: "none", duration: 1 }, 0);
+        tl.fromTo(el, { yPercent: yFrom }, { yPercent: yTo, ease: "none", duration: 1 }, 0)
+          // apparition/disparition douce seulement aux tout débuts/fins
+          .fromTo(el, { opacity: 0 }, { opacity: peak, ease: "none", duration: 0.14 }, 0)
+          .to(el, { opacity: 0, ease: "none", duration: 0.14 }, 0.86);
       };
-      // même sens (droite → gauche), vitesses croissantes = on avance à travers
-      bank(far.current, 0.5, -26, -6);   // fond, lent
-      bank(mid.current, 0.75, -48, -3);  // milieu
-      bank(near.current, 1, -82, 4);     // premier plan, rapide
+      bank(far.current, 80, -80, 0.7);   // fond, un peu plus lent visuellement
+      bank(near.current, 105, -105, 0.95); // premier plan, traverse plus vite
     }, root);
 
-    // le layout est prêt après le reveal : on recalcule les positions
     const r = requestAnimationFrame(() => ScrollTrigger.refresh());
-
     return () => { cancelAnimationFrame(r); ctx.revert(); };
   }, [active]);
 
   if (REDUCED) return null;
 
-  // chaque banc est plus large que l'écran pour pouvoir défiler sans laisser
-  // de bord visible.
-  const bankStyle: React.CSSProperties = {
+  // une BANDE (pas tout l'écran) : ~72% de haut, bords estompés en haut/bas
+  // pour que le nuage se fonde dans le ciel au lieu d'un rectangle net.
+  const feather =
+    "linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%)";
+  const bank: React.CSSProperties = {
     position: "absolute",
-    top: "-25%",
-    left: "-60%",
-    width: "220%",
-    height: "150%",
+    left: "-25%",
+    width: "150%",
+    top: "14%",
+    height: "72%",
     backgroundSize: "cover",
     backgroundPosition: "center",
+    WebkitMaskImage: feather,
+    maskImage: feather,
     willChange: "transform, opacity",
     opacity: 0,
   };
 
   return (
     <div ref={root} aria-hidden className="pointer-events-none fixed inset-0 z-[60] overflow-hidden">
-      <div ref={far} style={{ ...bankStyle, backgroundImage: cloudUri(0.01, 2, 5, 1.0), filter: "blur(3px)" }} />
-      <div ref={mid} style={{ ...bankStyle, backgroundImage: cloudUri(0.014, 7, 6, 1.18), filter: "blur(1px)" }} />
-      <div ref={near} style={{ ...bankStyle, backgroundImage: cloudUri(0.02, 4, 6, 1.42) }} />
-      <div ref={veil} style={{ position: "absolute", inset: 0, background: "radial-gradient(130% 130% at 50% 45%, #ffffff 0%, #eef4fb 62%, #e2ecf7 100%)", opacity: 0 }} />
+      <div ref={far} style={{ ...bank, backgroundImage: cloudUri(0.012, 3, 5, 1.05), filter: "blur(2px)" }} />
+      <div ref={near} style={{ ...bank, backgroundImage: cloudUri(0.019, 6, 6, 1.32) }} />
     </div>
   );
 }
