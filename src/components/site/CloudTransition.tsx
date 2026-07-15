@@ -2,16 +2,16 @@ import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
 
 /* Transition « traverser un nuage » entre l'accueil (#accueil) et la première
-   section. Pas de blanc plein écran : un BANC de nuages (une bande, pas tout
-   l'écran) traverse la vue VERTICALEMENT et LINÉAIREMENT au scroll — on
-   descend en scrollant droit dans le nuage. Bords estompés (masque) pour que
-   le nuage se fonde, deux plans en parallaxe pour la profondeur.
+   section. Gros nuage ÉPAIS : des bancs montent, puis un cœur de nuage dense
+   RECOUVRE TOUT L'ÉCRAN un instant (on est en plein dedans), puis se dissipe.
+   La transition s'étale sur ~1,7 écran de scroll → beaucoup de distance entre
+   le texte et le nuage (le texte est déjà loin quand le nuage est au plus dense).
 
    100 % code (feTurbulence SVG, aucun fichier). Ciel bleu du site en fond. */
 
 function cloudUri(freq: number, seed: number, octaves: number, bias: number) {
   const svg =
-    `<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='700'>` +
+    `<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'>` +
     `<filter id='c' x='-20%' y='-20%' width='140%' height='140%'>` +
     `<feTurbulence type='fractalNoise' baseFrequency='${freq}' numOctaves='${octaves}' seed='${seed}' stitchTiles='stitch'/>` +
     `<feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 -1.6 ${bias}'/>` +
@@ -22,6 +22,8 @@ function cloudUri(freq: number, seed: number, octaves: number, bias: number) {
 
 export default function CloudTransition({ active }: { active: boolean }) {
   const root = useRef<HTMLDivElement>(null);
+  const coreWhite = useRef<HTMLDivElement>(null);
+  const coreTex = useRef<HTMLDivElement>(null);
   const far = useRef<HTMLDivElement>(null);
   const near = useRef<HTMLDivElement>(null);
 
@@ -35,22 +37,31 @@ export default function CloudTransition({ active }: { active: boolean }) {
         scrollTrigger: {
           trigger: accueil,
           start: "top top",
-          end: "bottom top",
-          scrub: true, // couplage direct au scroll = linéaire
+          end: "+=135%", // s'étale au-delà de l'accueil (distance) mais dégagé à l'arrivée
+          scrub: true,
           invalidateOnRefresh: true,
         },
       });
 
-      // un banc : monte tout droit à travers la vue (bas → haut), linéaire.
-      const bank = (el: HTMLDivElement | null, yFrom: number, yTo: number, peak: number) => {
+      // bancs de nuages qui défilent verticalement (mouvement d'entrée/sortie)
+      const bank = (el: HTMLDivElement | null, yFrom: number, yTo: number, peak: number, outStart: number) => {
         if (!el) return;
         tl.fromTo(el, { yPercent: yFrom }, { yPercent: yTo, ease: "none", duration: 1 }, 0)
-          // apparition/disparition douce seulement aux tout débuts/fins
-          .fromTo(el, { opacity: 0 }, { opacity: peak, ease: "none", duration: 0.14 }, 0)
-          .to(el, { opacity: 0, ease: "none", duration: 0.14 }, 0.86);
+          .fromTo(el, { opacity: 0 }, { opacity: peak, ease: "power1.in", duration: 0.3 }, 0)
+          .to(el, { opacity: 0, ease: "power1.out", duration: 0.85 - outStart }, outStart);
       };
-      bank(far.current, 80, -80, 0.7);   // fond, un peu plus lent visuellement
-      bank(near.current, 105, -105, 0.95); // premier plan, traverse plus vite
+      bank(far.current, 70, -70, 0.75, 0.58);
+      bank(near.current, 100, -100, 0.9, 0.56);
+
+      // cœur dense : recouvre TOUT l'écran au milieu, avec un temps de maintien
+      const core = (el: HTMLDivElement | null, peak: number) => {
+        if (!el) return;
+        tl.fromTo(el, { opacity: 0 }, { opacity: peak, ease: "power1.inOut", duration: 0.36 }, 0.08)
+          .to(el, { opacity: peak, duration: 0.08 }, 0.46) // maintien plein écran
+          .to(el, { opacity: 0, ease: "power1.inOut", duration: 0.26 }, 0.54);
+      };
+      core(coreWhite.current, 0.97); // garantit une couverture totale
+      core(coreTex.current, 0.92);   // texture de nuage épaisse par-dessus
     }, root);
 
     const r = requestAnimationFrame(() => ScrollTrigger.refresh());
@@ -59,28 +70,23 @@ export default function CloudTransition({ active }: { active: boolean }) {
 
   if (REDUCED) return null;
 
-  // une BANDE (pas tout l'écran) : ~72% de haut, bords estompés en haut/bas
-  // pour que le nuage se fonde dans le ciel au lieu d'un rectangle net.
-  const feather =
-    "linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%)";
+  // bandes larges et hautes (nuage épais) avec bords estompés
+  const feather = "linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%)";
   const bank: React.CSSProperties = {
-    position: "absolute",
-    left: "-25%",
-    width: "150%",
-    top: "14%",
-    height: "72%",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    WebkitMaskImage: feather,
-    maskImage: feather,
-    willChange: "transform, opacity",
-    opacity: 0,
+    position: "absolute", left: "-30%", width: "160%", top: "-10%", height: "120%",
+    backgroundSize: "cover", backgroundPosition: "center",
+    WebkitMaskImage: feather, maskImage: feather,
+    willChange: "transform, opacity", opacity: 0,
   };
 
   return (
     <div ref={root} aria-hidden className="pointer-events-none fixed inset-0 z-[60] overflow-hidden">
-      <div ref={far} style={{ ...bank, backgroundImage: cloudUri(0.012, 3, 5, 1.05), filter: "blur(2px)" }} />
-      <div ref={near} style={{ ...bank, backgroundImage: cloudUri(0.019, 6, 6, 1.32) }} />
+      {/* bancs en parallaxe (mouvement) */}
+      <div ref={far} style={{ ...bank, backgroundImage: cloudUri(0.011, 3, 5, 1.15), filter: "blur(2px)" }} />
+      <div ref={near} style={{ ...bank, backgroundImage: cloudUri(0.017, 6, 6, 1.35) }} />
+      {/* cœur plein écran : couverture blanche + texture nuage épaisse */}
+      <div ref={coreWhite} style={{ position: "absolute", inset: 0, background: "radial-gradient(130% 130% at 50% 45%, #ffffff 0%, #eef4fb 65%, #e3edf8 100%)", opacity: 0 }} />
+      <div ref={coreTex} style={{ position: "absolute", inset: "-6%", backgroundImage: cloudUri(0.013, 9, 6, 1.5), backgroundSize: "cover", backgroundPosition: "center", opacity: 0 }} />
     </div>
   );
 }

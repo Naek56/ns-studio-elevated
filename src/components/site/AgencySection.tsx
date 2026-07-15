@@ -1,21 +1,21 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
-import PixelIcon, { type PixelIconName } from "./PixelIcon";
-import PixelScatter, { type Deco } from "./PixelScatter";
+import CloudDecor, { type CloudDeco } from "./CloudDecor";
+import PixelIcon from "./PixelIcon";
+import PillarIcon, { type PillarIconName } from "./PillarIcon";
 
-const DECO: Deco[] = [
-  { name: "plus", top: "12%", left: "8%", size: 15, rotate: -8, opacity: 0.26, delay: 0.4 },
-  { name: "diamond", top: "18%", right: "10%", size: 16, rotate: 8, opacity: 0.26, delay: 1.3 },
-  { name: "sparkle", top: "46%", left: "5%", size: 18, rotate: 0, opacity: 0.24, delay: 0.9 },
-  { name: "star", top: "52%", right: "6%", size: 16, rotate: 6, opacity: 0.24, delay: 1.8 },
+const DECO: CloudDeco[] = [
+  { top: "8%", left: "4%", size: 120, base: "#5f9ede", seed: 5, opacity: 0.4, delay: 0.4, drift: 14 },
+  { top: "14%", right: "5%", size: 100, base: "#4d86cf", seed: 14, opacity: 0.36, delay: 2.1, drift: -12 },
+  { bottom: "10%", left: "7%", size: 108, base: "#6aa6e2", seed: 21, opacity: 0.34, delay: 1.5, drift: 12 },
 ];
 
 /* Section Agence — « On ne livre pas des sites. On construit des présences. »
    Design : le logo WAY en grand filigrane. Trois piliers numérotés. */
-const PILLARS: { n: string; t: string; icon: PixelIconName }[] = [
-  { n: "01", t: "Stratégie", icon: "diamond" },
-  { n: "02", t: "Design", icon: "star" },
-  { n: "03", t: "Performance", icon: "bulb" },
+const PILLARS: { n: string; t: string; icon: PillarIconName }[] = [
+  { n: "01", t: "Stratégie", icon: "strategy" },
+  { n: "02", t: "Design", icon: "design" },
+  { n: "03", t: "Performance", icon: "performance" },
 ];
 
 export default function AgencySection() {
@@ -42,7 +42,7 @@ export default function AgencySection() {
 
   return (
     <section ref={root} id="agence" className="relative overflow-hidden px-6 py-24 text-center md:px-10 md:py-32">
-      <PixelScatter items={DECO} />
+      <CloudDecor items={DECO} />
       {/* design : logo WAY en filigrane */}
       <svg aria-hidden viewBox="0 0 48 48" fill="none"
         className="ag-logo pointer-events-none absolute left-1/2 top-[38%] -z-0 h-[52vh] w-[52vh] max-h-[520px] max-w-[520px] -translate-x-1/2 -translate-y-1/2 text-white opacity-[0.05] will-change-transform">
@@ -65,11 +65,11 @@ export default function AgencySection() {
           {PILLARS.map((p) => (
             <div
               key={p.t}
-              className="ag-pillar flex flex-col items-center gap-3 rounded-2xl border border-white/20 p-10 opacity-0 md:p-12"
+              className="ag-pillar pillar-card flex flex-col items-center gap-4 rounded-2xl border border-white/20 p-10 opacity-0 md:p-12"
               style={{ background: "linear-gradient(165deg, rgba(34,62,110,0.32) 0%, rgba(16,32,62,0.38) 60%, rgba(10,22,44,0.42) 100%)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 18px 40px -18px rgba(0,0,0,0.4)" }}
             >
-              <PixelIcon name={p.icon} size={30} />
-              <p className="type-body text-sm font-semibold tabular-nums text-white/45">{p.n}</p>
+              <PillarIcon name={p.icon} />
+              <p className="type-body mt-1 text-sm font-semibold tabular-nums text-white/45">{p.n}</p>
               <h3 className="type-strong text-2xl text-white md:text-3xl">{p.t}</h3>
             </div>
           ))}

@@ -1,15 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap, REDUCED } from "@/lib/gsapSetup";
 import PixelIcon from "./PixelIcon";
-import PixelScatter, { type Deco } from "./PixelScatter";
+import CloudDecor, { type CloudDeco } from "./CloudDecor";
 
-const HERO_DECO: Deco[] = [
-  { name: "sparkle", top: "16%", left: "9%", size: 22, rotate: -8, opacity: 0.34, delay: 0 },
-  { name: "star", top: "24%", right: "11%", size: 18, rotate: 10, opacity: 0.3, delay: 1.1 },
-  { name: "diamond", top: "62%", left: "7%", size: 16, rotate: -6, opacity: 0.28, delay: 0.6 },
-  { name: "plus", top: "70%", right: "9%", size: 15, rotate: 8, opacity: 0.26, delay: 1.6 },
-  { name: "heart", bottom: "16%", left: "16%", size: 16, rotate: -10, opacity: 0.26, delay: 2.1 },
-  { name: "sparkle", bottom: "20%", right: "18%", size: 20, rotate: 6, opacity: 0.3, delay: 0.9 },
+const HERO_DECO: CloudDeco[] = [
+  { top: "12%", left: "5%", size: 150, base: "#5f9ede", seed: 6, opacity: 0.5, delay: 0, drift: 16 },
+  { top: "20%", right: "6%", size: 120, base: "#4d86cf", seed: 12, opacity: 0.42, delay: 2.5, drift: -13 },
+  { bottom: "16%", left: "10%", size: 110, base: "#4d86cf", seed: 19, opacity: 0.4, delay: 1.2, drift: 12 },
+  { bottom: "12%", right: "12%", size: 140, base: "#6aa6e2", seed: 3, opacity: 0.46, delay: 3.4, drift: -15 },
 ];
 
 const WORDS = ["AVEUGLE", "MUET", "SEUL", "PERDU"];
@@ -64,7 +62,7 @@ export default function Hero({ play }: { play: boolean }) {
 
   return (
     <section ref={root} id="accueil" className="relative flex h-[100svh] items-center justify-center overflow-hidden px-6 text-center">
-      <PixelScatter items={HERO_DECO} />
+      <CloudDecor items={HERO_DECO} />
       <div aria-hidden className="read-pool pointer-events-none absolute left-1/2 top-1/2 h-[60vh] w-[92vw] max-w-[1100px] -translate-x-1/2 -translate-y-1/2" />
 
       <div className="h-stage relative flex flex-col items-center will-change-transform">

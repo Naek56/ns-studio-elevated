@@ -1,20 +1,20 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
-import PixelIcon, { type PixelIconName } from "./PixelIcon";
-import PixelScatter, { type Deco } from "./PixelScatter";
+import CloudDecor, { type CloudDeco } from "./CloudDecor";
+import PixelIcon from "./PixelIcon";
+import PillarIcon, { type PillarIconName } from "./PillarIcon";
 
-const DECO: Deco[] = [
-  { name: "diamond", top: "12%", left: "8%", size: 16, rotate: -8, opacity: 0.26, delay: 0.7 },
-  { name: "sparkle", top: "18%", right: "9%", size: 20, rotate: 6, opacity: 0.26, delay: 1.5 },
-  { name: "globe", top: "48%", left: "6%", size: 18, rotate: 0, opacity: 0.22, delay: 0.3 },
-  { name: "plus", top: "54%", right: "6%", size: 14, rotate: 8, opacity: 0.24, delay: 1.9 },
+const DECO: CloudDeco[] = [
+  { top: "8%", left: "5%", size: 116, base: "#5f9ede", seed: 7, opacity: 0.38, delay: 0.7, drift: 13 },
+  { top: "14%", right: "5%", size: 104, base: "#4d86cf", seed: 17, opacity: 0.36, delay: 2.4, drift: -12 },
+  { bottom: "10%", right: "8%", size: 110, base: "#6aa6e2", seed: 25, opacity: 0.34, delay: 1.1, drift: 12 },
 ];
 
-/* Section Kairos — « Et après la livraison ? ». Trois piliers numérotés. */
-const PILLARS: { n: string; t: string; icon: PixelIconName }[] = [
-  { n: "01", t: "Il observe", icon: "globe" },
-  { n: "02", t: "Il comprend", icon: "bulb" },
-  { n: "03", t: "Il analyse", icon: "diamond" },
+/* Section Kairos — « Et après la livraison ? ». Trois piliers illustrés. */
+const PILLARS: { n: string; t: string; icon: PillarIconName }[] = [
+  { n: "01", t: "Il observe", icon: "observe" },
+  { n: "02", t: "Il comprend", icon: "understand" },
+  { n: "03", t: "Il analyse", icon: "analyze" },
 ];
 
 export default function KairosSection() {
@@ -39,7 +39,7 @@ export default function KairosSection() {
 
   return (
     <section ref={root} id="kairos" className="relative overflow-hidden px-6 py-24 text-center md:px-10 md:py-32">
-      <PixelScatter items={DECO} />
+      <CloudDecor items={DECO} />
       <div className="relative z-10 mx-auto max-w-[1100px]">
         <p className="ka-in type-body flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.32em] text-white/70 opacity-0">
           <PixelIcon name="globe" size={16} />Le cerveau<PixelIcon name="diamond" size={16} />
@@ -55,11 +55,11 @@ export default function KairosSection() {
           {PILLARS.map((p) => (
             <div
               key={p.n}
-              className="ka-pillar flex flex-col items-center gap-3 rounded-2xl border border-white/20 p-10 opacity-0 md:p-12"
+              className="ka-pillar pillar-card flex flex-col items-center gap-4 rounded-2xl border border-white/20 p-10 opacity-0 md:p-12"
               style={{ background: "linear-gradient(165deg, rgba(34,62,110,0.32) 0%, rgba(16,32,62,0.38) 60%, rgba(10,22,44,0.42) 100%)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 18px 40px -18px rgba(0,0,0,0.4)" }}
             >
-              <PixelIcon name={p.icon} size={30} />
-              <p className="type-body text-sm font-semibold tabular-nums text-white/45">{p.n}</p>
+              <PillarIcon name={p.icon} />
+              <p className="type-body mt-1 text-sm font-semibold tabular-nums text-white/45">{p.n}</p>
               <h3 className="type-strong text-2xl text-white md:text-3xl">{p.t}</h3>
             </div>
           ))}
