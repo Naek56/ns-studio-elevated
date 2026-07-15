@@ -1,3 +1,5 @@
+import { startSupabaseTracking } from "./supabaseTracker";
+
 const KEY = "way-cookie-consent";
 const TWELVE_MONTHS = 365 * 24 * 60 * 60 * 1000;
 
@@ -42,6 +44,8 @@ let tracking = false;
 export function startKairosTracking() {
   if (tracking || getConsent() !== "accepted") return;
   tracking = true;
+  // tracker Supabase (pageviews / clics / scroll → table kairos_events)
+  startSupabaseTracking();
   const w = window as KairosWindow;
   if (typeof w.kairosGrantConsent === "function") {
     // grants the tracker's consent flag and starts collection immediately
