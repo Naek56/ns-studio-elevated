@@ -120,10 +120,16 @@ export default function MemoryExperience() {
       className="fixed inset-0 flex items-center justify-center overflow-hidden px-6 text-center"
       style={{
         background: [
-          "radial-gradient(65% 55% at 33% 20%, rgba(214,242,255,0.92) 0%, rgba(150,222,252,0.5) 38%, rgba(70,180,240,0) 72%)",
-          "radial-gradient(42% 78% at 80% 62%, rgba(72,196,255,0.85) 0%, rgba(40,150,225,0.35) 40%, rgba(20,90,170,0) 70%)",
-          "radial-gradient(90% 85% at 48% 42%, rgba(24,96,168,0.55) 0%, rgba(12,44,92,0.3) 45%, rgba(4,12,30,0) 75%)",
-          "linear-gradient(140deg, #060b17 0%, #081a33 38%, #061426 66%, #04070f 100%)",
+          // vignette sombre : assombrit les bords et cadre le bouton (contraste)
+          "radial-gradient(115% 115% at 50% 45%, transparent 26%, rgba(1,3,8,0.5) 68%, rgba(0,1,4,0.82) 100%)",
+          // tache cyan lumineuse en haut à gauche (plus saturée, plus resserrée)
+          "radial-gradient(58% 50% at 33% 18%, rgba(224,246,255,0.95) 0%, rgba(120,210,250,0.45) 36%, rgba(50,160,230,0) 68%)",
+          // traînée bleue vive à droite
+          "radial-gradient(40% 76% at 81% 62%, rgba(60,190,255,0.9) 0%, rgba(28,140,225,0.3) 40%, rgba(12,70,150,0) 68%)",
+          // brume bleue centrale profonde
+          "radial-gradient(88% 82% at 48% 42%, rgba(18,86,158,0.5) 0%, rgba(8,34,78,0.3) 45%, rgba(2,8,22,0) 74%)",
+          // base marine très sombre (noirs profonds → fort contraste)
+          "linear-gradient(140deg, #020610 0%, #051428 38%, #030c1c 66%, #010409 100%)",
         ].join(", "),
       }}
       onClick={clickThrough}
@@ -157,7 +163,7 @@ export default function MemoryExperience() {
 
         {/* ── textes simples ── */}
         {beat.kind === "text" && (
-          <motion.p key={`t${step}`} {...fade} className="type-strong max-w-3xl" style={{ fontSize: "clamp(1.5rem, 4.2vw, 2.9rem)" }}>
+          <motion.p key={`t${step}`} {...fade} className="exp-strong max-w-3xl" style={{ fontSize: "clamp(1.6rem, 4.6vw, 3.1rem)" }}>
             {beat.lines[0]}
           </motion.p>
         )}
@@ -167,7 +173,7 @@ export default function MemoryExperience() {
           <motion.div key="quiz" {...fade} className="flex flex-col items-center">
             {feedback === null ? (
               <>
-                <p className="type-strong max-w-2xl" style={{ fontSize: "clamp(1.5rem, 4.2vw, 2.7rem)" }}>
+                <p className="exp-strong max-w-2xl" style={{ fontSize: "clamp(1.6rem, 4.4vw, 2.9rem)" }}>
                   De quelle couleur était le bouton ?
                 </p>
                 <div className="mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
@@ -183,7 +189,7 @@ export default function MemoryExperience() {
                 </div>
               </>
             ) : (
-              <motion.p key="fb" {...fade} className="type-strong" style={{ fontSize: "clamp(1.5rem, 4.2vw, 2.9rem)" }}>
+              <motion.p key="fb" {...fade} className="exp-strong" style={{ fontSize: "clamp(1.6rem, 4.6vw, 3.1rem)" }}>
                 {feedback}
               </motion.p>
             )}
@@ -202,7 +208,7 @@ export default function MemoryExperience() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 1.0, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                className={i === 0 ? "type-strong" : "type-strong text-white/90"}
+                className={i === 0 ? "exp-strong opacity-80" : "exp-strong"}
                 style={{ fontSize: i === 0 ? "clamp(1.4rem, 3.6vw, 2.4rem)" : "clamp(1.6rem, 4.4vw, 3rem)" }}
               >
                 {l}
@@ -219,7 +225,7 @@ export default function MemoryExperience() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.2, duration: 0.7 }}
-              className="type-strong mt-12 max-w-2xl text-white/90"
+              className="exp-strong mt-12 max-w-2xl"
               style={{ fontSize: "clamp(1.2rem, 3vw, 1.9rem)" }}
             >
               Ou est-ce que ton cerveau vient simplement de reconstruire ce souvenir ?
@@ -247,8 +253,8 @@ export default function MemoryExperience() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.9 }}
-              className="type-strong max-w-2xl"
-              style={{ fontSize: "clamp(1.4rem, 3.6vw, 2.4rem)" }}
+              className="exp-strong max-w-2xl"
+              style={{ fontSize: "clamp(1.5rem, 3.8vw, 2.6rem)" }}
             >
               Nous ne créons pas seulement des sites.
               <span className="mt-2 block">Nous créons des expériences qui restent.</span>

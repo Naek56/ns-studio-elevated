@@ -1,12 +1,11 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
-import { IconObserve, IconUnderstand, IconAnalyze } from "./AnimatedIcons";
 
-/* Section Kairos — « Et après la livraison ? ». Trois piliers illustrés. */
+/* Section Kairos — « Et après la livraison ? ». Trois piliers numérotés. */
 const PILLARS = [
-  { n: "01", t: "Il observe", icon: <IconObserve /> },
-  { n: "02", t: "Il comprend", icon: <IconUnderstand /> },
-  { n: "03", t: "Il analyse", icon: <IconAnalyze /> },
+  { n: "01", t: "Il observe" },
+  { n: "02", t: "Il comprend" },
+  { n: "03", t: "Il analyse" },
 ];
 
 export default function KairosSection() {
@@ -44,12 +43,11 @@ export default function KairosSection() {
           {PILLARS.map((p) => (
             <div
               key={p.n}
-              className="ka-pillar flex flex-col items-center gap-4 rounded-2xl border border-white/20 p-8 opacity-0 md:p-10"
+              className="ka-pillar flex flex-col items-center gap-3 rounded-2xl border border-white/20 p-10 opacity-0 md:p-12"
               style={{ background: "linear-gradient(165deg, rgba(34,62,110,0.32) 0%, rgba(16,32,62,0.38) 60%, rgba(10,22,44,0.42) 100%)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 18px 40px -18px rgba(0,0,0,0.4)" }}
             >
-              {p.icon}
-              <p className="type-body text-sm font-semibold tabular-nums text-white/50">{p.n}</p>
-              <h3 className="type-strong text-xl text-white md:text-2xl">{p.t}</h3>
+              <p className="type-body text-sm font-semibold tabular-nums text-white/45">{p.n}</p>
+              <h3 className="type-strong text-2xl text-white md:text-3xl">{p.t}</h3>
             </div>
           ))}
         </div>
