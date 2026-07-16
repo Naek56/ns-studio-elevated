@@ -1,9 +1,9 @@
 import { useState } from "react";
 import PaintedCloud from "./PaintedCloud";
 
-/* Affiche le nuage « mixed media » envoyé par le client (/cloud.png, PNG
-   transparent). Tant que le fichier n'est pas déposé dans /public, on retombe
-   sur le nuage peint en SVG pour ne rien casser. */
+/* Affiche le nuage « mixed media » envoyé par le client (/nuage.png —
+   détouré : le damier incrusté a été retiré, PNG transparent). En cas de
+   fichier manquant, on retombe sur le nuage peint en SVG. */
 
 export default function CloudSprite({
   size = 130,
@@ -22,7 +22,7 @@ export default function CloudSprite({
 
   return (
     <img
-      src="/cloud.png"
+      src="/nuage.png"
       alt=""
       aria-hidden
       width={size}

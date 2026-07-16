@@ -148,27 +148,52 @@
      garde sa couleur — exactement comme quand on sélectionne un mot.
      box-decoration-break: clone → le fond suit le mot même sur 2 lignes. */
   .mark-select {
-    background-color: rgba(45, 121, 255, 0.5);
+    /* bande bleue limitée à 72% de la hauteur de ligne, centrée : elle ne
+       peut PAS toucher la ligne du dessus ni celle du dessous */
+    background-image: linear-gradient(rgba(45, 121, 255, 0.5), rgba(45, 121, 255, 0.5));
+    background-repeat: no-repeat;
+    background-size: 100% 72%;
+    background-position: center;
     color: inherit;
-    padding: 0.03em 0.02em;  /* colle au mot, quasi aucune largeur ajoutée */
-    margin: 0 0.28em;        /* grand écart → ne touche plus du tout les mots voisins */
+    padding: 0 0.02em;
+    margin: 0 0.28em;        /* grand écart → ne touche pas les mots voisins */
     border-radius: 2px;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
     text-shadow: none;
   }
 
-  /* nuages « mixed media » : dérive horizontale marquée + pivot (stop-motion) */
+  /* fond de l'expérience (fait main) : halos lumineux qui respirent très
+     lentement — une lueur vivante, jamais distrayante */
+  .exp-halo-a { animation: exp-halo-a 26s ease-in-out infinite alternate; }
+  .exp-halo-b { animation: exp-halo-b 34s ease-in-out infinite alternate; }
+  @keyframes exp-halo-a {
+    0%   { transform: translate(0, 0) scale(1); opacity: 0.9; }
+    100% { transform: translate(4%, 5%) scale(1.12); opacity: 1; }
+  }
+  @keyframes exp-halo-b {
+    0%   { transform: translate(0, 0) scale(1.08); opacity: 0.85; }
+    100% { transform: translate(-5%, -4%) scale(1); opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) { .exp-halo-a, .exp-halo-b { animation: none; } }
+
+  /* nuages « mixed media » : animation COLLAGE en coupes (stop-motion).
+     steps(1, end) fige chaque pose → le nuage SAUTE d'une position/angle à
+     l'autre, jamais de mouvement fluide, comme un collage animé à la main. */
   .cd-float {
-    animation: cd-float var(--dur, 16s) ease-in-out infinite;
+    animation: cd-cut var(--dur, 16s) steps(1, end) infinite;
     will-change: transform;
   }
-  @keyframes cd-float {
-    0%   { transform: translateX(var(--xa, 40px)) translateY(0) rotate(var(--ra, -5deg)); }
-    25%  { transform: translateX(calc(var(--xa, 40px) * 0.2)) translateY(-7px) rotate(var(--rb, 5deg)); }
-    50%  { transform: translateX(var(--xb, -40px)) translateY(0) rotate(var(--ra, -5deg)); }
-    75%  { transform: translateX(calc(var(--xb, -40px) * 0.2)) translateY(7px) rotate(var(--rb, 5deg)); }
-    100% { transform: translateX(var(--xa, 40px)) translateY(0) rotate(var(--ra, -5deg)); }
+  @keyframes cd-cut {
+    0%    { transform: translate(var(--xa, 40px), 0) rotate(var(--ra, -5deg)); }
+    12.5% { transform: translate(calc(var(--xa, 40px) * 0.45), -6px) rotate(2deg); }
+    25%   { transform: translate(0, -10px) rotate(var(--rb, 5deg)); }
+    37.5% { transform: translate(calc(var(--xb, -40px) * 0.45), -4px) rotate(-1deg); }
+    50%   { transform: translate(var(--xb, -40px), 0) rotate(var(--ra, -5deg)); }
+    62.5% { transform: translate(calc(var(--xb, -40px) * 0.45), 6px) rotate(3deg); }
+    75%   { transform: translate(0, 10px) rotate(var(--rb, 5deg)); }
+    87.5% { transform: translate(calc(var(--xa, 40px) * 0.45), 4px) rotate(-2deg); }
+    100%  { transform: translate(var(--xa, 40px), 0) rotate(var(--ra, -5deg)); }
   }
   @media (prefers-reduced-motion: reduce) { .cd-float { animation: none; } }
 
