@@ -4,10 +4,10 @@ import PixelIcon from "./PixelIcon";
 import CloudDecor, { type CloudDeco } from "./CloudDecor";
 
 const HERO_DECO: CloudDeco[] = [
-  { top: "12%", left: "5%", size: 150, base: "#5f9ede", seed: 6, opacity: 0.5, delay: 0, drift: 16 },
-  { top: "20%", right: "6%", size: 120, base: "#4d86cf", seed: 12, opacity: 0.42, delay: 2.5, drift: -13 },
-  { bottom: "16%", left: "10%", size: 110, base: "#4d86cf", seed: 19, opacity: 0.4, delay: 1.2, drift: 12 },
-  { bottom: "12%", right: "12%", size: 140, base: "#6aa6e2", seed: 3, opacity: 0.46, delay: 3.4, drift: -15 },
+  { top: "11%", left: "4%", size: 158, seed: 6, opacity: 0.55, delay: 0, travel: 60, pivot: 5, dur: 15, flip: false },
+  { top: "19%", right: "5%", size: 122, seed: 12, opacity: 0.46, delay: 2.5, travel: -50, pivot: 6, dur: 18, flip: true },
+  { bottom: "15%", left: "9%", size: 116, seed: 19, opacity: 0.44, delay: 1.2, travel: 46, pivot: 4, dur: 20, flip: false },
+  { bottom: "12%", right: "11%", size: 146, seed: 3, opacity: 0.5, delay: 3.4, travel: -56, pivot: 7, dur: 17, flip: true },
 ];
 
 const WORDS = ["AVEUGLE", "MUET", "SEUL", "PERDU"];

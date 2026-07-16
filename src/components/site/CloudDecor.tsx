@@ -1,8 +1,8 @@
-import PaintedCloud from "./PaintedCloud";
+import CloudSprite from "./CloudSprite";
 
-/* Petits nuages « mixed media » disséminés dans les vides d'une section, qui
-   dérivent doucement (un peu animés). À poser dans un parent `relative` ;
-   restent en fond (pointer-events-none, derrière le contenu). */
+/* Nuages « mixed media » disséminés dans les vides d'une section. Ils bougent
+   nettement : dérive horizontale (droite ↔ gauche) + léger pivot, comme une
+   animation mixed-media (stop-motion). À poser dans un parent `relative`. */
 
 export type CloudDeco = {
   top?: string;
@@ -14,29 +14,40 @@ export type CloudDeco = {
   seed?: number;
   opacity?: number;
   delay?: number;
-  drift?: number; // amplitude du flottement horizontal (px)
+  flip?: boolean;
+  travel?: number; // amplitude de dérive horizontale (px)
+  pivot?: number;  // amplitude de rotation (deg)
+  dur?: number;    // durée du cycle (s)
 };
 
 export default function CloudDecor({ items }: { items: CloudDeco[] }) {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-      {items.map((it, i) => (
-        <span
-          key={i}
-          className="cd-float absolute"
-          style={{
-            top: it.top,
-            bottom: it.bottom,
-            left: it.left,
-            right: it.right,
-            opacity: it.opacity ?? 0.5,
-            ["--drift" as string]: `${it.drift ?? 14}px`,
-            animationDelay: `${it.delay ?? 0}s`,
-          }}
-        >
-          <PaintedCloud size={it.size ?? 130} base={it.base ?? "#4d86cf"} seed={it.seed ?? 12} />
-        </span>
-      ))}
+      {items.map((it, i) => {
+        const t = it.travel ?? 46;
+        const r = it.pivot ?? 5;
+        return (
+          <span
+            key={i}
+            className="cd-float absolute"
+            style={{
+              top: it.top,
+              bottom: it.bottom,
+              left: it.left,
+              right: it.right,
+              opacity: it.opacity ?? 0.55,
+              ["--xa" as string]: `${t}px`,
+              ["--xb" as string]: `${-t}px`,
+              ["--ra" as string]: `${-r}deg`,
+              ["--rb" as string]: `${r}deg`,
+              ["--dur" as string]: `${it.dur ?? 16}s`,
+              animationDelay: `${it.delay ?? 0}s`,
+            }}
+          >
+            <CloudSprite size={it.size ?? 130} flip={it.flip} base={it.base ?? "#4d86cf"} seed={it.seed ?? 12} />
+          </span>
+        );
+      })}
     </div>
   );
 }

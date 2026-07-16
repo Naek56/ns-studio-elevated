@@ -2,21 +2,16 @@ import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
 import CloudDecor, { type CloudDeco } from "./CloudDecor";
 import PixelIcon from "./PixelIcon";
-import PillarIcon, { type PillarIconName } from "./PillarIcon";
 
 const DECO: CloudDeco[] = [
-  { top: "8%", left: "4%", size: 120, base: "#5f9ede", seed: 5, opacity: 0.4, delay: 0.4, drift: 14 },
-  { top: "14%", right: "5%", size: 100, base: "#4d86cf", seed: 14, opacity: 0.36, delay: 2.1, drift: -12 },
-  { bottom: "10%", left: "7%", size: 108, base: "#6aa6e2", seed: 21, opacity: 0.34, delay: 1.5, drift: 12 },
+  { top: "8%", left: "4%", size: 128, seed: 5, opacity: 0.5, delay: 0.4, travel: 52, pivot: 5, dur: 15, flip: false },
+  { top: "16%", right: "5%", size: 104, seed: 14, opacity: 0.44, delay: 2.1, travel: -44, pivot: 6, dur: 18, flip: true },
+  { bottom: "10%", left: "8%", size: 112, seed: 21, opacity: 0.42, delay: 1.5, travel: 48, pivot: 4, dur: 20, flip: false },
 ];
 
 /* Section Agence — « On ne livre pas des sites. On construit des présences. »
-   Design : le logo WAY en grand filigrane. Trois piliers numérotés. */
-const PILLARS: { n: string; t: string; icon: PillarIconName }[] = [
-  { n: "01", t: "Stratégie", icon: "strategy" },
-  { n: "02", t: "Design", icon: "design" },
-  { n: "03", t: "Performance", icon: "performance" },
-];
+   Design : le logo WAY en grand filigrane. (Les colonnes ont été retirées —
+   à remplacer par autre chose.) */
 
 export default function AgencySection() {
   const root = useRef<HTMLElement>(null);
@@ -25,27 +20,23 @@ export default function AgencySection() {
     const el = root.current;
     if (!el) return;
     const ctx = gsap.context(() => {
-      if (REDUCED) { gsap.set([".ag-in", ".ag-pillar"], { opacity: 1, y: 0 }); return; }
+      if (REDUCED) { gsap.set(".ag-in", { opacity: 1, y: 0 }); return; }
       gsap.fromTo(".ag-in", { opacity: 0, y: 34 }, {
         opacity: 1, y: 0, duration: 0.9, stagger: 0.16, ease: "power3.out",
         scrollTrigger: { trigger: el, start: "top 70%", once: true },
       });
-      gsap.fromTo(".ag-pillar", { opacity: 0, y: 40 }, {
-        opacity: 1, y: 0, duration: 0.85, stagger: 0.14, ease: "power3.out",
-        scrollTrigger: { trigger: ".ag-grid", start: "top 82%", once: true },
-      });
       gsap.to(".ag-logo", { yPercent: -12, ease: "none",
         scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true } });
     }, root);
-    return () => { ctx.revert(); ScrollTrigger.getAll().forEach((s) => { if (s.trigger === el || (s.trigger as Element)?.classList?.contains?.("ag-grid")) s.kill(); }); };
+    return () => { ctx.revert(); ScrollTrigger.getAll().forEach((s) => { if (s.trigger === el) s.kill(); }); };
   }, []);
 
   return (
-    <section ref={root} id="agence" className="relative overflow-hidden px-6 py-24 text-center md:px-10 md:py-32">
+    <section ref={root} id="agence" className="relative overflow-hidden px-6 py-28 text-center md:px-10 md:py-36">
       <CloudDecor items={DECO} />
       {/* design : logo WAY en filigrane */}
       <svg aria-hidden viewBox="0 0 48 48" fill="none"
-        className="ag-logo pointer-events-none absolute left-1/2 top-[38%] -z-0 h-[52vh] w-[52vh] max-h-[520px] max-w-[520px] -translate-x-1/2 -translate-y-1/2 text-white opacity-[0.05] will-change-transform">
+        className="ag-logo pointer-events-none absolute left-1/2 top-[42%] -z-0 h-[52vh] w-[52vh] max-h-[520px] max-w-[520px] -translate-x-1/2 -translate-y-1/2 text-white opacity-[0.05] will-change-transform">
         <circle cx="24" cy="24" r="22" stroke="currentColor" strokeWidth="1.4" />
         <path d="M13 17.5 L18.5 31 L24 20 L29.5 31 L35 17.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -60,20 +51,6 @@ export default function AgencySection() {
         <p className="ag-in type-body mx-auto mt-7 max-w-2xl text-white/80 opacity-0" style={{ fontSize: "clamp(0.95rem, 2vw, 1.2rem)" }}>
           WAY Agency est une agence web créative basée à Strasbourg. On travaille avec des businesses qui ont quelque chose à dire et qui veulent être entendus.
         </p>
-
-        <div className="ag-grid mt-16 grid grid-cols-1 gap-5 sm:grid-cols-3 md:mt-20">
-          {PILLARS.map((p) => (
-            <div
-              key={p.t}
-              className="ag-pillar pillar-card flex flex-col items-center gap-4 rounded-2xl border border-white/20 p-10 opacity-0 md:p-12"
-              style={{ background: "linear-gradient(165deg, rgba(34,62,110,0.32) 0%, rgba(16,32,62,0.38) 60%, rgba(10,22,44,0.42) 100%)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12), 0 18px 40px -18px rgba(0,0,0,0.4)" }}
-            >
-              <PillarIcon name={p.icon} />
-              <p className="type-body mt-1 text-sm font-semibold tabular-nums text-white/45">{p.n}</p>
-              <h3 className="type-strong text-2xl text-white md:text-3xl">{p.t}</h3>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   );
