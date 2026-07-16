@@ -163,20 +163,6 @@
     text-shadow: none;
   }
 
-  /* fond de l'expérience (fait main) : halos lumineux qui respirent très
-     lentement — une lueur vivante, jamais distrayante */
-  .exp-halo-a { animation: exp-halo-a 26s ease-in-out infinite alternate; }
-  .exp-halo-b { animation: exp-halo-b 34s ease-in-out infinite alternate; }
-  @keyframes exp-halo-a {
-    0%   { transform: translate(0, 0) scale(1); opacity: 0.9; }
-    100% { transform: translate(4%, 5%) scale(1.12); opacity: 1; }
-  }
-  @keyframes exp-halo-b {
-    0%   { transform: translate(0, 0) scale(1.08); opacity: 0.85; }
-    100% { transform: translate(-5%, -4%) scale(1); opacity: 1; }
-  }
-  @media (prefers-reduced-motion: reduce) { .exp-halo-a, .exp-halo-b { animation: none; } }
-
   /* nuages « mixed media » : animation COLLAGE en coupes (stop-motion).
      steps(1, end) fige chaque pose → le nuage SAUTE d'une position/angle à
      l'autre, jamais de mouvement fluide, comme un collage animé à la main. */
