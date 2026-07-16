@@ -2,13 +2,13 @@ import { useEffect, useRef } from "react";
 
 /**
  * Le fond du site agence : la photo (background.svg), LÉGÈREMENT PIXELISÉE.
- * On dessine l'image sur un petit canvas (~340 px de large) puis on l'étire
- * en plein écran avec image-rendering: pixelated → une mosaïque de PETITS
- * pixels (~5-6 px à l'écran), subtile car les teintes voisines sont proches.
+ * On dessine l'image sur un petit canvas (~230 px de large) puis on l'étire
+ * en plein écran avec image-rendering: pixelated → une mosaïque de pixels
+ * (~8 px à l'écran), subtile car les teintes voisines sont proches.
  * Si le canvas échoue, le fond lisse d'origine reste visible dessous.
  */
 const PHOTO_URL = "/background.svg";
-const PIX_W = 340; // largeur du canvas → taille des pixels à l'écran
+const PIX_W = 230; // largeur du canvas → taille des pixels à l'écran (plus petit = plus gros pixels)
 
 export default function PaperBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
