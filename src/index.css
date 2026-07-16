@@ -150,24 +150,40 @@
   .mark-select {
     background-color: rgba(45, 121, 255, 0.5);
     color: inherit;
-    padding: 0 0.09em;      /* pas de hauteur ajoutée → ne touche pas les lignes voisines */
-    margin: 0 0.06em;       /* petit écart → ne colle pas aux mots voisins */
+    padding: 0 0.05em;      /* colle au mot, pas de hauteur ajoutée */
+    margin: 0 0.16em;       /* bon écart → ne frôle plus les mots voisins */
     border-radius: 2px;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
     text-shadow: none;
   }
 
-  /* petites décorations pixel qui flottent doucement (remplir les vides) */
-  .px-float {
-    animation: px-float 6s ease-in-out infinite;
-    will-change: transform, opacity;
+  /* micro-animations des icônes de colonnes (Agence / Kairos) */
+  .pi-pulse { animation: pi-pulse 2.6s ease-in-out infinite; }
+  @keyframes pi-pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+  .pi-needle { transform-box: fill-box; transform-origin: 24px 33px; animation: pi-needle 3.4s ease-in-out infinite; }
+  @keyframes pi-needle { 0%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(12deg); } }
+  .pi-bar { transform-box: fill-box; transform-origin: center bottom; animation: pi-bar 3s ease-in-out infinite; }
+  @keyframes pi-bar { 0%, 100% { transform: scaleY(0.82); } 50% { transform: scaleY(1); } }
+  @media (prefers-reduced-motion: reduce) { .pi-pulse, .pi-needle, .pi-bar { animation: none; } }
+
+  /* colonnes : léger relief au survol (sans transform → pas de conflit GSAP) */
+  .pillar-card { transition: border-color 0.35s ease, box-shadow 0.35s ease, background-color 0.35s ease; }
+  .pillar-card:hover {
+    border-color: rgba(255, 255, 255, 0.42) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 26px 50px -20px rgba(0,0,0,0.55) !important;
   }
-  @keyframes px-float {
-    0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); opacity: var(--op, 0.35); }
-    50%      { transform: translateY(-7px) rotate(var(--rot, 0deg)); opacity: calc(var(--op, 0.35) + 0.12); }
+
+  /* nuages « mixed media » qui dérivent doucement dans les vides */
+  .cd-float {
+    animation: cd-float 14s ease-in-out infinite;
+    will-change: transform;
   }
-  @media (prefers-reduced-motion: reduce) { .px-float { animation: none; } }
+  @keyframes cd-float {
+    0%, 100% { transform: translate(0, 0); }
+    50%      { transform: translate(var(--drift, 14px), -6px); }
+  }
+  @media (prefers-reduced-motion: reduce) { .cd-float { animation: none; } }
 
   /* texture carton/papier : même grain que la photo, tonalité claire fiable */
   .paper {
