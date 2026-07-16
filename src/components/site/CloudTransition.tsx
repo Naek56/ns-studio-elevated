@@ -45,12 +45,14 @@ export default function CloudTransition({ active }: { active: boolean }) {
         },
       });
 
-      // bancs de nuages qui défilent verticalement (mouvement d'entrée/sortie)
+      // bancs de nuages qui défilent verticalement (mouvement d'entrée/sortie).
+      // autoAlpha (opacité + visibility) : les couches invisibles sortent du
+      // compositing → plus de saccades pendant la traversée.
       const bank = (el: HTMLDivElement | null, yFrom: number, yTo: number, peak: number) => {
         if (!el) return;
         tl.fromTo(el, { yPercent: yFrom }, { yPercent: yTo, ease: "none", duration: 1 }, 0)
-          .fromTo(el, { opacity: 0 }, { opacity: peak, ease: "power1.in", duration: 0.26 }, 0.02)
-          .to(el, { opacity: 0, ease: "power1.out", duration: 0.24 }, 0.54);
+          .fromTo(el, { autoAlpha: 0 }, { autoAlpha: peak, ease: "power1.in", duration: 0.26 }, 0.02)
+          .to(el, { autoAlpha: 0, ease: "power1.out", duration: 0.24 }, 0.54);
       };
       bank(far.current, 60, -60, 0.75);
       bank(near.current, 95, -95, 0.9);
@@ -58,9 +60,9 @@ export default function CloudTransition({ active }: { active: boolean }) {
       // cœur dense : recouvre TOUT l'écran au milieu, avec un temps de maintien
       const core = (el: HTMLDivElement | null, peak: number) => {
         if (!el) return;
-        tl.fromTo(el, { opacity: 0 }, { opacity: peak, ease: "power1.inOut", duration: 0.3 }, 0.12)
-          .to(el, { opacity: peak, duration: 0.08 }, 0.42) // maintien plein écran
-          .to(el, { opacity: 0, ease: "power1.inOut", duration: 0.24 }, 0.5);
+        tl.fromTo(el, { autoAlpha: 0 }, { autoAlpha: peak, ease: "power1.inOut", duration: 0.3 }, 0.12)
+          .to(el, { autoAlpha: peak, duration: 0.08 }, 0.42) // maintien plein écran
+          .to(el, { autoAlpha: 0, ease: "power1.inOut", duration: 0.24 }, 0.5);
       };
       core(coreWhite.current, 0.97); // garantit une couverture totale
       core(coreTex.current, 0.92);   // texture de nuage épaisse par-dessus
@@ -78,17 +80,22 @@ export default function CloudTransition({ active }: { active: boolean }) {
     position: "absolute", left: "-30%", width: "160%", top: "-10%", height: "120%",
     backgroundSize: "cover", backgroundPosition: "center",
     WebkitMaskImage: feather, maskImage: feather,
-    willChange: "transform, opacity", opacity: 0,
+    willChange: "transform, opacity", opacity: 0, visibility: "hidden",
+    transform: "translateZ(0)", backfaceVisibility: "hidden",
+  };
+  const core: React.CSSProperties = {
+    position: "absolute", opacity: 0, visibility: "hidden",
+    willChange: "opacity", transform: "translateZ(0)", backfaceVisibility: "hidden",
   };
 
   return (
     <div ref={root} aria-hidden className="pointer-events-none fixed inset-0 z-[60] overflow-hidden">
-      {/* bancs en parallaxe (mouvement) */}
-      <div ref={far} style={{ ...bank, backgroundImage: cloudUri(0.011, 3, 5, 1.15), filter: "blur(2px)" }} />
+      {/* bancs en parallaxe (mouvement) — sans blur (coûteux → saccades) */}
+      <div ref={far} style={{ ...bank, backgroundImage: cloudUri(0.011, 3, 5, 1.15) }} />
       <div ref={near} style={{ ...bank, backgroundImage: cloudUri(0.017, 6, 6, 1.35) }} />
       {/* cœur plein écran : couverture blanche + texture nuage épaisse */}
-      <div ref={coreWhite} style={{ position: "absolute", inset: 0, background: "radial-gradient(130% 130% at 50% 45%, #ffffff 0%, #eef4fb 65%, #e3edf8 100%)", opacity: 0 }} />
-      <div ref={coreTex} style={{ position: "absolute", inset: "-6%", backgroundImage: cloudUri(0.013, 9, 6, 1.5), backgroundSize: "cover", backgroundPosition: "center", opacity: 0 }} />
+      <div ref={coreWhite} style={{ ...core, inset: 0, background: "radial-gradient(130% 130% at 50% 45%, #ffffff 0%, #eef4fb 65%, #e3edf8 100%)" }} />
+      <div ref={coreTex} style={{ ...core, inset: "-6%", backgroundImage: cloudUri(0.013, 9, 6, 1.5), backgroundSize: "cover", backgroundPosition: "center" }} />
     </div>
   );
 }

@@ -129,24 +129,31 @@ export default function MemoryExperience() {
   return (
     <div
       className="fixed inset-0 flex items-center justify-center overflow-hidden px-6 text-center"
-      style={{
-        background: [
-          // vignette sombre EN HAUT : assombrit les bords, cadre le bouton (contraste)
-          "radial-gradient(115% 115% at 50% 45%, transparent 26%, rgba(1,3,8,0.5) 68%, rgba(0,1,4,0.82) 100%)",
-          // LA PHOTO (déposée dans /public sous le nom experience-bg.png).
-          // Tant qu'elle n'est pas là, elle est simplement ignorée et le
-          // dégradé ci-dessous s'affiche comme repli.
-          "url('/experience-bg.png') center / cover no-repeat",
-          // ── repli : recréation du dégradé bleu granuleux ──
-          "radial-gradient(58% 50% at 33% 18%, rgba(224,246,255,0.95) 0%, rgba(120,210,250,0.45) 36%, rgba(50,160,230,0) 68%)",
-          "radial-gradient(40% 76% at 81% 62%, rgba(60,190,255,0.9) 0%, rgba(28,140,225,0.3) 40%, rgba(12,70,150,0) 68%)",
-          "radial-gradient(88% 82% at 48% 42%, rgba(18,86,158,0.5) 0%, rgba(8,34,78,0.3) 45%, rgba(2,8,22,0) 74%)",
-          "linear-gradient(140deg, #020610 0%, #051428 38%, #030c1c 66%, #010409 100%)",
-        ].join(", "),
-      }}
+      style={{ background: "linear-gradient(140deg, #020610 0%, #051428 38%, #030c1c 66%, #010409 100%)" }}
       onClick={clickThrough}
     >
-      {/* grain photographique (film) par-dessus le dégradé */}
+      {/* fond fait main, un peu animé : deux halos bleus qui respirent lentement */}
+      <div
+        aria-hidden
+        className="exp-halo-a pointer-events-none absolute"
+        style={{
+          left: "-10%", top: "-18%", width: "85%", height: "75%",
+          background: "radial-gradient(closest-side, rgba(224,246,255,0.95) 0%, rgba(120,210,250,0.42) 42%, rgba(50,160,230,0) 72%)",
+          willChange: "transform, opacity",
+        }}
+      />
+      <div
+        aria-hidden
+        className="exp-halo-b pointer-events-none absolute"
+        style={{
+          right: "-14%", top: "22%", width: "62%", height: "95%",
+          background: "radial-gradient(closest-side, rgba(60,190,255,0.8) 0%, rgba(28,140,225,0.28) 45%, rgba(12,70,150,0) 72%)",
+          willChange: "transform, opacity",
+        }}
+      />
+      {/* vignette sombre : assombrit les bords, cadre le bouton */}
+      <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(115% 115% at 50% 45%, transparent 26%, rgba(1,3,8,0.5) 68%, rgba(0,1,4,0.85) 100%)" }} />
+      {/* grain photographique (film) par-dessus */}
       <div aria-hidden className="grain pointer-events-none absolute inset-0" style={{ opacity: 0.22, mixBlendMode: "overlay" }} />
 
       <AnimatePresence mode="wait">
