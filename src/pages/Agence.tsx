@@ -53,6 +53,8 @@ const Agence = () => {
 
       <main>
         <Hero play={revealed} />
+        {/* ciel vide : espace entre la traversée du nuage et la 1re section */}
+        <div aria-hidden id="cloud-gap" className="h-[52vh]" />
         <AwarenessHero />
         <ReviewsSection />
         <InvisibleSection />

@@ -150,38 +150,25 @@
   .mark-select {
     background-color: rgba(45, 121, 255, 0.5);
     color: inherit;
-    padding: 0 0.05em;      /* colle au mot, pas de hauteur ajoutée */
-    margin: 0 0.16em;       /* bon écart → ne frôle plus les mots voisins */
+    padding: 0.03em 0.02em;  /* colle au mot, quasi aucune largeur ajoutée */
+    margin: 0 0.28em;        /* grand écart → ne touche plus du tout les mots voisins */
     border-radius: 2px;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
     text-shadow: none;
   }
 
-  /* micro-animations des icônes de colonnes (Agence / Kairos) */
-  .pi-pulse { animation: pi-pulse 2.6s ease-in-out infinite; }
-  @keyframes pi-pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
-  .pi-needle { transform-box: fill-box; transform-origin: 24px 33px; animation: pi-needle 3.4s ease-in-out infinite; }
-  @keyframes pi-needle { 0%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(12deg); } }
-  .pi-bar { transform-box: fill-box; transform-origin: center bottom; animation: pi-bar 3s ease-in-out infinite; }
-  @keyframes pi-bar { 0%, 100% { transform: scaleY(0.82); } 50% { transform: scaleY(1); } }
-  @media (prefers-reduced-motion: reduce) { .pi-pulse, .pi-needle, .pi-bar { animation: none; } }
-
-  /* colonnes : léger relief au survol (sans transform → pas de conflit GSAP) */
-  .pillar-card { transition: border-color 0.35s ease, box-shadow 0.35s ease, background-color 0.35s ease; }
-  .pillar-card:hover {
-    border-color: rgba(255, 255, 255, 0.42) !important;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 26px 50px -20px rgba(0,0,0,0.55) !important;
-  }
-
-  /* nuages « mixed media » qui dérivent doucement dans les vides */
+  /* nuages « mixed media » : dérive horizontale marquée + pivot (stop-motion) */
   .cd-float {
-    animation: cd-float 14s ease-in-out infinite;
+    animation: cd-float var(--dur, 16s) ease-in-out infinite;
     will-change: transform;
   }
   @keyframes cd-float {
-    0%, 100% { transform: translate(0, 0); }
-    50%      { transform: translate(var(--drift, 14px), -6px); }
+    0%   { transform: translateX(var(--xa, 40px)) translateY(0) rotate(var(--ra, -5deg)); }
+    25%  { transform: translateX(calc(var(--xa, 40px) * 0.2)) translateY(-7px) rotate(var(--rb, 5deg)); }
+    50%  { transform: translateX(var(--xb, -40px)) translateY(0) rotate(var(--ra, -5deg)); }
+    75%  { transform: translateX(calc(var(--xb, -40px) * 0.2)) translateY(7px) rotate(var(--rb, 5deg)); }
+    100% { transform: translateX(var(--xa, 40px)) translateY(0) rotate(var(--ra, -5deg)); }
   }
   @media (prefers-reduced-motion: reduce) { .cd-float { animation: none; } }
 
