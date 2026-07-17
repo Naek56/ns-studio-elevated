@@ -3,8 +3,8 @@ import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
 import CloudDecor, { type CloudDeco } from "./CloudDecor";
 
 const DECO: CloudDeco[] = [
-  { top: "9%", right: "5%", size: 120, seed: 14, opacity: 0.44, flip: true },
-  { bottom: "12%", left: "6%", size: 128, seed: 21, opacity: 0.42, flip: false },
+  { top: "9%", left: "5%", size: 120, seed: 14, opacity: 0.44, flip: false },
+  { bottom: "9%", right: "6%", size: 128, seed: 21, opacity: 0.42, flip: true },
 ];
 
 /* Section Agence — « On ne livre pas des sites. On construit des présences. »

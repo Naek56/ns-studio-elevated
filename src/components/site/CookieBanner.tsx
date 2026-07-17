@@ -40,20 +40,20 @@ export default function CookieBanner() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 40, opacity: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed inset-x-0 bottom-0 z-[120] flex justify-center px-3 pb-3 sm:px-4 sm:pb-4"
+          className="fixed inset-x-0 bottom-0 z-[120] flex justify-start px-3 pb-3 sm:px-5 sm:pb-5"
           role="dialog"
           aria-label="Consentement aux cookies"
         >
           <div
-            className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-white/15 p-5 sm:p-6"
+            className="relative w-full max-w-md overflow-hidden rounded-2xl border border-white/15 p-5 sm:p-6"
             style={{
-              background: "linear-gradient(160deg, #16161a 0%, #0c0c10 60%, #060608 100%)",
-              boxShadow: "0 20px 50px -20px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08)",
+              background: "linear-gradient(160deg, #16407e 0%, #0e2a56 58%, #0a1e40 100%)",
+              boxShadow: "0 20px 50px -20px rgba(3,12,30,0.75), inset 0 1px 0 rgba(255,255,255,0.12)",
             }}
           >
             {/* halo décoratif */}
             <div aria-hidden className="pointer-events-none absolute -right-10 -top-14 h-40 w-40 rounded-full"
-              style={{ background: "radial-gradient(closest-side, rgba(255,255,255,0.14), transparent 70%)" }} />
+              style={{ background: "radial-gradient(closest-side, rgba(140,203,232,0.28), transparent 70%)" }} />
 
             <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/15" style={{ background: "rgba(255,255,255,0.06)" }}>

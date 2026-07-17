@@ -49,10 +49,23 @@ export default function CloudTransition({ active }: { active: boolean }) {
       tl.fromTo(tex.current, { autoAlpha: 0, yPercent: 22 }, { autoAlpha: 0.92, ease: "power1.in", duration: 0.3 }, 0.06)
         .to(tex.current, { autoAlpha: 0, ease: "power1.out", duration: 0.24 }, 0.54)
         .fromTo(tex.current, { yPercent: 22 }, { yPercent: -22, ease: "none", duration: 1 }, 0);
+
+      // met le shader de fond en PAUSE tant que le nuage recouvre l'écran
+      // (il n'est pas visible à ce moment-là) → libère le GPU, évite les lags
+      ScrollTrigger.create({
+        trigger: accueil,
+        start: "top+=12% top",
+        end: "bottom-=8% top",
+        onToggle: (self) => window.dispatchEvent(new CustomEvent("way:shaderpause", { detail: self.isActive })),
+      });
     }, root);
 
     const r = requestAnimationFrame(() => ScrollTrigger.refresh());
-    return () => { cancelAnimationFrame(r); ctx.revert(); };
+    return () => {
+      cancelAnimationFrame(r);
+      window.dispatchEvent(new CustomEvent("way:shaderpause", { detail: false }));
+      ctx.revert();
+    };
   }, [active]);
 
   if (REDUCED) return null;
