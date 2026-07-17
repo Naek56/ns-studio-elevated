@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { Cookie, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { getConsent, setConsent, startKairosTracking, type ConsentValue } from "@/lib/consent";
 import { sfxTap, sfxSuccess } from "@/lib/sfx";
 
@@ -56,8 +56,8 @@ export default function CookieBanner() {
               style={{ background: "radial-gradient(closest-side, rgba(140,203,232,0.28), transparent 70%)" }} />
 
             <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/15" style={{ background: "rgba(255,255,255,0.06)" }}>
-                <Cookie className="h-5 w-5 text-[#8ecbe8]" />
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/15 bg-white">
+                <img src="/minecraft-cookie.jpg" alt="" aria-hidden className="h-full w-full object-cover" style={{ imageRendering: "pixelated" }} />
               </span>
 
               <div className="min-w-0 flex-1">
