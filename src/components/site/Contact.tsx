@@ -8,7 +8,7 @@ import CloudDecor, { type CloudDeco } from "./CloudDecor";
 
 const CONTACT_DECO: CloudDeco[] = [
   { top: "12%", left: "7%", size: 138, seed: 8, opacity: 0.46, flip: false },
-  { bottom: "20%", right: "9%", size: 120, seed: 15, opacity: 0.44, flip: true },
+  { top: "40%", right: "9%", size: 120, seed: 15, opacity: 0.44, flip: true },
 ];
 
 export default function Contact() {

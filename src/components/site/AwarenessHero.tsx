@@ -1,8 +1,14 @@
 import { useEffect, useRef } from "react";
 import { gsap, REDUCED } from "@/lib/gsapSetup";
+import CloudDecor, { type CloudDeco } from "./CloudDecor";
 
-/* Section 1 — « Arrête de regarder ton écran ». Flèches COURBÉES qui se
-   dessinent une fois à l'arrivée, puis restent immobiles. */
+/* Section 1 — « Arrête de regarder ton écran ». 3 nuages bien éparpillés. */
+const DECO: CloudDeco[] = [
+  { top: "9%", left: "5%", size: 122, seed: 4, opacity: 0.44, flip: false },
+  { top: "14%", right: "6%", size: 104, seed: 18, opacity: 0.42, flip: true },
+  { bottom: "10%", left: "38%", size: 112, seed: 27, opacity: 0.4, flip: false },
+];
+
 export default function AwarenessHero() {
   const root = useRef<HTMLElement>(null);
 
@@ -55,6 +61,7 @@ export default function AwarenessHero() {
 
   return (
     <section ref={root} id="reveil" className="relative flex min-h-[92svh] flex-col items-center justify-center overflow-hidden px-6 text-center">
+      <CloudDecor items={DECO} />
       <div aria-hidden className="read-pool pointer-events-none absolute left-1/2 top-1/2 h-[70vh] w-[92vw] max-w-[1200px] -translate-x-1/2 -translate-y-1/2" />
 
       <div className="a-stage relative flex flex-col items-center will-change-transform">

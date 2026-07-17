@@ -1,11 +1,18 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
-/* Section « Le cerveau » : décor = icônes cerveau (au lieu des nuages).
-   Image transparente déposée dans /public. */
+import CloudDecor, { type CloudDeco } from "./CloudDecor";
+
+/* Section « Le cerveau » : décor = 4 cerveaux + 2 nuages, bien éparpillés
+   (aucun élément à côté d'un autre). Image cerveau transparente dans /public. */
 const BRAINS = [
-  { top: "8%", left: "5%", size: 120, opacity: 0.9, flip: false },
-  { top: "44%", right: "6%", size: 96, opacity: 0.82, flip: true },
-  { bottom: "9%", left: "9%", size: 108, opacity: 0.85, flip: false },
+  { top: "7%", left: "5%", size: 116, opacity: 0.9, flip: false },
+  { top: "11%", right: "6%", size: 100, opacity: 0.82, flip: true },
+  { bottom: "9%", left: "8%", size: 108, opacity: 0.85, flip: false },
+  { bottom: "12%", right: "7%", size: 94, opacity: 0.8, flip: true },
+];
+const CLOUDS: CloudDeco[] = [
+  { top: "46%", left: "3%", size: 108, seed: 7, opacity: 0.4, flip: false },
+  { top: "50%", right: "3%", size: 116, seed: 25, opacity: 0.4, flip: true },
 ];
 
 /* Section Kairos — « Et après la livraison ? ». (Les colonnes ont été
@@ -29,6 +36,7 @@ export default function KairosSection() {
 
   return (
     <section ref={root} id="kairos" className="relative overflow-hidden px-6 py-28 text-center md:px-10 md:py-36">
+      <CloudDecor items={CLOUDS} />
       <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         {BRAINS.map((b, i) => (
           <img

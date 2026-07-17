@@ -6,6 +6,11 @@ const DECO: CloudDeco[] = [
   { top: "9%", left: "5%", size: 120, seed: 14, opacity: 0.44, flip: false },
   { bottom: "9%", right: "6%", size: 128, seed: 21, opacity: 0.42, flip: true },
 ];
+/* icônes logo W (papier découpé) — dans les coins libres, loin des nuages */
+const LOGOS = [
+  { top: "11%", right: "6%", size: 82, opacity: 0.85 },
+  { bottom: "11%", left: "6%", size: 76, opacity: 0.8 },
+];
 
 /* Section Agence — « On ne livre pas des sites. On construit des présences. »
    Design : le logo WAY en grand filigrane. (Les colonnes ont été retirées —
@@ -32,6 +37,12 @@ export default function AgencySection() {
   return (
     <section ref={root} id="agence" className="relative overflow-hidden px-6 py-28 text-center md:px-10 md:py-36">
       <CloudDecor items={DECO} />
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+        {LOGOS.map((l, i) => (
+          <img key={i} src="/w_flat_grise_trans.png" alt="" aria-hidden className="absolute"
+            style={{ top: l.top, bottom: l.bottom, left: l.left, right: l.right, width: l.size, opacity: l.opacity }} />
+        ))}
+      </div>
       {/* design : logo WAY en filigrane */}
       <svg aria-hidden viewBox="0 0 48 48" fill="none"
         className="ag-logo pointer-events-none absolute left-1/2 top-[42%] -z-0 h-[52vh] w-[52vh] max-h-[520px] max-w-[520px] -translate-x-1/2 -translate-y-1/2 text-white opacity-[0.05] will-change-transform">
