@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
-import CloudDecor, { type CloudDeco } from "./CloudDecor";
-
-const DECO: CloudDeco[] = [
-  { top: "9%", left: "5%", size: 120, seed: 7, opacity: 0.44, flip: true },
-  { bottom: "12%", right: "7%", size: 126, seed: 25, opacity: 0.42, flip: false },
+/* Section « Le cerveau » : décor = icônes cerveau (au lieu des nuages).
+   Image transparente déposée dans /public. */
+const BRAINS = [
+  { top: "8%", left: "5%", size: 120, opacity: 0.9, flip: false },
+  { top: "44%", right: "6%", size: 96, opacity: 0.82, flip: true },
+  { bottom: "9%", left: "9%", size: 108, opacity: 0.85, flip: false },
 ];
 
 /* Section Kairos — « Et après la livraison ? ». (Les colonnes ont été
@@ -28,7 +29,18 @@ export default function KairosSection() {
 
   return (
     <section ref={root} id="kairos" className="relative overflow-hidden px-6 py-28 text-center md:px-10 md:py-36">
-      <CloudDecor items={DECO} />
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+        {BRAINS.map((b, i) => (
+          <img
+            key={i}
+            src="/brain_rose_pop_trans.png"
+            alt=""
+            aria-hidden
+            className="absolute"
+            style={{ top: b.top, bottom: b.bottom, left: b.left, right: b.right, width: b.size, opacity: b.opacity, transform: b.flip ? "scaleX(-1)" : undefined }}
+          />
+        ))}
+      </div>
       <div className="relative z-10 mx-auto max-w-[1100px]">
         <p className="ka-in type-body text-xs font-semibold uppercase tracking-[0.32em] text-white/70 opacity-0">Le cerveau</p>
         <h2 className="ka-in type-strong mx-auto mt-5 max-w-3xl opacity-0" style={{ fontSize: "clamp(2rem, 5.2vw, 4rem)" }}>
