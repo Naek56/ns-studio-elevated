@@ -42,7 +42,7 @@ export default function AgencySection() {
       <div className="relative z-10 mx-auto max-w-[1100px]">
         <p className="ag-in type-body text-xs font-semibold uppercase tracking-[0.32em] text-white/70 opacity-0">L'agence</p>
         <h2 className="ag-in type-strong mx-auto mt-5 max-w-3xl opacity-0" style={{ fontSize: "clamp(2rem, 5.2vw, 4rem)" }}>
-          On ne livre pas des sites. On construit des <span className="mark-select">présences</span>.
+          On ne livre pas des sites. On construit des <span className="mark-select mk-c">présences</span>.
         </h2>
         <p className="ag-in type-body mx-auto mt-7 max-w-2xl text-white/80 opacity-0" style={{ fontSize: "clamp(0.95rem, 2vw, 1.2rem)" }}>
           WAY Agency est une agence web créative basée à Strasbourg. On travaille avec des businesses qui ont quelque chose à dire et qui veulent être entendus.
