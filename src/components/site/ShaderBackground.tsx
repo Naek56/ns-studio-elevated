@@ -357,6 +357,7 @@ export function ShaderBackground({ className }: { className?: string }) {
     let visible = document.visibilityState === "visible"
     let inView = true
     let disposed = false
+    let paused = false // mis en pause pendant la traversée du nuage (perf)
     const start = performance.now()
     const timeAnimated = Math.abs(UNIFORMS.timeScale) > 0.0001
 
@@ -375,10 +376,23 @@ export function ShaderBackground({ className }: { className?: string }) {
     }
 
     function requestRender() {
-      if (!disposed && visible && inView && raf === 0) {
+      if (!disposed && visible && inView && !paused && raf === 0) {
         raf = requestAnimationFrame(render)
       }
     }
+
+    // pause externe (ex. pendant la transition nuage plein écran) → libère le GPU
+    const onPause = (e: Event) => {
+      const next = !!(e as CustomEvent<boolean>).detail
+      if (next === paused) return
+      paused = next
+      if (paused) {
+        if (raf !== 0) { cancelAnimationFrame(raf); raf = 0; lastNow = null }
+      } else {
+        requestRender()
+      }
+    }
+    window.addEventListener("way:shaderpause", onPause as EventListener)
 
     const updatePointerTarget = () => {
       if (!pointerKnown) return
@@ -456,7 +470,7 @@ export function ShaderBackground({ className }: { className?: string }) {
 
     function render(now: number) {
       raf = 0
-      if (disposed || !visible || !inView) return
+      if (disposed || !visible || !inView || paused) return
       const dt = lastNow === null ? 0 : Math.min((now - lastNow) / 1000, 0.1)
       lastNow = now
       const follow = 1 - Math.exp(-12 * dt)
@@ -481,6 +495,7 @@ export function ShaderBackground({ className }: { className?: string }) {
     return () => {
       disposed = true
       cancelAnimationFrame(raf)
+      window.removeEventListener("way:shaderpause", onPause as EventListener)
       resizeObserver.disconnect()
       intersectionObserver.disconnect()
       document.removeEventListener("visibilitychange", onVisibilityChange)
