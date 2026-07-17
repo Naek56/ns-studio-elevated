@@ -59,7 +59,7 @@ export default function AwarenessHero() {
 
       <div className="a-stage relative flex flex-col items-center will-change-transform">
         <h1 className="a-title type-strong max-w-4xl opacity-0" style={{ fontSize: "clamp(1.9rem, 5.4vw, 4.2rem)" }}>
-          Arrête de regarder ton <span className="mark-select">écran</span>
+          Arrête de regarder ton <span className="mark-select mk-a">écran</span>
         </h1>
 
         <div className="a-sub mt-9 flex flex-col items-center justify-center gap-5 opacity-0 sm:mt-11 sm:flex-row sm:gap-8">
