@@ -1,12 +1,10 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger, REDUCED } from "@/lib/gsapSetup";
 import CloudDecor, { type CloudDeco } from "./CloudDecor";
-import PixelIcon from "./PixelIcon";
 
 const DECO: CloudDeco[] = [
-  { top: "8%", left: "4%", size: 128, seed: 5, opacity: 0.5, delay: 0.4, travel: 52, pivot: 5, dur: 15, flip: false },
-  { top: "16%", right: "5%", size: 104, seed: 14, opacity: 0.44, delay: 2.1, travel: -44, pivot: 6, dur: 18, flip: true },
-  { bottom: "10%", left: "8%", size: 112, seed: 21, opacity: 0.42, delay: 1.5, travel: 48, pivot: 4, dur: 20, flip: false },
+  { top: "9%", right: "5%", size: 120, seed: 14, opacity: 0.44, flip: true },
+  { bottom: "12%", left: "6%", size: 128, seed: 21, opacity: 0.42, flip: false },
 ];
 
 /* Section Agence — « On ne livre pas des sites. On construit des présences. »
@@ -42,9 +40,7 @@ export default function AgencySection() {
       </svg>
 
       <div className="relative z-10 mx-auto max-w-[1100px]">
-        <p className="ag-in type-body flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.32em] text-white/70 opacity-0">
-          <PixelIcon name="sparkle" size={16} />L'agence<PixelIcon name="sparkle" size={16} />
-        </p>
+        <p className="ag-in type-body text-xs font-semibold uppercase tracking-[0.32em] text-white/70 opacity-0">L'agence</p>
         <h2 className="ag-in type-strong mx-auto mt-5 max-w-3xl opacity-0" style={{ fontSize: "clamp(2rem, 5.2vw, 4rem)" }}>
           On ne livre pas des sites. On construit des <span className="mark-select">présences</span>.
         </h2>

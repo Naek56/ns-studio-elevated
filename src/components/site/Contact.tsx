@@ -7,9 +7,8 @@ import { gsap, REDUCED } from "@/lib/gsapSetup";
 import CloudDecor, { type CloudDeco } from "./CloudDecor";
 
 const CONTACT_DECO: CloudDeco[] = [
-  { top: "12%", left: "7%", size: 146, seed: 8, opacity: 0.5, delay: 0.4, travel: 54, pivot: 5, dur: 16, flip: false },
-  { top: "20%", right: "8%", size: 112, seed: 15, opacity: 0.44, delay: 2.2, travel: -46, pivot: 6, dur: 19, flip: true },
-  { bottom: "22%", left: "11%", size: 124, seed: 2, opacity: 0.46, delay: 1.4, travel: 48, pivot: 4, dur: 21, flip: false },
+  { top: "12%", left: "7%", size: 138, seed: 8, opacity: 0.46, flip: false },
+  { bottom: "20%", right: "9%", size: 120, seed: 15, opacity: 0.44, flip: true },
 ];
 
 export default function Contact() {

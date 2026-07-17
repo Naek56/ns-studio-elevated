@@ -144,7 +144,7 @@ export default function MemoryExperience() {
         {beat.kind === "button" && !popping && (
           <motion.div key="btn" {...fade} className="flex flex-col items-center">
             <ScribbleButton onClick={(e?: unknown) => { (e as Event | undefined)?.stopPropagation?.(); popButton(); }} />
-            <p className="type-body mt-16 text-sm tracking-[0.22em] text-white/60 sm:text-base">Ne l'oublie pas</p>
+            <p className="type-body mt-16 text-sm font-medium tracking-[0.22em] text-white/90 sm:text-base" style={{ textShadow: "0 2px 14px rgba(0,0,0,0.75), 0 0 2px rgba(0,0,0,0.6)" }}>Ne l'oublie pas</p>
           </motion.div>
         )}
 
@@ -158,7 +158,7 @@ export default function MemoryExperience() {
                 <path d="M100 10 v-14 M160 30 l12 -12 M186 66 h14 M160 96 l12 12 M100 112 v14 M40 96 l-12 12 M14 66 h-14 M40 30 l-12 -12" />
               </g>
             </svg>
-            <p className="type-body mt-16 text-sm tracking-[0.22em] text-white/60 opacity-0 sm:text-base">Ne l'oublie pas</p>
+            <p className="type-body mt-16 text-sm font-medium tracking-[0.22em] text-white/90 opacity-0 sm:text-base" style={{ textShadow: "0 2px 14px rgba(0,0,0,0.75), 0 0 2px rgba(0,0,0,0.6)" }}>Ne l'oublie pas</p>
           </motion.div>
         )}
 
@@ -242,10 +242,11 @@ export default function MemoryExperience() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2 }}
               className="absolute top-12 flex flex-col items-center gap-3 text-white sm:top-14"
+              style={{ filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.85)) drop-shadow(0 0 2px rgba(0,0,0,0.6))" }}
             >
               <svg viewBox="0 0 48 48" className="h-14 w-14 sm:h-16 sm:w-16" fill="none" aria-hidden>
-                <circle cx="24" cy="24" r="22" stroke="currentColor" strokeWidth="2.2" />
-                <path d="M13 17.5 L18.5 31 L24 20 L29.5 31 L35 17.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="24" cy="24" r="22" stroke="currentColor" strokeWidth="2.6" />
+                <path d="M13 17.5 L18.5 31 L24 20 L29.5 31 L35 17.5" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               <span className="type-body text-sm font-semibold tracking-[0.3em]">WAY</span>
             </motion.div>
