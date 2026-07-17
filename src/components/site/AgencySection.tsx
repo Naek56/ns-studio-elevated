@@ -9,7 +9,7 @@ const DECO: CloudDeco[] = [
 /* icônes logo W (papier découpé) — dans les coins libres, loin des nuages */
 const LOGOS = [
   { top: "11%", right: "6%", size: 82, opacity: 0.85 },
-  { bottom: "11%", left: "6%", size: 76, opacity: 0.8 },
+  { bottom: "22%", left: "6%", size: 76, opacity: 0.8 },
 ];
 
 /* Section Agence — « On ne livre pas des sites. On construit des présences. »
