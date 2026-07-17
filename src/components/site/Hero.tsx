@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap, REDUCED } from "@/lib/gsapSetup";
-import PixelIcon from "./PixelIcon";
 import CloudDecor, { type CloudDeco } from "./CloudDecor";
 
 const HERO_DECO: CloudDeco[] = [
-  { top: "11%", left: "4%", size: 158, seed: 6, opacity: 0.55, delay: 0, travel: 60, pivot: 5, dur: 15, flip: false },
-  { top: "19%", right: "5%", size: 122, seed: 12, opacity: 0.46, delay: 2.5, travel: -50, pivot: 6, dur: 18, flip: true },
-  { bottom: "15%", left: "9%", size: 116, seed: 19, opacity: 0.44, delay: 1.2, travel: 46, pivot: 4, dur: 20, flip: false },
-  { bottom: "12%", right: "11%", size: 146, seed: 3, opacity: 0.5, delay: 3.4, travel: -56, pivot: 7, dur: 17, flip: true },
+  { top: "10%", left: "4%", size: 150, seed: 6, opacity: 0.5, flip: false },
+  { top: "40%", right: "5%", size: 120, seed: 12, opacity: 0.42, flip: true },
+  { bottom: "9%", left: "16%", size: 128, seed: 19, opacity: 0.44, flip: false },
 ];
 
 const WORDS = ["AVEUGLE", "MUET", "SEUL", "PERDU"];
@@ -73,8 +71,8 @@ export default function Hero({ play }: { play: boolean }) {
             <span aria-hidden className="ml-1 inline-block w-[0.05em] animate-pulse rounded-full bg-white align-baseline" style={{ height: "0.82em", boxShadow: "0 0 16px rgba(255,255,255,0.8)" }} />
           </span>
         </h1>
-        <p className="h-sub mt-8 flex items-center justify-center gap-2 text-base text-white/70 opacity-0 sm:text-lg">
-          On change ça.<PixelIcon name="star" size={18} />
+        <p className="h-sub mt-8 text-base font-medium text-white/85 opacity-0 sm:text-lg" style={{ textShadow: "0 2px 14px rgba(0,0,0,0.6)" }}>
+          On change ça.
         </p>
       </div>
 

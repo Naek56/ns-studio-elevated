@@ -148,40 +148,30 @@
      garde sa couleur — exactement comme quand on sélectionne un mot.
      box-decoration-break: clone → le fond suit le mot même sur 2 lignes. */
   .mark-select {
-    /* bande bleue limitée à 72% de la hauteur de ligne, centrée : elle ne
-       peut PAS toucher la ligne du dessus ni celle du dessous */
-    background-image: linear-gradient(rgba(45, 121, 255, 0.5), rgba(45, 121, 255, 0.5));
+    /* vrai coup de SURLIGNEUR : trait translucide, ébauché à la main —
+       extrémités qui « bavent » puis s'estompent, épaisseur irrégulière,
+       fondu léger. Reste sur ~66% de la hauteur de ligne (ne touche pas
+       les lignes voisines) et garde ses marges (pas les mots voisins). */
+    background-image:
+      linear-gradient(101deg,
+        rgba(74, 150, 255, 0) 0.5%,
+        rgba(74, 150, 255, 0.5) 3.5%,
+        rgba(64, 140, 250, 0.62) 24%,
+        rgba(80, 158, 255, 0.5) 52%,
+        rgba(64, 140, 250, 0.6) 78%,
+        rgba(74, 150, 255, 0.48) 96%,
+        rgba(74, 150, 255, 0) 99.5%);
     background-repeat: no-repeat;
-    background-size: 100% 72%;
-    background-position: center;
+    background-size: 100% 66%;
+    background-position: 2% 62%;
     color: inherit;
-    padding: 0 0.02em;
-    margin: 0 0.28em;        /* grand écart → ne touche pas les mots voisins */
-    border-radius: 2px;
+    padding: 0.02em 0.16em;
+    margin: 0 0.12em;
+    border-radius: 45% 55% 48% 52% / 62% 40% 60% 38%; /* extrémités organiques */
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
     text-shadow: none;
   }
-
-  /* nuages « mixed media » : animation COLLAGE en coupes (stop-motion).
-     steps(1, end) fige chaque pose → le nuage SAUTE d'une position/angle à
-     l'autre, jamais de mouvement fluide, comme un collage animé à la main. */
-  .cd-float {
-    animation: cd-cut var(--dur, 16s) steps(1, end) infinite;
-    will-change: transform;
-  }
-  @keyframes cd-cut {
-    0%    { transform: translate(var(--xa, 40px), 0) rotate(var(--ra, -5deg)); }
-    12.5% { transform: translate(calc(var(--xa, 40px) * 0.45), -6px) rotate(2deg); }
-    25%   { transform: translate(0, -10px) rotate(var(--rb, 5deg)); }
-    37.5% { transform: translate(calc(var(--xb, -40px) * 0.45), -4px) rotate(-1deg); }
-    50%   { transform: translate(var(--xb, -40px), 0) rotate(var(--ra, -5deg)); }
-    62.5% { transform: translate(calc(var(--xb, -40px) * 0.45), 6px) rotate(3deg); }
-    75%   { transform: translate(0, 10px) rotate(var(--rb, 5deg)); }
-    87.5% { transform: translate(calc(var(--xa, 40px) * 0.45), 4px) rotate(-2deg); }
-    100%  { transform: translate(var(--xa, 40px), 0) rotate(var(--ra, -5deg)); }
-  }
-  @media (prefers-reduced-motion: reduce) { .cd-float { animation: none; } }
 
   /* texture carton/papier : même grain que la photo, tonalité claire fiable */
   .paper {

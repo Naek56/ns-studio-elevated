@@ -95,10 +95,10 @@ export default function ReviewsSection() {
 
       <div className="relative z-10 mx-auto max-w-3xl text-center">
         <h2 className="rv-l1 type-strong opacity-0" style={{ fontSize: "clamp(2rem, 5.4vw, 4rem)" }}>
-          Maintenant imagine que tes <span className="mark-select">clients</span> fassent pareil.
+          Maintenant imagine que tes clients fassent pareil.
         </h2>
         <h2 className="rv-l2 type-strong mt-4 opacity-0" style={{ fontSize: "clamp(2rem, 5.4vw, 4rem)" }}>
-          Et ne trouvent pas ton <span className="mark-select">nom</span>.
+          Et ne trouvent pas ton nom.
         </h2>
       </div>
     </section>
