@@ -6,6 +6,7 @@ const HERO_DECO: CloudDeco[] = [
   { top: "10%", left: "4%", size: 150, seed: 6, opacity: 0.5, flip: false },
   { top: "40%", right: "5%", size: 120, seed: 12, opacity: 0.42, flip: true },
   { bottom: "9%", left: "16%", size: 128, seed: 19, opacity: 0.44, flip: false },
+  { bottom: "15%", right: "9%", size: 116, seed: 31, opacity: 0.44, flip: true },
 ];
 
 const WORDS = ["AVEUGLE", "MUET", "SEUL", "PERDU"];
