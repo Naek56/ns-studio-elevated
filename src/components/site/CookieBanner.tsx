@@ -45,46 +45,45 @@ export default function CookieBanner() {
           aria-label="Consentement aux cookies"
         >
           <div
-            className="relative w-full max-w-md overflow-hidden rounded-2xl border border-white/15 p-5 sm:p-6"
+            className="relative w-full max-w-[340px] overflow-hidden rounded-xl border border-white/15 p-3.5"
             style={{
               background: "linear-gradient(160deg, #16407e 0%, #0e2a56 58%, #0a1e40 100%)",
-              boxShadow: "0 20px 50px -20px rgba(3,12,30,0.75), inset 0 1px 0 rgba(255,255,255,0.12)",
+              boxShadow: "0 16px 40px -20px rgba(3,12,30,0.75), inset 0 1px 0 rgba(255,255,255,0.12)",
             }}
           >
             {/* halo décoratif */}
-            <div aria-hidden className="pointer-events-none absolute -right-10 -top-14 h-40 w-40 rounded-full"
-              style={{ background: "radial-gradient(closest-side, rgba(140,203,232,0.28), transparent 70%)" }} />
+            <div aria-hidden className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full"
+              style={{ background: "radial-gradient(closest-side, rgba(140,203,232,0.26), transparent 70%)" }} />
 
-            <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/15 bg-white">
+            <div className="relative flex items-start gap-3">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/15 bg-white">
                 <img src="/minecraft-cookie.jpg" alt="" aria-hidden className="h-full w-full object-cover" style={{ imageRendering: "pixelated" }} />
               </span>
 
               <div className="min-w-0 flex-1">
-                <p className="type-body text-sm font-semibold text-white">On aime savoir ce qui vous plaît</p>
-                <p className="type-body mt-1 text-[13px] leading-relaxed text-white/65">
-                  Des cookies analytiques nous aident à améliorer votre expérience. Rien n'est vendu ni partagé.{" "}
+                <p className="type-body text-[13px] font-semibold text-white">On aime savoir ce qui vous plaît</p>
+                <p className="type-body mt-0.5 text-[11.5px] leading-snug text-white/65">
+                  Cookies analytiques pour améliorer votre expérience.{" "}
                   <Link to="/confidentialite" className="whitespace-nowrap text-[#8ecbe8] underline underline-offset-2 transition-colors hover:text-white">
                     En savoir plus
                   </Link>
                 </p>
-              </div>
-
-              <div className="flex shrink-0 items-center gap-4 sm:flex-col-reverse sm:items-stretch sm:gap-2">
-                <button
-                  onClick={() => choose("refused")}
-                  className="type-body text-[13px] font-medium text-white/55 transition-colors hover:text-white/90"
-                >
-                  Refuser
-                </button>
-                <button
-                  onClick={() => choose("accepted")}
-                  className="type-body group inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-neutral-900 transition-all duration-300 hover:brightness-105"
-                  style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.5), 0 10px 26px -8px rgba(255,255,255,0.4)" }}
-                >
-                  <Check className="h-4 w-4" />
-                  Accepter
-                </button>
+                <div className="mt-2.5 flex items-center gap-3">
+                  <button
+                    onClick={() => choose("accepted")}
+                    className="type-body group inline-flex items-center justify-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-[13px] font-semibold text-neutral-900 transition-all duration-300 hover:brightness-105"
+                    style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.5), 0 8px 18px -8px rgba(255,255,255,0.4)" }}
+                  >
+                    <Check className="h-3.5 w-3.5" />
+                    Accepter
+                  </button>
+                  <button
+                    onClick={() => choose("refused")}
+                    className="type-body text-[12px] font-medium text-white/55 transition-colors hover:text-white/90"
+                  >
+                    Refuser
+                  </button>
+                </div>
               </div>
             </div>
           </div>

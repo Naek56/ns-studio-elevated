@@ -4,9 +4,9 @@ import CloudDecor, { type CloudDeco } from "./CloudDecor";
 
 /* Section 1 — « Arrête de regarder ton écran ». 3 nuages bien éparpillés. */
 const DECO: CloudDeco[] = [
-  { top: "9%", left: "5%", size: 122, seed: 4, opacity: 0.44, flip: false },
-  { top: "14%", right: "6%", size: 104, seed: 18, opacity: 0.42, flip: true },
-  { bottom: "10%", left: "56%", size: 112, seed: 27, opacity: 0.4, flip: false },
+  { top: "24%", left: "5%", size: 122, seed: 4, opacity: 0.44, flip: false },
+  { top: "28%", right: "6%", size: 104, seed: 18, opacity: 0.42, flip: true },
+  { bottom: "10%", left: "68%", size: 112, seed: 27, opacity: 0.4, flip: false },
 ];
 
 export default function AwarenessHero() {
