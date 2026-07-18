@@ -9,10 +9,8 @@ const BRAINS = [
   { bottom: "12%", right: "7%", size: 94, opacity: 0.8, flip: true },
 ];
 const CLOUDS: CloudDeco[] = [
-  { top: "46%", left: "3%", size: 108, seed: 7, opacity: 0.4, flip: false },
-  { top: "50%", right: "3%", size: 116, seed: 25, opacity: 0.4, flip: true },
-  { top: "11%", right: "6%", size: 106, seed: 33, opacity: 0.42, flip: true },
-  { bottom: "9%", left: "8%", size: 112, seed: 41, opacity: 0.42, flip: false },
+  { top: "30%", right: "6%", size: 106, seed: 33, opacity: 0.42, flip: true },
+  { bottom: "24%", left: "8%", size: 112, seed: 41, opacity: 0.42, flip: false },
 ];
 
 /* Section Kairos — « Et après la livraison ? ». (Les colonnes ont été

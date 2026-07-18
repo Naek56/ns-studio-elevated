@@ -19,6 +19,14 @@ function ScrollToTop() {
   return null;
 }
 
+/* Pas de bannière cookies sur l'expérience (« 1re partie du site », route "/").
+   Elle reste sur le site agence et les pages légales. */
+function CookieGate() {
+  const { pathname } = useLocation();
+  if (pathname === "/") return null;
+  return <CookieBanner />;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -34,8 +42,8 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-        {/* the consent banner lives at app level so it shows on every page */}
-        <CookieBanner />
+        {/* bannière consentement : sur toutes les pages SAUF l'expérience */}
+        <CookieGate />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
