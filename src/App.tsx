@@ -19,11 +19,11 @@ function ScrollToTop() {
   return null;
 }
 
-/* Pas de bannière cookies sur l'expérience (« 1re partie du site », route "/").
-   Elle reste sur le site agence et les pages légales. */
+/* Pas de bannière cookies sur l'expérience (désormais route "/experience").
+   Elle s'affiche sur l'accueil agence ("/") et les pages légales. */
 function CookieGate() {
   const { pathname } = useLocation();
-  if (pathname === "/") return null;
+  if (pathname === "/experience") return null;
   return <CookieBanner />;
 }
 
@@ -35,8 +35,12 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-          <Route path="/" element={<Index />} />
+          {/* La 1re partie (l'expérience, <Index/>) a été retirée du parcours :
+             l'accueil ouvre directement le site agence. L'expérience reste
+             sauvegardée et accessible sur /experience (+ branche backup/experience-full). */}
+          <Route path="/" element={<Agence />} />
           <Route path="/agence" element={<Agence />} />
+          <Route path="/experience" element={<Index />} />
           <Route path="/mentions-legales" element={<MentionsLegales />} />
           <Route path="/confidentialite" element={<Confidentialite />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
