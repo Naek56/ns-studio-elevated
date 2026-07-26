@@ -66,10 +66,12 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        display: ['Poppins', 'system-ui', 'sans-serif'],
-        serif: ['Poppins', 'system-ui', 'sans-serif'],
-        mono: ['Poppins', 'system-ui', 'sans-serif'],
-        sans: ['Poppins', 'system-ui', 'sans-serif'],
+        display: ['Fredoka', 'system-ui', 'sans-serif'],
+        pixel: ['"Press Start 2P"', 'monospace'],
+        round: ['Fredoka', 'system-ui', 'sans-serif'],
+        serif: ['Fredoka', 'system-ui', 'sans-serif'],
+        mono: ['"Press Start 2P"', 'monospace'],
+        sans: ['Fredoka', 'system-ui', 'sans-serif'],
       },
       keyframes: {
         "accordion-down": {
