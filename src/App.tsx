@@ -9,6 +9,7 @@ import Index from "./pages/Index.tsx";
 import Agence from "./pages/Agence.tsx";
 import MentionsLegales from "./pages/MentionsLegales.tsx";
 import Confidentialite from "./pages/Confidentialite.tsx";
+import BlueSmp from "./pages/BlueSmp.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -23,7 +24,7 @@ function ScrollToTop() {
    Elle s'affiche sur l'accueil agence ("/") et les pages légales. */
 function CookieGate() {
   const { pathname } = useLocation();
-  if (pathname === "/experience") return null;
+  if (pathname === "/experience" || pathname === "/bluesmp") return null;
   return <CookieBanner />;
 }
 
@@ -41,6 +42,8 @@ const App = () => (
           <Route path="/" element={<Agence />} />
           <Route path="/agence" element={<Agence />} />
           <Route path="/experience" element={<Index />} />
+          {/* Site séparé : serveur Minecraft BLUE SMP (indépendant du site agence) */}
+          <Route path="/bluesmp" element={<BlueSmp />} />
           <Route path="/mentions-legales" element={<MentionsLegales />} />
           <Route path="/confidentialite" element={<Confidentialite />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

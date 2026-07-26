@@ -27,3 +27,13 @@ npm install
 npm run dev
 npm run build
 ```
+
+## Site séparé : BLUE SMP (serveur Minecraft)
+
+Un second site **indépendant** est disponible sur la route **`/bluesmp`** — une
+landing page pour le serveur Minecraft SMP « BLUE SMP » (thème bleu & noir, polices
+pixel Minecraft / Fredoka). Il n'affecte pas le site agence.
+
+- Page : `src/pages/BlueSmp.tsx`
+- Logo : dépose ton image dans `public/blue-smp-logo.png` (sinon un titre CSS s'affiche)
+- Infos à personnaliser (IP, Discord, version) : en haut de `src/pages/BlueSmp.tsx`
