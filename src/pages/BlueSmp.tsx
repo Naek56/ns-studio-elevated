@@ -23,6 +23,31 @@ const SERVER_IP = "play.bluesmp.net";
 const BEDROCK_PORT = "19132";
 const DISCORD_URL = "https://discord.gg/bluesmp";
 const MC_VERSION = "1.21+";
+/* Dépose ton logo ici : public/blue-smp-logo.png
+   S'il n'existe pas, un titre "BLUE SMP" en CSS s'affiche automatiquement. */
+const LOGO_SRC = "/blue-smp-logo.png";
+
+/* Logo du serveur : image si dispo, sinon repli sur le wordmark CSS */
+function LogoTitle() {
+  const [failed, setFailed] = useState(false);
+  if (failed) {
+    return (
+      <h1 className="wordmark mb-4 text-6xl leading-[0.95] sm:text-7xl lg:text-8xl">
+        BLUE
+        <br />
+        SMP
+      </h1>
+    );
+  }
+  return (
+    <img
+      src={LOGO_SRC}
+      alt="BLUE SMP"
+      onError={() => setFailed(true)}
+      className="mb-4 w-full max-w-md drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+    />
+  );
+}
 
 /* ---------- petit bandeau de flocons/particules bleues ---------- */
 function Particles() {
@@ -148,7 +173,7 @@ export default function BlueSmp() {
   const [menu, setMenu] = useState(false);
 
   return (
-    <div className="relative min-h-screen overflow-x-clip">
+    <div className="blue-smp relative min-h-screen overflow-x-clip">
       {/* keyframes locales */}
       <style>{`
         @keyframes mcfall { to { transform: translateY(110vh) rotate(180deg); } }
@@ -232,11 +257,7 @@ export default function BlueSmp() {
               <Sparkles className="h-3.5 w-3.5" /> Serveur Survie · Java & Bedrock
             </span>
 
-            <h1 className="wordmark mb-4 text-6xl leading-[0.95] sm:text-7xl lg:text-8xl">
-              BLUE
-              <br />
-              SMP
-            </h1>
+            <LogoTitle />
 
             <p className="font-round mb-8 max-w-lg text-lg leading-relaxed text-muted-foreground">
               Plonge dans une aventure Minecraft glacée. Survie, économie,

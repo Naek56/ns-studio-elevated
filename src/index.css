@@ -4,36 +4,36 @@
 
 @layer base {
   :root {
-    /* BLUE SMP — bleu & noir */
-    --background: 218 74% 8%;
-    --foreground: 210 100% 96%;
+    /* WAY Agency — fully black & white */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
 
-    --card: 218 60% 12%;
-    --card-foreground: 210 100% 96%;
+    --card: 0 0% 4%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 218 60% 10%;
-    --popover-foreground: 210 100% 96%;
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 208 100% 62%;
-    --primary-foreground: 218 74% 8%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 4%;
 
-    --secondary: 216 55% 16%;
-    --secondary-foreground: 210 100% 96%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 216 45% 18%;
-    --muted-foreground: 205 40% 72%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 56%;
 
-    --accent: 199 100% 74%;
-    --accent-foreground: 218 74% 8%;
+    --accent: 0 0% 98%;
+    --accent-foreground: 0 0% 4%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 210 60% 26%;
-    --input: 216 45% 18%;
-    --ring: 199 100% 74%;
+    --border: 0 0% 16%;
+    --input: 0 0% 14%;
+    --ring: 0 0% 80%;
 
-    --radius: 0.25rem;
+    --radius: 0.75rem;
   }
 }
 
@@ -44,119 +44,43 @@
 
   html {
     scroll-behavior: smooth;
-    overflow-x: clip;
   }
+
+  /* Lenis smooth scroll */
+  html.lenis,
+  html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+  .lenis.lenis-stopped { overflow: hidden; }
+
+  /* clip (not hidden) so it never creates a scroll container that breaks
+     position: sticky in the storytelling section */
+  html { overflow-x: clip; }
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Fredoka', system-ui, -apple-system, sans-serif;
+    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
     overflow-x: clip;
     max-width: 100vw;
-    background-color: #071331;
-    background-image:
-      radial-gradient(1200px 600px at 50% -10%, rgba(63, 169, 255, 0.35), transparent 60%),
-      radial-gradient(900px 500px at 15% 20%, rgba(30, 111, 214, 0.25), transparent 55%),
-      radial-gradient(900px 500px at 85% 30%, rgba(126, 200, 255, 0.18), transparent 55%),
-      linear-gradient(180deg, #0a1a3f 0%, #071331 45%, #050d24 100%);
-    background-attachment: fixed;
+    /* allow only vertical finger scroll (no horizontal drift on mobile) */
+    touch-action: pan-y;
+    overscroll-behavior-x: none;
   }
 
   ::selection {
-    background: hsl(208 100% 62%);
-    color: hsl(218 74% 8%);
+    background: hsl(0 0% 98%);
+    color: hsl(0 0% 0%);
   }
 
-  ::-webkit-scrollbar { width: 10px; }
-  ::-webkit-scrollbar-track { background: #050d24; }
-  ::-webkit-scrollbar-thumb { background: hsl(208 100% 45%); border: 2px solid #050d24; }
-  ::-webkit-scrollbar-thumb:hover { background: hsl(199 100% 60%); }
-}
-
-@layer components {
-  /* Police pixel façon Minecraft "Mojangles" */
-  .font-pixel {
-    font-family: 'Press Start 2P', 'Fredoka', monospace;
-    letter-spacing: 0.02em;
-  }
-  /* Police ronde façon "Oddbods" */
-  .font-round {
-    font-family: 'Fredoka', system-ui, sans-serif;
-  }
-
-  /* Bouton bloc Minecraft */
-  .mc-btn {
-    @apply font-pixel inline-flex items-center justify-center gap-2 select-none;
-    font-size: 0.72rem;
-    line-height: 1;
-    padding: 1rem 1.5rem;
-    color: #0a1a3f;
-    background: linear-gradient(180deg, #7ec8ff 0%, #3fa9ff 55%, #1e6fd6 100%);
-    border: 3px solid #0a1a3f;
-    box-shadow:
-      inset -4px -4px 0 rgba(10, 26, 63, 0.45),
-      inset 4px 4px 0 rgba(255, 255, 255, 0.55),
-      0 6px 0 #0a1a3f,
-      0 10px 22px rgba(0, 0, 0, 0.45);
-    transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s ease;
-    cursor: pointer;
-    text-transform: uppercase;
-  }
-  .mc-btn:hover { filter: brightness(1.08); }
-  .mc-btn:active {
-    transform: translateY(6px);
-    box-shadow:
-      inset -4px -4px 0 rgba(10, 26, 63, 0.45),
-      inset 4px 4px 0 rgba(255, 255, 255, 0.55),
-      0 0 0 #0a1a3f,
-      0 4px 10px rgba(0, 0, 0, 0.4);
-  }
-
-  .mc-btn--ghost {
-    color: #dff1ff;
-    background: linear-gradient(180deg, #14336b 0%, #0e2450 100%);
-    box-shadow:
-      inset -4px -4px 0 rgba(0, 0, 0, 0.4),
-      inset 4px 4px 0 rgba(126, 200, 255, 0.25),
-      0 6px 0 #050d24,
-      0 10px 22px rgba(0, 0, 0, 0.45);
-  }
-
-  /* Carte / panneau style bloc */
-  .mc-panel {
-    @apply relative;
-    background: linear-gradient(180deg, rgba(20, 51, 107, 0.75) 0%, rgba(10, 26, 63, 0.85) 100%);
-    border: 3px solid hsl(210 60% 30%);
-    box-shadow:
-      inset -3px -3px 0 rgba(0, 0, 0, 0.35),
-      inset 3px 3px 0 rgba(126, 200, 255, 0.14),
-      0 8px 24px rgba(0, 0, 0, 0.4);
-  }
-
-  /* Wordmark BLUE SMP en CSS (façon logo) */
-  .wordmark {
-    @apply font-pixel;
-    background: linear-gradient(180deg, #ffffff 0%, #bfe6ff 45%, #3fa9ff 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    filter: drop-shadow(4px 6px 0 #0a1a3f) drop-shadow(0 0 26px rgba(63, 169, 255, 0.55));
-  }
-
-  .pixel-border {
-    box-shadow: 0 0 0 3px #0a1a3f, 0 0 0 6px hsl(208 100% 62%);
-  }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: hsl(0 0% 0%); }
+  ::-webkit-scrollbar-thumb { background: hsl(0 0% 20%); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(0 0% 35%); }
 }
 
 @layer utilities {
-  .text-glow { text-shadow: 0 0 24px rgba(63, 169, 255, 0.6); }
-  .bg-grid {
-    background-image:
-      linear-gradient(rgba(126, 200, 255, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(126, 200, 255, 0.06) 1px, transparent 1px);
-    background-size: 42px 42px;
-  }
-  .text-balance { text-wrap: balance; }
+  .font-display { font-family: 'Poppins', system-ui, sans-serif; }
+  .font-mono { font-family: 'Poppins', system-ui, sans-serif; }
 
   .container-tight {
     width: 100%;
@@ -164,15 +88,485 @@
     margin-inline: auto;
     padding-inline: 1.5rem;
   }
+  .container-wide {
+    width: 100%;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  /* big heading — Poppins, tight */
+  .display-xl {
+    font-family: 'Poppins', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  /* cinematic display — Cormorant Garamond, light, editorial */
+  .display-serif {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 300;
+    letter-spacing: -0.005em;
+    line-height: 1.06;
+  }
+  .display-serif em, .display-serif i { font-style: italic; font-weight: 400; }
+
+  /* ── Les deux polices de l'expérience ─────────────────────────────
+     .type-strong  : Poppins 800, gros, dégradé bleu électrique → noir
+                     (les titres forts, visibles partout)
+     .type-body    : Work Sans, lisible, sans couleur particulière        */
+  .type-strong {
+    font-family: 'Poppins', system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    color: #ffffff;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  .type-body {
+    font-family: 'Work Sans', system-ui, sans-serif;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  /* un ou deux MOTS ACCROCHEURS dans une phrase de l'expérience : eux seuls
+     passent en serif Fraunces + teinte ivoire chaude, en italique léger.
+     Le reste de la phrase garde la police normale (type-strong). */
+  .exp-accent {
+    font-family: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: italic;
+    color: #5cb3ff; /* bleu électrique : couleur distincte de la police normale */
+    letter-spacing: 0;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6), 0 0 3px rgba(0, 0, 0, 0.5);
+  }
+
+  /* mot « sélectionné » façon sélection de texte d'ordinateur : un bloc bleu
+     translucide et RECTANGULAIRE qui couvre la hauteur de ligne, le texte
+     garde sa couleur — exactement comme quand on sélectionne un mot.
+     box-decoration-break: clone → le fond suit le mot même sur 2 lignes. */
+  /* ── SURLIGNEUR réaliste ────────────────────────────────────────────
+     Base commune : trait translucide, extrémités qui s'estompent, garde
+     ses marges. Chaque mot reçoit une VARIANTE (mk-a…mk-d) : angle, teinte,
+     densité d'encre, forme et « repasse » différents → jamais identique.
+     Deux dégradés superposés par variante = corps + coup de repasse. */
+  .mark-select {
+    color: inherit;
+    background-repeat: no-repeat;
+    padding: 0.02em 0.18em;
+    margin: 0 0.14em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    text-shadow: none;
+  }
+  /* A — azur, densité centrale */
+  .mk-a {
+    background-image:
+      linear-gradient(100deg, rgba(70,150,255,0) 1%, rgba(70,150,255,0.42) 5%, rgba(56,132,250,0.64) 30%, rgba(80,160,255,0.46) 55%, rgba(56,132,250,0.6) 80%, rgba(70,150,255,0.4) 96%, rgba(70,150,255,0) 99.5%),
+      linear-gradient(100deg, rgba(160,205,255,0) 8%, rgba(160,205,255,0.34) 42%, rgba(160,205,255,0) 80%);
+    background-size: 100% 64%, 100% 24%;
+    background-position: 1% 66%, 4% 40%;
+    border-radius: 46% 54% 48% 52% / 60% 42% 58% 40%;
+  }
+  /* B — indigo, densité à gauche, plus haut */
+  .mk-b {
+    background-image:
+      linear-gradient(94deg, rgba(96,120,255,0) 1%, rgba(96,120,255,0.55) 6%, rgba(80,104,246,0.6) 35%, rgba(110,132,255,0.42) 62%, rgba(80,104,246,0.52) 88%, rgba(96,120,255,0) 99%),
+      linear-gradient(94deg, rgba(175,190,255,0) 10%, rgba(175,190,255,0.3) 36%, rgba(175,190,255,0) 70%);
+    background-size: 100% 70%, 100% 20%;
+    background-position: 0% 60%, 2% 34%;
+    border-radius: 55% 45% 58% 42% / 45% 60% 40% 62%;
+  }
+  /* C — cyan, densité à droite, plus fin */
+  .mk-c {
+    background-image:
+      linear-gradient(108deg, rgba(60,190,235,0) 1%, rgba(60,190,235,0.4) 5%, rgba(48,170,225,0.5) 28%, rgba(80,200,240,0.44) 55%, rgba(48,170,225,0.64) 82%, rgba(60,190,235,0.44) 96%, rgba(60,190,235,0) 99.5%),
+      linear-gradient(108deg, rgba(185,238,255,0) 30%, rgba(185,238,255,0.36) 62%, rgba(185,238,255,0) 92%);
+    background-size: 100% 58%, 100% 22%;
+    background-position: 2% 64%, 5% 46%;
+    border-radius: 48% 52% 44% 56% / 62% 40% 60% 42%;
+  }
+  /* D — bleu-sarcelle, double repasse décalée */
+  .mk-d {
+    background-image:
+      linear-gradient(98deg, rgba(56,164,220,0) 1%, rgba(56,164,220,0.5) 6%, rgba(44,140,210,0.62) 40%, rgba(70,178,232,0.44) 66%, rgba(44,140,210,0.56) 92%, rgba(56,164,220,0) 99%),
+      linear-gradient(98deg, rgba(155,222,246,0) 14%, rgba(155,222,246,0.32) 48%, rgba(155,222,246,0) 82%);
+    background-size: 100% 66%, 100% 28%;
+    background-position: 1% 62%, 6% 56%;
+    border-radius: 52% 48% 55% 45% / 55% 45% 58% 42%;
+  }
+
+  /* texture carton/papier : même grain que la photo, tonalité claire fiable */
+  .paper {
+    background-color: #e9e6dd;
+    background-image:
+      radial-gradient(120% 140% at 15% 0%, rgba(255, 255, 255, 0.7), transparent 55%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0.06));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+                0 10px 30px -16px rgba(0, 0, 0, 0.6);
+  }
+
+  /* nappe sombre derrière un bloc de texte blanc : garantit le contraste
+     sur les zones claires de la photo, sans la masquer autour */
+  .read-pool {
+    background: radial-gradient(ellipse 58% 54% at 50% 50%,
+      rgba(10, 20, 40, 0.42), rgba(10, 20, 40, 0.18) 46%, transparent 76%);
+    filter: blur(30px);
+  }
+
+  /* curseur natif masqué quand le curseur personnalisé est actif */
+  .cursor-none, .cursor-none * { cursor: none !important; }
+  /* …sauf quand une modale est ouverte : on rend le curseur natif et on
+     masque le curseur perso (sinon on ne voit rien sur le formulaire) */
+  html.modal-open, html.modal-open * { cursor: auto !important; }
+  html.modal-open input, html.modal-open textarea { cursor: text !important; }
+  html.modal-open .custom-cursor { display: none !important; }
+
+  /* flèches courbées qui se dessinent (déclenché par la classe .drawn) */
+  .a-draw { stroke-dasharray: 200; stroke-dashoffset: 200; }
+  .a-sub.drawn .a-draw { animation: adraw 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+  @keyframes adraw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { .a-draw { stroke-dashoffset: 0; animation: none; } }
+
+  /* ── Illustrations animées (icônes « Lottie-like ») ─────────────────── */
+  /* rotation autour du CENTRE DU VIEWBOX (pas de la boîte du tracé) —
+     indispensable pour le balayage radar qui part du centre */
+  .il-spin   { animation: il-spin 7s linear infinite; transform-box: view-box; transform-origin: 50% 50%; }
+  .il-spin-r { animation: il-spin 14s linear infinite reverse; transform-box: view-box; transform-origin: 50% 50%; }
+  .il-pulse  { animation: il-pulse 2.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .il-bar    { animation: il-bar 1.8s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom; }
+  .il-scanx  { animation: il-scanx 3s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .il-scany  { animation: il-scany 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .il-twinkle{ animation: il-twinkle 2.4s ease-in-out infinite; }
+  .il-blink  { animation: il-blink 4.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .il-float  { animation: il-float 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  /* la courbe SE DESSINE, tient, puis SE RETIRE dans le même sens —
+     plus de disparition brutale au rebouclage */
+  .il-draw   { stroke-dasharray: var(--len, 200); animation: il-draw 5s ease-in-out infinite; }
+  .il-dash   { animation: il-dash 1.1s linear infinite; }
+
+  @keyframes il-spin   { to { transform: rotate(360deg); } }
+  @keyframes il-pulse  { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.35; } }
+  @keyframes il-bar    { 0%,100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+  @keyframes il-scanx  { 0%,100% { transform: translateX(-10px); } 50% { transform: translateX(10px); } }
+  @keyframes il-scany  { 0%,100% { transform: translateY(-12px); opacity: 0.2; } 50% { transform: translateY(12px); opacity: 0.8; } }
+  @keyframes il-twinkle{ 0%,100% { opacity: 0.25; } 50% { opacity: 1; } }
+  @keyframes il-blink  { 0%,90%,100% { transform: scaleY(1); } 95% { transform: scaleY(0.08); } }
+  @keyframes il-float  { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  @keyframes il-draw   {
+    0%       { stroke-dashoffset: var(--len, 200); }
+    42%, 72% { stroke-dashoffset: 0; }
+    100%     { stroke-dashoffset: calc(-1 * var(--len, 200)); }
+  }
+
+  /* éléments liés au cycle de dessin (5s) : le stylo et l'aire suivent la courbe */
+  .il-pen  { animation: il-pen 5s ease-in-out infinite; }
+  @keyframes il-pen  { 0% { opacity: 0; } 8%, 68% { opacity: 1; } 80%, 100% { opacity: 0; } }
+  .il-area { animation: il-area 5s ease-in-out infinite; }
+  @keyframes il-area { 0%, 10% { opacity: 0; } 46%, 68% { opacity: 1; } 88%, 100% { opacity: 0; } }
+
+  /* halo qui respire doucement (au lieu d'un clignotement) */
+  .il-glowpulse { animation: il-glowpulse 3.2s ease-in-out infinite; }
+  @keyframes il-glowpulse { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.6; } }
+  @keyframes il-dash   { to { stroke-dashoffset: -40; } }
+  @media (prefers-reduced-motion: reduce) {
+    [class^="il-"], [class*=" il-"] { animation: none !important; }
+    .il-draw { stroke-dashoffset: 0; }
+  }
+
+  /* ── Expérience : bouton gribouillis & pop cartoon ───────────────────── */
+  /* « boiling » : les deux jeux de traits alternent comme un dessin animé */
+  .scribble-btn .sb-a { animation: sb-boil-a 0.5s steps(1) infinite; }
+  .scribble-btn .sb-b { animation: sb-boil-b 0.5s steps(1) infinite; }
+  @keyframes sb-boil-a { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes sb-boil-b { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+  .scribble-btn svg { animation: sb-wobble 0.5s steps(2) infinite; }
+  @keyframes sb-wobble { 0%,100% { transform: rotate(-0.8deg); } 50% { transform: rotate(0.8deg); } }
+
+  /* pop cartoon : squash & stretch puis disparition */
+  .sb-pop { animation: sb-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+  @keyframes sb-pop {
+    0%   { transform: scale(1, 1); }
+    25%  { transform: scale(1.25, 0.7); }
+    45%  { transform: scale(0.8, 1.3) rotate(-4deg); }
+    65%  { transform: scale(1.15, 0.9) rotate(3deg); }
+    100% { transform: scale(0) rotate(10deg); opacity: 0; }
+  }
+  /* éclats qui giclent autour du pop */
+  .sb-burst { animation: sb-burst 0.5s ease-out 0.18s forwards; opacity: 0; transform-origin: center; }
+  @keyframes sb-burst {
+    0%   { opacity: 1; transform: scale(0.3) rotate(0deg); }
+    100% { opacity: 0; transform: scale(1.5) rotate(14deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scribble-btn .sb-a, .scribble-btn .sb-b, .scribble-btn svg { animation: none; }
+    .scribble-btn .sb-b { opacity: 0; }
+  }
+
+  /* point actif de la ligne d'avancement du storytelling */
+  .sy-dot.sy-on { background: #ffffff; border-color: #ffffff; box-shadow: 0 0 10px rgba(255,255,255,0.8); }
+
+  /* soulignement animé des liens de navigation */
+  .nav-underline { position: relative; }
+  .nav-underline::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: -4px;
+    height: 1px; width: 100%;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-underline:hover::after { transform: scaleX(1); }
+  .paper-grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+    mix-blend-mode: multiply;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* section label: tiny, wide tracking, readable */
+  .label {
+    font-family: 'Poppins', system-ui, sans-serif;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* soft white light glow behind the hero title */
+  .hero-glow {
+    background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.12) 34%, transparent 70%);
+    filter: blur(8px);
+  }
+  /* wide ambient white light so the whole hero feels lit */
+  .hero-glow-wide {
+    background: radial-gradient(ellipse 55% 50% at 50% 48%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.07) 42%, transparent 72%);
+    filter: blur(30px);
+  }
+
+  /* soft floating white light in the background */
+  .light-orb {
+    border-radius: 9999px;
+    background: radial-gradient(closest-side, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06) 46%, transparent 72%);
+    filter: blur(48px);
+    opacity: 0.85;
+    will-change: transform;
+  }
+
+  /* coloured aurora blobs behind the hero (subtle, premium) */
+  .aurora {
+    border-radius: 9999px;
+    filter: blur(60px);
+    opacity: 0.55;
+    will-change: transform;
+  }
+  .aurora-a { background: radial-gradient(closest-side, rgba(108, 140, 255, 0.55), transparent 70%); }
+  .aurora-b { background: radial-gradient(closest-side, rgba(178, 130, 255, 0.45), transparent 70%); }
+  .aurora-c { background: radial-gradient(closest-side, rgba(255, 255, 255, 0.5), transparent 70%); }
+
+  /* glowing shimmering word (the rotating one) */
+  .word-glow {
+    background-image: linear-gradient(100deg, #ffffff 0%, #cdd8ff 35%, #ffffff 60%, #e6d6ff 100%);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 6s linear infinite;
+    filter: drop-shadow(0 0 26px rgba(180, 200, 255, 0.65)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
+  }
+
+  /* giant transparent watermark numerals/words */
+  .watermark { color: rgba(255, 255, 255, 0.05); }
+
+  .legible { text-shadow: 0 1px 12px rgba(0, 0, 0, 0.85); }
+
+  /* dark halo placed behind a text block */
+  .text-scrim::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 150%;
+    height: 130%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse at center, rgba(4, 4, 4, 0.85) 0%, rgba(4, 4, 4, 0.55) 35%, transparent 70%);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+
+  .text-balance { text-wrap: balance; }
+}
+
+@layer components {
+  /* monochrome glass surface */
+  .glass-mono {
+    background: hsl(0 0% 100% / 0.04);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid hsl(0 0% 100% / 0.1);
+  }
+
+  /* liquid glass (dark) for nav & intro */
+  .liquid-glass {
+    position: relative;
+    isolation: isolate;
+    background: linear-gradient(180deg, hsl(0 0% 100% / 0.1), hsl(0 0% 100% / 0.03));
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid hsl(0 0% 100% / 0.14);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.25), 0 10px 30px -12px hsl(0 0% 0% / 0.7);
+    overflow: hidden;
+  }
+  .liquid-glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 35%, hsl(0 0% 100% / 0.3) 50%, transparent 65%);
+    transform: translateX(-130%);
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+  .liquid-glass:hover::after { transform: translateX(130%); }
+
+  .btn-glass {
+    @apply liquid-glass inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium tracking-[0.02em] text-foreground transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98];
+  }
+
+  .btn-line {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/25 px-8 py-4 text-sm font-medium tracking-[0.02em] text-foreground transition-all duration-500 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-background;
+  }
+
+  .section {
+    @apply relative py-24 md:py-44;
+  }
 }
 
 @layer base {
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   BLUE SMP — serveur Minecraft (site séparé, route /bluesmp)
+   Tout est SCOPÉ sous .blue-smp pour ne pas toucher le site agence.
+   ══════════════════════════════════════════════════════════════════ */
+.blue-smp {
+  /* thème bleu & noir, uniquement dans ce sous-arbre */
+  --background: 218 74% 8%;
+  --foreground: 210 100% 96%;
+  --card: 218 60% 12%;
+  --card-foreground: 210 100% 96%;
+  --popover: 218 60% 10%;
+  --popover-foreground: 210 100% 96%;
+  --primary: 208 100% 62%;
+  --primary-foreground: 218 74% 8%;
+  --secondary: 216 55% 16%;
+  --secondary-foreground: 210 100% 96%;
+  --muted: 216 45% 18%;
+  --muted-foreground: 205 40% 72%;
+  --accent: 199 100% 74%;
+  --accent-foreground: 218 74% 8%;
+  --border: 210 60% 26%;
+  --input: 216 45% 18%;
+  --ring: 199 100% 74%;
+
+  min-height: 100vh;
+  color: hsl(var(--foreground));
+  font-family: 'Fredoka', system-ui, -apple-system, sans-serif;
+  background-color: #071331;
+  background-image:
+    radial-gradient(1200px 600px at 50% -10%, rgba(63, 169, 255, 0.35), transparent 60%),
+    radial-gradient(900px 500px at 15% 20%, rgba(30, 111, 214, 0.25), transparent 55%),
+    radial-gradient(900px 500px at 85% 30%, rgba(126, 200, 255, 0.18), transparent 55%),
+    linear-gradient(180deg, #0a1a3f 0%, #071331 45%, #050d24 100%);
+  background-attachment: fixed;
+}
+.blue-smp ::selection { background: hsl(208 100% 62%); color: hsl(218 74% 8%); }
+
+/* Polices */
+.blue-smp .font-pixel {
+  font-family: 'Press Start 2P', 'Fredoka', monospace;
+  letter-spacing: 0.02em;
+}
+.blue-smp .font-round { font-family: 'Fredoka', system-ui, sans-serif; }
+
+/* Bouton bloc Minecraft */
+.blue-smp .mc-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  user-select: none;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.72rem; line-height: 1; padding: 1rem 1.5rem;
+  color: #0a1a3f; text-transform: uppercase;
+  background: linear-gradient(180deg, #7ec8ff 0%, #3fa9ff 55%, #1e6fd6 100%);
+  border: 3px solid #0a1a3f;
+  box-shadow:
+    inset -4px -4px 0 rgba(10, 26, 63, 0.45),
+    inset 4px 4px 0 rgba(255, 255, 255, 0.55),
+    0 6px 0 #0a1a3f, 0 10px 22px rgba(0, 0, 0, 0.45);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s ease;
+  cursor: pointer;
+}
+.blue-smp .mc-btn:hover { filter: brightness(1.08); }
+.blue-smp .mc-btn:active {
+  transform: translateY(6px);
+  box-shadow:
+    inset -4px -4px 0 rgba(10, 26, 63, 0.45),
+    inset 4px 4px 0 rgba(255, 255, 255, 0.55),
+    0 0 0 #0a1a3f, 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.blue-smp .mc-btn--ghost {
+  color: #dff1ff;
+  background: linear-gradient(180deg, #14336b 0%, #0e2450 100%);
+  box-shadow:
+    inset -4px -4px 0 rgba(0, 0, 0, 0.4),
+    inset 4px 4px 0 rgba(126, 200, 255, 0.25),
+    0 6px 0 #050d24, 0 10px 22px rgba(0, 0, 0, 0.45);
+}
+
+/* Panneau bloc */
+.blue-smp .mc-panel {
+  position: relative;
+  background: linear-gradient(180deg, rgba(20, 51, 107, 0.75) 0%, rgba(10, 26, 63, 0.85) 100%);
+  border: 3px solid hsl(210 60% 30%);
+  box-shadow:
+    inset -3px -3px 0 rgba(0, 0, 0, 0.35),
+    inset 3px 3px 0 rgba(126, 200, 255, 0.14),
+    0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Wordmark BLUE SMP en CSS (repli si le logo image n'est pas là) */
+.blue-smp .wordmark {
+  font-family: 'Press Start 2P', monospace;
+  background: linear-gradient(180deg, #ffffff 0%, #bfe6ff 45%, #3fa9ff 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(4px 6px 0 #0a1a3f) drop-shadow(0 0 26px rgba(63, 169, 255, 0.55));
+}
+
+.blue-smp .bg-grid {
+  background-image:
+    linear-gradient(rgba(126, 200, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126, 200, 255, 0.06) 1px, transparent 1px);
+  background-size: 42px 42px;
 }
