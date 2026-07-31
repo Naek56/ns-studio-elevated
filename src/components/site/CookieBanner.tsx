@@ -9,6 +9,13 @@ import { sfxTap, sfxSuccess } from "@/lib/sfx";
    Signature WAY : un liseré bleu lumineux en haut de la carte. */
 export default function CookieBanner() {
   const [open, setOpen] = useState(false);
+  const [masked, setMasked] = useState(false); // fiche de RDV ouverte par-dessus
+
+  useEffect(() => {
+    const onModal = (e: Event) => setMasked(!!(e as CustomEvent<boolean>).detail);
+    window.addEventListener("way:modal", onModal as EventListener);
+    return () => window.removeEventListener("way:modal", onModal as EventListener);
+  }, []);
 
   useEffect(() => {
     if (getConsent() === "accepted") startKairosTracking();
@@ -42,7 +49,7 @@ export default function CookieBanner() {
 
   return (
     <AnimatePresence>
-      {open && (
+      {open && !masked && (
         <motion.div
           initial={{ y: 24, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

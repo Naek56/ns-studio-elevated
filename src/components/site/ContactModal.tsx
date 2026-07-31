@@ -49,22 +49,37 @@ export default function ContactModal() {
 
   useEffect(() => {
     const root = document.documentElement;
+    // Lenis fait défiler la page par programmation : overflow:hidden ne suffit
+    // pas, il faut l'arrêter explicitement pendant l'ouverture de la fiche.
+    const lenis = (window as unknown as { lenis?: { stop: () => void; start: () => void } }).lenis;
     if (!open) {
       root.style.overflow = "";
       document.body.style.overflow = "";
+      lenis?.start();
       return;
     }
     root.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
+    lenis?.stop();
     sfxWhoosh();
     root.classList.add("modal-open"); // curseur natif visible sur le formulaire
+    // masque la bannière cookies tant que la fiche est ouverte (elle la couvrait)
+    window.dispatchEvent(new CustomEvent("way:modal", { detail: true }));
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    // bloque aussi la molette / le tactile qui ne visent pas la fiche
+    const block = (e: Event) => { if (!(e.target as Element)?.closest?.("[data-modal-card]")) e.preventDefault(); };
     window.addEventListener("keydown", onKey);
+    window.addEventListener("wheel", block, { passive: false });
+    window.addEventListener("touchmove", block, { passive: false });
     return () => {
       window.removeEventListener("keydown", onKey);
+      window.removeEventListener("wheel", block);
+      window.removeEventListener("touchmove", block);
       root.style.overflow = "";
       document.body.style.overflow = "";
       root.classList.remove("modal-open");
+      lenis?.start();
+      window.dispatchEvent(new CustomEvent("way:modal", { detail: false }));
     };
   }, [open]);
 
@@ -155,7 +170,8 @@ export default function ContactModal() {
           <div className="absolute inset-0 backdrop-blur-md" style={{ background: "rgba(8,21,43,0.75)" }} onClick={close} />
 
           <motion.div
-            className="relative z-10 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-white/15 shadow-2xl"
+            data-modal-card
+            className="relative z-10 max-h-[94vh] w-full max-w-2xl overflow-hidden rounded-2xl border border-white/15 shadow-2xl"
             style={{ background: "linear-gradient(160deg, #16305a 0%, #0e1e3a 60%, #0a1730 100%)" }}
             initial={{ opacity: 0, y: 24, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -179,13 +195,14 @@ export default function ContactModal() {
               </div>
             ) : (
               <form onSubmit={submit} noValidate>
-                <div className="px-6 pt-7 sm:px-8">
+                <div className="px-6 pt-5 sm:px-7">
                   <p className="label">Parlons de votre projet</p>
-                  <h3 className="display-xl mt-2 text-2xl font-semibold text-white sm:text-3xl">Réservez un créneau.</h3>
-                  <p className="type-body mt-2 text-sm text-white/55">30 minutes, en visio, sans engagement.</p>
+                  <h3 className="display-xl mt-1.5 text-xl font-semibold text-white sm:text-2xl">
+                    Réservez un créneau. <span className="type-body text-sm font-normal text-white/50">30 min, en visio.</span>
+                  </h3>
                 </div>
 
-                <div className="mt-6 grid gap-6 px-6 sm:grid-cols-[1fr_auto] sm:px-8">
+                <div className="mt-4 grid gap-5 px-6 sm:grid-cols-[1fr_auto] sm:px-7">
                   {/* ── calendrier ── */}
                   <div>
                     <div className="flex items-center justify-between">
@@ -201,9 +218,9 @@ export default function ContactModal() {
                       </button>
                     </div>
 
-                    <div className="mt-3 grid grid-cols-7 gap-1 text-center">
+                    <div className="mt-2 grid grid-cols-7 gap-1 text-center">
                       {WEEKDAYS.map((w) => (
-                        <span key={w} className="type-body py-1 text-[11px] font-medium text-white/40">{w}</span>
+                        <span key={w} className="type-body py-0.5 text-[11px] font-medium text-white/40">{w}</span>
                       ))}
                       {grid.map((d, i) =>
                         d === null ? <span key={`e${i}`} /> : (
@@ -214,7 +231,7 @@ export default function ContactModal() {
                             disabled={unavailable(d)}
                             aria-label={d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
                             className={[
-                              "type-body flex h-9 items-center justify-center rounded-lg text-[13px] tabular-nums transition-colors",
+                              "type-body flex h-8 items-center justify-center rounded-lg text-[13px] tabular-nums transition-colors",
                               unavailable(d)
                                 ? "text-white/20 line-through"
                                 : sameDay(date, d)
@@ -231,16 +248,17 @@ export default function ContactModal() {
                   </div>
 
                   {/* ── créneaux ── */}
-                  <div className="sm:w-[136px]">
-                    <p className="type-body mb-3 text-[11px] font-medium uppercase tracking-[0.16em] text-white/40 sm:text-center">Créneaux</p>
-                    <div className="flex max-h-[212px] gap-2 overflow-x-auto overflow-y-hidden pb-1 sm:flex-col sm:overflow-x-hidden sm:overflow-y-auto sm:pr-1">
+                  <div className="sm:w-[212px]">
+                    <p className="type-body mb-2 text-[11px] font-medium uppercase tracking-[0.16em] text-white/40">Créneaux</p>
+                    {/* grille : tous les créneaux visibles, aucun défilement */}
+                    <div className="grid grid-cols-4 gap-1.5 sm:grid-cols-3">
                       {SLOTS.map((t) => (
                         <button
                           key={t}
                           type="button"
                           onClick={() => pickTime(t)}
                           className={[
-                            "type-body shrink-0 rounded-lg border px-4 py-2 text-[13px] tabular-nums transition-colors sm:w-full",
+                            "type-body rounded-lg border px-1 py-1.5 text-[12.5px] tabular-nums transition-colors",
                             time === t
                               ? "border-white bg-white font-semibold text-neutral-900"
                               : "border-white/15 text-white/80 hover:border-white/35 hover:text-white",
@@ -254,50 +272,44 @@ export default function ContactModal() {
                   </div>
                 </div>
 
-                {/* ── e-mail ── */}
-                <div className="mt-6 px-6 sm:px-8">
-                  <label className="block">
-                    <span className="mb-2 flex items-baseline justify-between">
-                      <span className="text-xs uppercase tracking-[0.18em] text-white/45">Votre e-mail *</span>
-                      {errors.email && <span className="text-[0.7rem] text-red-400">{errors.email}</span>}
-                    </span>
+                {/* ── e-mail + confirmation, sur une seule ligne ── */}
+                <div className="mt-4 border-t border-white/12 px-6 pt-4 sm:px-7">
+                  <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors((x) => { const n = { ...x }; delete n.email; return n; }); }}
-                      placeholder="jean@societe.com"
-                      className="w-full rounded-md border border-white/20 bg-white/[0.06] px-3.5 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/25 focus:border-[#63b3dd]"
+                      placeholder="Votre e-mail"
+                      aria-label="Votre e-mail"
+                      className="w-full flex-1 rounded-lg border border-white/20 bg-white/[0.06] px-3.5 py-2.5 text-sm text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#63b3dd]"
                       style={errors.email ? { borderColor: "rgba(248,113,113,0.7)" } : undefined}
                     />
-                  </label>
-                </div>
+                    <button
+                      type="submit"
+                      disabled={status === "sending"}
+                      className="type-body shrink-0 rounded-lg bg-white px-6 py-2.5 text-sm font-semibold text-neutral-900 transition-all duration-200 hover:brightness-95 disabled:opacity-60"
+                    >
+                      {status === "sending" ? "Envoi…" : "Confirmer"}
+                    </button>
+                  </div>
 
-                {/* ── barre de confirmation ── */}
-                <div className="mt-6 flex flex-col gap-3 border-t border-white/12 px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-                  <p className="type-body text-sm text-white/70">
-                    {date && time ? (
+                  <p className="type-body mt-2.5 text-[12.5px] text-white/60">
+                    {errors.email ? (
+                      <span className="text-red-400">{errors.email}</span>
+                    ) : status === "error" ? (
+                      <span className="text-red-400">Une erreur est survenue. Réessayez dans un instant.</span>
+                    ) : date && time ? (
                       <>Rendez-vous le <span className="font-semibold text-white">{prettyDate}</span> à <span className="font-semibold text-white">{time}</span>.</>
                     ) : (
                       <span className={errors.date ? "text-red-400" : ""}>Choisissez une date et un créneau.</span>
                     )}
                   </p>
-                  <button
-                    type="submit"
-                    disabled={status === "sending"}
-                    className="type-body shrink-0 rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-neutral-900 transition-all duration-200 hover:brightness-95 disabled:opacity-60"
-                  >
-                    {status === "sending" ? "Envoi…" : "Confirmer"}
-                  </button>
                 </div>
 
-                {status === "error" && (
-                  <p className="px-6 pb-4 text-sm text-red-400 sm:px-8">Une erreur est survenue. Réessayez dans un instant.</p>
-                )}
-
-                <p className="px-6 pb-6 text-[0.7rem] leading-relaxed text-white/40 sm:px-8">
-                  En confirmant, vous acceptez que votre e-mail soit utilisé pour organiser ce rendez-vous. Voir notre{" "}
+                <p className="px-6 pb-5 pt-3 text-[0.68rem] leading-snug text-white/35 sm:px-7">
+                  En confirmant, votre e-mail sert uniquement à organiser ce rendez-vous —{" "}
                   <Link to="/confidentialite" onClick={close} className="underline underline-offset-2 transition-colors hover:text-white">
-                    politique de confidentialité
+                    confidentialité
                   </Link>.
                 </p>
               </form>
