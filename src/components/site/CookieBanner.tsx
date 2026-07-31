@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { X } from "lucide-react";
 import { getConsent, setConsent, startKairosTracking, type ConsentValue } from "@/lib/consent";
 import { sfxTap, sfxSuccess } from "@/lib/sfx";
 
+/* Bannière de consentement — minimale : un titre, une phrase, deux boutons.
+   Signature WAY : un liseré bleu lumineux en haut de la carte. */
 export default function CookieBanner() {
   const [open, setOpen] = useState(false);
 
@@ -30,61 +32,72 @@ export default function CookieBanner() {
     };
   }, []);
 
-  const choose = (value: ConsentValue) => { if (value === "accepted") sfxSuccess(); else sfxTap(); setConsent(value); setOpen(false); };
+  const choose = (value: ConsentValue) => {
+    if (value === "accepted") sfxSuccess(); else sfxTap();
+    setConsent(value);
+    setOpen(false);
+  };
+  // fermeture sans choix : la bannière reviendra à la prochaine visite
+  const dismiss = () => { sfxTap(); setOpen(false); };
 
   return (
     <AnimatePresence>
       {open && (
         <motion.div
-          initial={{ y: 40, opacity: 0 }}
+          initial={{ y: 24, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 40, opacity: 0 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          exit={{ y: 24, opacity: 0 }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
           className="fixed inset-x-0 bottom-0 z-[120] flex justify-start px-3 pb-3 sm:px-5 sm:pb-5"
           role="dialog"
           aria-label="Consentement aux cookies"
         >
           <div
-            className="relative w-full max-w-[340px] overflow-hidden rounded-xl border border-white/15 p-3.5"
+            className="relative w-full max-w-[370px] overflow-hidden rounded-2xl border border-white/12 p-5"
             style={{
-              background: "linear-gradient(160deg, #16407e 0%, #0e2a56 58%, #0a1e40 100%)",
-              boxShadow: "0 16px 40px -20px rgba(3,12,30,0.75), inset 0 1px 0 rgba(255,255,255,0.12)",
+              background: "linear-gradient(168deg, #0d1c33 0%, #0a1526 60%, #070f1d 100%)",
+              boxShadow: "0 22px 48px -22px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.06)",
             }}
           >
-            {/* halo décoratif */}
-            <div aria-hidden className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full"
-              style={{ background: "radial-gradient(closest-side, rgba(140,203,232,0.26), transparent 70%)" }} />
+            {/* liseré bleu lumineux — la touche WAY */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 top-0 h-px"
+              style={{ background: "linear-gradient(90deg, transparent, #63b3dd 22%, #8ecbe8 50%, #63b3dd 78%, transparent)" }}
+            />
 
-            <div className="relative flex items-start gap-3">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/15 bg-white">
-                <img src="/minecraft-cookie.jpg" alt="" aria-hidden className="h-full w-full object-cover" style={{ imageRendering: "pixelated" }} />
-              </span>
+            <button
+              onClick={dismiss}
+              aria-label="Fermer"
+              className="absolute right-4 top-4 text-white/35 transition-colors hover:text-white/80"
+            >
+              <X className="h-4 w-4" />
+            </button>
 
-              <div className="min-w-0 flex-1">
-                <p className="type-body text-[13px] font-semibold text-white">On aime savoir ce qui vous plaît</p>
-                <p className="type-body mt-0.5 text-[11.5px] leading-snug text-white/65">
-                  Cookies analytiques pour améliorer votre expérience.{" "}
-                  <Link to="/confidentialite" className="whitespace-nowrap text-[#8ecbe8] underline underline-offset-2 transition-colors hover:text-white">
-                    En savoir plus
-                  </Link>
-                </p>
-                <div className="mt-2.5 flex items-center gap-3">
-                  <button
-                    onClick={() => choose("accepted")}
-                    className="type-body group inline-flex items-center justify-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-[13px] font-semibold text-neutral-900 transition-all duration-300 hover:brightness-105"
-                    style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.5), 0 8px 18px -8px rgba(255,255,255,0.4)" }}
-                  >
-                    <Check className="h-3.5 w-3.5" />
-                    Accepter
-                  </button>
-                  <button
-                    onClick={() => choose("refused")}
-                    className="type-body text-[12px] font-medium text-white/55 transition-colors hover:text-white/90"
-                  >
-                    Refuser
-                  </button>
-                </div>
-              </div>
+            <p className="type-body pr-8 text-[15px] font-semibold text-white">
+              On aime savoir ce qui vous plaît <span aria-hidden>🍪</span>
+            </p>
+            <p className="type-body mt-1.5 text-[13px] leading-relaxed text-white/55">
+              Des cookies analytiques nous aident à améliorer votre expérience.{" "}
+              <Link to="/confidentialite" className="whitespace-nowrap text-white/75 underline underline-offset-2 transition-colors hover:text-white">
+                En savoir plus
+              </Link>
+            </p>
+
+            <div className="mt-4 flex items-center gap-2.5">
+              <button
+                onClick={() => choose("accepted")}
+                className="type-body rounded-lg bg-white px-4 py-2 text-[13px] font-semibold text-neutral-900 transition-all duration-200 hover:brightness-95"
+              >
+                Accepter
+              </button>
+              <button
+                onClick={() => choose("refused")}
+                className="type-body rounded-lg border border-white/15 px-4 py-2 text-[13px] font-medium text-white/80 transition-colors duration-200 hover:border-white/30 hover:text-white"
+                style={{ background: "rgba(255,255,255,0.04)" }}
+              >
+                Refuser
+              </button>
             </div>
           </div>
         </motion.div>

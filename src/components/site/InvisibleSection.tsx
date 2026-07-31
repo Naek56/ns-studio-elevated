@@ -48,7 +48,7 @@ function WifiOff() {
 function EyeOff() {
   return (
     <svg viewBox="0 0 64 64" width="60" height="60" {...STROKE}>
-      <g className="il-blink">
+      <g>
         <path d="M8 32 C 18 19, 46 19, 56 32 C 46 45, 18 45, 8 32 Z" />
         <circle cx="32" cy="32" r="7.5" />
         <circle cx="32" cy="32" r="2.6" fill="#fff" stroke="none" />
