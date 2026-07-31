@@ -10,9 +10,9 @@ export default function Footer() {
             <circle cx="24" cy="24" r="22" stroke="currentColor" strokeWidth="2.5" />
             <path d="M13 17.5 L18.5 31 L24 20 L29.5 31 L35 17.5" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span className="type-body text-base font-semibold leading-none tracking-[0.18em]">
+          <span className="type-body text-base font-semibold leading-none tracking-normal">
             WAY
-            <span className="mt-1 block text-[0.5rem] font-medium tracking-[0.32em] text-white/50">CREATIVE AGENCY</span>
+            <span className="mt-1 block text-[0.5rem] font-medium tracking-[0.18em] text-white/50">CREATIVE AGENCY</span>
           </span>
         </a>
         <nav className="type-body flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-white/60">
