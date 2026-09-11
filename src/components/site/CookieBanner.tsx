@@ -20,14 +20,16 @@ export default function CookieBanner() {
   useEffect(() => {
     if (getConsent() === "accepted") startKairosTracking();
 
-    // la bannière s'affiche à CHAQUE visite, juste APRÈS l'animation pixel
+    // la bannière s'affiche à CHAQUE visite. Sur le site agence elle attend la
+    // fin de l'animation pixel ; ailleurs (dont le nouvel accueil, qui n'a pas
+    // d'intro) elle arrive simplement après un court délai.
     const show = () => setOpen(true);
-    const onHome = window.location.pathname === "/";
+    const hasPixelIntro = window.location.pathname === "/agence";
     let introDone = true;
     try { introDone = sessionStorage.getItem("way-revealed") === "1"; } catch { /* noop */ }
 
     let t: number | undefined;
-    if (onHome && !introDone) window.addEventListener("way:revealed", show, { once: true });
+    if (hasPixelIntro && !introDone) window.addEventListener("way:revealed", show, { once: true });
     else t = window.setTimeout(show, 400);
 
     const reopen = () => setOpen(true);
