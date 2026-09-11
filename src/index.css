@@ -466,3 +466,32 @@
     }
   }
 }
+
+/* ── Accueil (nouvelle direction) ─────────────────────────────────────────
+   Deux familles seulement : Bricolage Grotesque porte le titre et l'interface,
+   Newsreader italique sert d'accent. */
+.wy {
+  font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+}
+.wy-display { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; }
+.wy-italic {
+  font-family: "Newsreader", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+/* focus visible et sobre sur le papier crème */
+.wy a:focus-visible,
+.wy button:focus-visible,
+.wy input:focus-visible {
+  outline: 2px solid #16120E;
+  outline-offset: 3px;
+  border-radius: 9999px;
+}
+/* le panneau ciel : large et bas sur grand écran, plus haut sur mobile pour
+   que la scène respire au lieu d'être écrasée */
+.wy-sky { aspect-ratio: 4 / 3.4; }
+@media (min-width: 640px) { .wy-sky { aspect-ratio: 16 / 7.4; } }
+@media (min-width: 1024px) { .wy-sky { aspect-ratio: 16 / 6.5; } }

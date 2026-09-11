@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# outillage local (skills CLI) — pas du code du site
+.agents/
+.claude/skills/
+skills-lock.json

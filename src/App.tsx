@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import CookieBanner from "@/components/site/CookieBanner";
 import Index from "./pages/Index.tsx";
+import Accueil from "./pages/Accueil.tsx";
 import Agence from "./pages/Agence.tsx";
 import MentionsLegales from "./pages/MentionsLegales.tsx";
 import Confidentialite from "./pages/Confidentialite.tsx";
@@ -35,10 +36,10 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-          {/* La 1re partie (l'expérience, <Index/>) a été retirée du parcours :
-             l'accueil ouvre directement le site agence. L'expérience reste
-             sauvegardée et accessible sur /experience (+ branche backup/experience-full). */}
-          <Route path="/" element={<Agence />} />
+          {/* Nouvelle direction : l'accueil est la page <Accueil/>.
+             L'ancien site reste entier sur /agence, l'expérience sur /experience
+             (+ branche backup/experience-full). */}
+          <Route path="/" element={<Accueil />} />
           <Route path="/agence" element={<Agence />} />
           <Route path="/experience" element={<Index />} />
           <Route path="/mentions-legales" element={<MentionsLegales />} />
