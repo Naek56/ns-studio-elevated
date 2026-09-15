@@ -20,11 +20,11 @@ function ScrollToTop() {
   return null;
 }
 
-/* Pas de bannière cookies sur l'expérience (désormais route "/experience").
-   Elle s'affiche sur l'accueil agence ("/") et les pages légales. */
+/* Pas de bannière cookies sur l'expérience ni sur le nouvel accueil.
+   Elle reste sur le site agence et les pages légales. */
 function CookieGate() {
   const { pathname } = useLocation();
-  if (pathname === "/experience") return null;
+  if (pathname === "/" || pathname === "/experience") return null;
   return <CookieBanner />;
 }
 

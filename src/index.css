@@ -470,8 +470,7 @@
 
 /* ── Accueil « neige » ───────────────────────────────────────────────────
    Fond blanc neige #FFFAFA, encre minuit #0F0F0F. Deux familles : Bricolage
-   Grotesque (titre + interface) et Newsreader italique (le mot-marque
-   « way » et le dernier temps du titre). */
+   Grotesque (titre + interface) et Newsreader italique (le mot-marque). */
 .snow {
   background: #FFFAFA;
   color: #0F0F0F;
@@ -492,78 +491,118 @@
   border-radius: 9999px;
 }
 
-/* Rayons de lumière bleus : bandes verticales floues qui montent du bas,
-   comme sur la référence. Deux trames superposées de périodes différentes
-   pour que ça ne fasse pas « papier peint ». */
+/* ── Le fond vivant ─────────────────────────────────────────────────────
+   Rayons bleus qui montent du bas. Deux nappes de périodes différentes qui
+   dérivent et respirent en sens inverse : le fond n'est jamais deux fois le
+   même, sans jamais attirer l'œil plus que le texte.
+   Une seule instance pour toute la page → l'intro et l'accueil partagent
+   exactement le même fond, donc aucun saut au moment du fondu. */
 .snow-rays {
   position: absolute;
-  inset: 0;
+  inset-inline: -8%;
+  bottom: 0;
+  height: 62%;
   pointer-events: none;
-  background-image:
-    repeating-linear-gradient(90deg,
-      rgba(66,126,245,0)    0px,
-      rgba(66,126,245,0.62) 22px,
-      rgba(66,126,245,0)    54px,
-      rgba(66,126,245,0.38) 78px,
-      rgba(66,126,245,0)   112px),
-    repeating-linear-gradient(90deg,
-      rgba(66,126,245,0)    0px,
-      rgba(66,126,245,0.30) 40px,
-      rgba(66,126,245,0)   136px);
-  filter: blur(16px);
-  -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,0.85) 22%, transparent 68%);
-  mask-image:         linear-gradient(to top, #000 0%, rgba(0,0,0,0.85) 22%, transparent 68%);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,0.85) 24%, transparent 72%);
+  mask-image:         linear-gradient(to top, #000 0%, rgba(0,0,0,0.85) 24%, transparent 72%);
+}
+.snow-rays::before,
+.snow-rays::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  filter: blur(18px);
+  will-change: transform, opacity;
+}
+.snow-rays::before {
+  background-image: repeating-linear-gradient(90deg,
+    rgba(66,126,245,0)    0px,
+    rgba(66,126,245,0.60) 24px,
+    rgba(66,126,245,0)    58px,
+    rgba(66,126,245,0.34) 84px,
+    rgba(66,126,245,0)   120px);
+  animation: snow-drift-a 34s ease-in-out infinite alternate;
+}
+.snow-rays::after {
+  background-image: repeating-linear-gradient(90deg,
+    rgba(66,126,245,0)    0px,
+    rgba(96,150,250,0.30) 46px,
+    rgba(96,150,250,0)   152px);
+  animation: snow-drift-b 47s ease-in-out infinite alternate;
+}
+@keyframes snow-drift-a {
+  from { transform: translate3d(-2.2%, 2%, 0) scaleY(1);    opacity: 0.62; }
+  to   { transform: translate3d( 2.2%, -1%, 0) scaleY(1.10); opacity: 0.92; }
+}
+@keyframes snow-drift-b {
+  from { transform: translate3d( 3%, -1%, 0) scaleY(1.08); opacity: 0.85; }
+  to   { transform: translate3d(-3%,  2%, 0) scaleY(1);    opacity: 0.50; }
 }
 
 /* ── Intro « way » ──────────────────────────────────────────────────────
-   Chaque lettre fond à l'écran (flou → net, transparent → opaque) au ralenti,
-   l'une après l'autre. Puis l'ensemble fond à son tour et laisse place à
-   l'accueil, qui se révèle du même mouvement inverse. */
+   Chaque lettre fond à l'écran (très flou → net) au ralenti. Le mot reste
+   optiquement centré pendant qu'il se construit : la rangée glisse d'un
+   demi-caractère à chaque lettre (décalage mesuré en JS, cf. Accueil.tsx). */
 .snow-intro {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: 60;
   display: grid;
   place-items: center;
-  background: #FFFAFA;
   pointer-events: none;
-  overflow: hidden;
 }
 .snow-intro-word {
-  position: relative;
   display: flex;
   line-height: 1;
   font-size: clamp(4.2rem, 13vw, 10rem);
   color: #0F0F0F;
+  transition: transform 1.2s cubic-bezier(0.22, 0.7, 0.2, 1);
+  will-change: transform;
 }
 .snow-letter {
   opacity: 0;
-  filter: blur(16px);
-  transform: translateY(0.06em);
-  animation: snow-letter-in 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  filter: blur(34px);
+  transform: scale(1.06);
+  transition:
+    opacity 2s cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter  2s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 2s cubic-bezier(0.2, 0.7, 0.2, 1);
   will-change: opacity, filter, transform;
 }
-@keyframes snow-letter-in {
-  to { opacity: 1; filter: blur(0); transform: translateY(0); }
-}
-.snow-intro--leave {
-  animation: snow-intro-out 1.05s cubic-bezier(0.6, 0, 0.8, 0.4) forwards;
-}
+.snow-letter--in { opacity: 1; filter: blur(0); transform: scale(1); }
+
+.snow-intro--leave { animation: snow-intro-out 1.3s cubic-bezier(0.6, 0, 0.75, 0.35) forwards; }
 @keyframes snow-intro-out {
-  to { opacity: 0; filter: blur(18px); transform: scale(1.03); }
+  to { opacity: 0; filter: blur(26px); transform: scale(1.04); }
 }
 
-/* l'accueil arrive en fondant, dans le sens inverse de l'intro */
-.snow-home { opacity: 0; filter: blur(10px); transform: translateY(6px); }
-.snow-home--in {
-  animation: snow-home-in 1.15s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
-}
+/* l'accueil se révèle dans le mouvement inverse de l'intro */
+.snow-home { opacity: 0; filter: blur(12px); transform: translateY(8px); }
+.snow-home--in { animation: snow-home-in 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
 @keyframes snow-home-in {
   to { opacity: 1; filter: blur(0); transform: translateY(0); }
 }
 
+/* onglet actif de la nav : le trait court sous le mot, comme la référence */
+.snow-tab { position: relative; }
+.snow-tab::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 0;
+  height: 1.5px;
+  border-radius: 2px;
+  background: #0F0F0F;
+  transform: translateX(-50%);
+  transition: width 0.28s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.snow-tab[aria-current="page"]::after { width: calc(100% - 1.75rem); }
+
 @media (prefers-reduced-motion: reduce) {
-  .snow-letter, .snow-intro--leave, .snow-home--in { animation: none; }
-  .snow-letter { opacity: 1; filter: none; transform: none; }
+  .snow-rays::before, .snow-rays::after,
+  .snow-intro--leave, .snow-home--in { animation: none; }
+  .snow-letter { transition: none; opacity: 1; filter: none; transform: none; }
+  .snow-intro-word { transition: none; }
   .snow-home { opacity: 1; filter: none; transform: none; }
 }
