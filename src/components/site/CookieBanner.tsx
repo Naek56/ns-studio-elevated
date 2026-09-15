@@ -24,12 +24,17 @@ export default function CookieBanner() {
     // fin de l'animation pixel ; ailleurs (dont le nouvel accueil, qui n'a pas
     // d'intro) elle arrive simplement après un court délai.
     const show = () => setOpen(true);
-    const hasPixelIntro = window.location.pathname === "/agence";
+    const path = window.location.pathname;
     let introDone = true;
     try { introDone = sessionStorage.getItem("way-revealed") === "1"; } catch { /* noop */ }
+    // "/" : l'intro « way » pose un drapeau quand elle a fini — on attend
+    // toujours ce moment pour ne pas recouvrir l'animation.
+    const homeIntroRunning =
+      path === "/" && !(window as unknown as { __wayRevealed?: boolean }).__wayRevealed;
+    const agencyIntroRunning = path === "/agence" && !introDone;
 
     let t: number | undefined;
-    if (hasPixelIntro && !introDone) window.addEventListener("way:revealed", show, { once: true });
+    if (homeIntroRunning || agencyIntroRunning) window.addEventListener("way:revealed", show, { once: true });
     else t = window.setTimeout(show, 400);
 
     const reopen = () => setOpen(true);

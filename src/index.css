@@ -467,31 +467,103 @@
   }
 }
 
-/* ── Accueil (nouvelle direction) ─────────────────────────────────────────
-   Deux familles seulement : Bricolage Grotesque porte le titre et l'interface,
-   Newsreader italique sert d'accent. */
-.wy {
+
+/* ── Accueil « neige » ───────────────────────────────────────────────────
+   Fond blanc neige #FFFAFA, encre minuit #0F0F0F. Deux familles : Bricolage
+   Grotesque (titre + interface) et Newsreader italique (le mot-marque
+   « way » et le dernier temps du titre). */
+.snow {
+  background: #FFFAFA;
+  color: #0F0F0F;
   font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
   font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
 }
-.wy-display { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; }
-.wy-italic {
+.snow-serif-i {
   font-family: "Newsreader", Georgia, serif;
   font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-weight: 500;
+  letter-spacing: -0.015em;
 }
-/* focus visible et sobre sur le papier crème */
-.wy a:focus-visible,
-.wy button:focus-visible,
-.wy input:focus-visible {
-  outline: 2px solid #16120E;
+.snow a:focus-visible,
+.snow button:focus-visible {
+  outline: 2px solid #0F0F0F;
   outline-offset: 3px;
   border-radius: 9999px;
 }
-/* le panneau ciel : large et bas sur grand écran, plus haut sur mobile pour
-   que la scène respire au lieu d'être écrasée */
-.wy-sky { aspect-ratio: 4 / 3.4; }
-@media (min-width: 640px) { .wy-sky { aspect-ratio: 16 / 7.4; } }
-@media (min-width: 1024px) { .wy-sky { aspect-ratio: 16 / 6.5; } }
+
+/* Rayons de lumière bleus : bandes verticales floues qui montent du bas,
+   comme sur la référence. Deux trames superposées de périodes différentes
+   pour que ça ne fasse pas « papier peint ». */
+.snow-rays {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(90deg,
+      rgba(66,126,245,0)    0px,
+      rgba(66,126,245,0.62) 22px,
+      rgba(66,126,245,0)    54px,
+      rgba(66,126,245,0.38) 78px,
+      rgba(66,126,245,0)   112px),
+    repeating-linear-gradient(90deg,
+      rgba(66,126,245,0)    0px,
+      rgba(66,126,245,0.30) 40px,
+      rgba(66,126,245,0)   136px);
+  filter: blur(16px);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,0.85) 22%, transparent 68%);
+  mask-image:         linear-gradient(to top, #000 0%, rgba(0,0,0,0.85) 22%, transparent 68%);
+}
+
+/* ── Intro « way » ──────────────────────────────────────────────────────
+   Chaque lettre fond à l'écran (flou → net, transparent → opaque) au ralenti,
+   l'une après l'autre. Puis l'ensemble fond à son tour et laisse place à
+   l'accueil, qui se révèle du même mouvement inverse. */
+.snow-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: #FFFAFA;
+  pointer-events: none;
+  overflow: hidden;
+}
+.snow-intro-word {
+  position: relative;
+  display: flex;
+  line-height: 1;
+  font-size: clamp(4.2rem, 13vw, 10rem);
+  color: #0F0F0F;
+}
+.snow-letter {
+  opacity: 0;
+  filter: blur(16px);
+  transform: translateY(0.06em);
+  animation: snow-letter-in 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  will-change: opacity, filter, transform;
+}
+@keyframes snow-letter-in {
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+.snow-intro--leave {
+  animation: snow-intro-out 1.05s cubic-bezier(0.6, 0, 0.8, 0.4) forwards;
+}
+@keyframes snow-intro-out {
+  to { opacity: 0; filter: blur(18px); transform: scale(1.03); }
+}
+
+/* l'accueil arrive en fondant, dans le sens inverse de l'intro */
+.snow-home { opacity: 0; filter: blur(10px); transform: translateY(6px); }
+.snow-home--in {
+  animation: snow-home-in 1.15s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+@keyframes snow-home-in {
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snow-letter, .snow-intro--leave, .snow-home--in { animation: none; }
+  .snow-letter { opacity: 1; filter: none; transform: none; }
+  .snow-home { opacity: 1; filter: none; transform: none; }
+}
