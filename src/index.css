@@ -468,209 +468,753 @@
 }
 
 
-/* ── Accueil « neige » ───────────────────────────────────────────────────
-   Fond blanc neige #FFFAFA, encre minuit #0F0F0F.
-   Typo classique : Newsreader (serif de presse) porte le titre et le
-   mot-marque, Inter tient l'interface. Tracking dépendant de la taille —
-   négatif sur le grand titre, neutre sur le texte courant. */
+/* ══════════════════════════════════════════════════════════════════════════
+   ACCUEIL « NEIGE » — fond blanc neige #FFFAFA, encre minuit #0F0F0F.
+
+   Une seule voix typographique : Instrument Sans (grotesque) porte le titre,
+   le mot-marque et l'interface ; Instrument Serif italique porte LE mot
+   d'accent, et lui seul. Les deux familles partagent exactement la même
+   hauteur d'x (0,510 em) et la même hauteur de capitale (0,720 em) : les
+   « É » de « Échouer. » et « Évoluer. » s'alignent sans correction.
+
+   Trois mécaniques vivent ici :
+     · le fond, un champ de lumière en quatre nappes, jamais deux fois le même ;
+     · l'intro, où les lettres arrivent du fond de la scène (profondeur en Z) ;
+     · le verre, une seule pilule translucide qui réfracte ce fond.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+
+/* ── Polices de secours à métriques calées ───────────────────────────────
+   Le titre fait 68 px : un swap Arial → Instrument Sans non calé ferait
+   sauter la ligne. On aligne la hauteur d'x et la boîte de ligne pour que la
+   substitution soit invisible. */
+@font-face {
+  font-family: "Instrument Sans Fallback";
+  /* Les listes couvrent Windows, macOS, Linux ET Android : sur Android, ni
+     Arial ni Liberation n'existent — sans Roboto/Noto la @font-face ne matche
+     rien et les overrides deviennent un no-op sur la première plateforme
+     mobile du monde. */
+  src: local("Arial"), local("Helvetica Neue"), local("Liberation Sans"),
+       local("Arimo"), local("Roboto"), local("Noto Sans"), local("Segoe UI");
+  size-adjust: 98.3%;
+  ascent-override: 98.7%;
+  descent-override: 25.4%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Instrument Serif Fallback";
+  font-style: italic;
+  /* Une face qui s'ANNONCE italique n'est jamais obliquée par le moteur : si
+     elle pointe vers le romain, « Évoluer. » s'affiche DROIT pendant tout le
+     swap. On ne cite donc que des italiques réelles. */
+  src: local("Georgia Italic"), local("Georgia-Italic"),
+       local("Times New Roman Italic"), local("TimesNewRomanPS-ItalicMT"),
+       local("Liberation Serif Italic"), local("Noto Serif Italic"),
+       local("DejaVu Serif Italic");
+  size-adjust: 105.9%;
+  ascent-override: 93.5%;
+  descent-override: 29.3%;
+  line-gap-override: 0%;
+}
+
+/* L'angle du reflet du verre doit être interpolable : sans @property, une
+   custom property est une chaîne et ne se transitionne pas. */
+@property --lg-sweep {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+
+/* ── La page ─────────────────────────────────────────────────────────────
+   Instrument n'expose pas d'axe optique : la compensation est explicite, par
+   une rampe d'approche indexée sur la taille (plus c'est grand, plus c'est
+   serré). Les courbes sont nommées une fois — le fichier les répétait à sept
+   endroits sans jamais les nommer. */
 .snow {
   background: #FFFAFA;
   color: #0F0F0F;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
+  font-family: "Instrument Sans", "Instrument Sans Fallback",
+               ui-sans-serif, system-ui, sans-serif;
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures contextual;
+  /* `style` autorisé (l'italique reste garanti si le serif ne charge pas),
+     `weight` interdit : pas de faux-gras sur Instrument Serif, qui n'a que 400. */
+  font-synthesis: style;
+
+  /* approche par rôle — un seul endroit à régler */
+  --snow-tk-mark:    -0.038em;  /* mot-marque ~120 px */
+  --snow-tk-display: -0.028em;  /* titre ~68 px       */
+  --snow-tk-italic:  -0.012em;  /* le serif italique est déjà chassé serré */
+  --snow-tk-lede:    -0.004em;  /* sous-titre ~19 px  */
+  --snow-tk-ui:       0.005em;  /* 14-15 px : un cheveu positif */
+
+  /* courbes */
+  --snow-ease:  cubic-bezier(0.22, 0.70, 0.20, 1);   /* matérialisation */
+  --snow-land:  cubic-bezier(0.23, 1, 0.32, 1);      /* atterrissage, sans rebond */
+  --snow-leave: cubic-bezier(0.80, 0, 0.78, 0.30);   /* miroir de --snow-ease */
+  --snow-blur:  14px;                                 /* flou de distance */
 }
+/* Cantonnés au héros : <ContactModal /> est un frère de .snow-home, monté
+   dans .snow, et il est sombre — un caret noir et une encre noire en
+   sélection y seraient illisibles. */
+.snow-home { caret-color: #0F0F0F; }
+.snow-home ::selection,
+.snow-home::selection {
+  background: rgba(66, 126, 245, 0.22);
+  color: #0F0F0F;
+  text-shadow: none;
+}
+
+
+/* ── Le titre ────────────────────────────────────────────────────────────
+   clamp(2.3rem, 6.4vw, 4.25rem) → 36,8 px … 68 px, contre 5,8rem avant.
+   « Créer. Échouer. Évoluer. » mesure 9,724 em ; à 68 px = 661 px. En
+   dessous de 418 px le titre passe sur deux lignes équilibrées, jamais trois
+   (la plus longue, « Créer. Échouer. », fait 6,702 em → 247 px à 36,8 px,
+   pour 272 px utiles à 320 px de large).
+   Le grotesque semi-gras a plus d'encre que la serif qu'il remplace : à 68 px
+   il pèse autant que l'ancienne à 93 px, tout en étant 27 % plus petit. */
 .snow-display {
-  font-family: Newsreader, Georgia, "Times New Roman", serif;
-  font-optical-sizing: auto;
+  font-family: "Instrument Sans", "Instrument Sans Fallback",
+               ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(2.3rem, 6.4vw, 4.25rem);
   font-weight: 600;
-  line-height: 1.02;
-  letter-spacing: -0.028em;   /* le grand texte se resserre en grandissant */
+  line-height: 1.05;          /* l'accent du É monte à 0.95 em ; 1.02 le frôlait */
+  letter-spacing: var(--snow-tk-display);
+  margin: 0;
+  font-size-adjust: ex-height 0.51;   /* no-op une fois Instrument chargé ; cale le secours */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-wrap: balance;
+  hyphens: none;
+  font-kerning: normal;
 }
-.snow-display i { font-style: italic; font-weight: 500; }
-.snow-serif-i {
-  font-family: Newsreader, Georgia, serif;
+
+/* Centrage optique du titre. Un texte centré n'est PAS optiquement centré :
+   l'approche négative s'ajoute aussi APRÈS le dernier caractère, et le point
+   final italique a une approche droite large. Mesuré au pixel sur le rendu
+   (scan des colonnes d'encre) : l'encre tombe 0,027 em trop à gauche, soit
+   2 px à 68 px. Un padding p décale l'encre de p/2, d'où p = 0,054 em.
+   Uniquement au-dessus de 26rem : en dessous, le titre passe sur deux lignes,
+   la dernière ligne change et l'encre est déjà centrée — mesuré à 0 px. */
+@media (min-width: 26rem) {
+  .snow-display { padding-inline-start: 0.054em; }
+}
+
+/* Le mot d'accent. AUCUN changement de corps : mêmes hauteurs d'x et de
+   capitale, donc les deux « É » sont sur la même ligne au pixel. Ce qu'il
+   faut compenser, c'est l'espace : le É italique a une approche gauche
+   négative, la chasse blanche avant « Évoluer. » tombe à 0,166 em contre
+   0,264 em entre les deux premiers mots — le mot d'accent paraît collé. On
+   rend 0,09 em. */
+.snow-display i {
+  font-family: "Instrument Serif", "Instrument Serif Fallback", Georgia, serif;
   font-style: italic;
+  font-weight: 400;                 /* Instrument Serif n'existe qu'en 400 */
+  font-synthesis: style;            /* pas de faux-gras — mais l'oblique de
+                                       secours doit rester possible, sinon le
+                                       mot d'accent s'affiche droit */
+  font-size-adjust: ex-height 0.51;
+  letter-spacing: var(--snow-tk-italic);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* L'écart devant le mot d'accent. Le É italique a une approche gauche
+   négative : la chasse blanche avant « Évoluer. » tombe à 0,166 em contre
+   0,264 em entre les deux premiers mots, et le mot paraît collé. On rend
+   0,09 em — porté par l'ESPACE et non par une marge sur le <i>, parce qu'un
+   espace se collapse à la coupure de ligne et une marge, non : sur deux
+   lignes, la marge décalerait l'encre de la seconde ligne vers la droite. */
+.snow-display .snow-gap { word-spacing: 0.09em; }
+
+/* Le chapô. 16 → 19 px, mesure 46ch : les 84 caractères tombent en deux
+   lignes pleines sous un titre de 661 px, plutôt qu'en trois lignes courtes.
+   Contraste mesuré : rgba(15,15,15,0.74) sur #FFFAFA = 8,2:1. */
+.snow-lede {
+  font-size: clamp(1rem, 0.55vw + 0.86rem, 1.1875rem);
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: var(--snow-tk-lede);
+  color: rgba(15, 15, 15, 0.74);
+  max-width: min(100%, 46ch);
+  margin-inline: auto;
+  margin-top: clamp(1.25rem, 1.6vw, 1.75rem);
+  text-wrap: balance;
+}
+
+/* Interface : 14-15 px, approche très légèrement positive — l'inverse du
+   display, parce qu'aux petits corps les contreformes se referment. */
+.snow-ui {
   font-weight: 500;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--snow-tk-ui);
+  font-variant-numeric: proportional-nums;
 }
 
-/* ── Liquid glass ───────────────────────────────────────────────────────
-   Une vraie matière : on flouterait le fond, on relève la saturation, et une
-   arête claire en haut capte la lumière. Jamais deux surfaces translucides
-   l'une sur l'autre — d'où une nav sans fond et le verre réservé aux
-   commandes, là où il attire l'œil. */
-.lg {
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(18px) saturate(180%);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    0 8px 24px -12px rgba(15, 15, 15, 0.25);
+
+/* ── Le fond vivant ──────────────────────────────────────────────────────
+   Un champ de lumière, pas une texture. Les rayures floutées d'avant
+   coûtaient un blur(18px) plein écran — un tampon hors écran et une
+   gaussienne à chaque re-rastérisation. Ici, zéro filter : un dégradé radial
+   est déjà continu, il coûte UNE peinture puis plus rien.
+
+   Quatre nappes : la lueur basse (la source), la nappe haute (perspective
+   aérienne : ce qui est loin pâlit, et ça équilibre une composition qui
+   n'était lestée qu'en bas), et deux dérives qui traversent en diagonale.
+
+   Périodes 53 / 71 / 89 / 113 s — quatre nombres premiers. En alternate les
+   cycles perçus valent 106 / 142 / 178 / 226 s ; leur PPCM dépasse deux ans.
+   Aucune boucle commune n'est perceptible. Les délais négatifs ouvrent la
+   page sur un champ DÉJÀ en mouvement, jamais sur une pose de départ.
+
+   Seuls transform et opacity sont animés : le compositeur les lit sans
+   repasser par le style, le layout ou la peinture. */
+.snow-bg {
+  position: fixed;
+  /* -32px, soit plus que la dérive au pointeur (16 px en x, 10 px en y) :
+     `overflow: hidden` et `contain: paint` clippent sur CETTE boîte, et elle
+     voyage avec la transformée. À `inset: 0`, le décalage découvrirait une
+     bande de #FFFAFA pur à arête franche sur le bord d'attaque. */
+  inset: -32px;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;                 /* les nappes débordent volontairement */
+  contain: layout paint style;
+  transform: translate3d(0, 0, 0);  /* promotion — pas besoin de will-change en plus */
+  background: #FFFAFA;
 }
-.lg-dark {
-  position: relative;
-  overflow: hidden;
-  background: rgba(15, 15, 15, 0.88);
-  backdrop-filter: blur(18px) saturate(180%);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #FFFAFA;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    0 10px 28px -12px rgba(15, 15, 15, 0.5);
+.snow-bg > i {
+  position: absolute;
+  display: block;
+  /* Pas de will-change : une animation composée de transform/opacity promeut
+     déjà l'élément pendant toute sa durée, et cette promotion-là s'arrête avec
+     l'animation — ce que will-change empêcherait. */
+  /* sinusoïdale : dérivée nulle aux deux bouts. En alternate, `linear`
+     produirait une discontinuité de vitesse au demi-tour, que l'œil attrape
+     même sur 53 s. */
+  animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
-/* reflet spéculaire qui balaie la surface au survol — la touche « liquide » */
-.lg-dark::after {
+
+/* Le tramage. Sur 8 bits par canal, une rampe de 0,30 d'alpha étalée sur
+   700 px ne dispose que d'une trentaine de valeurs : les paliers se voient, en
+   arcs concentriques. Un damier d'un pixel à ± 2/255 rend le pas de
+   quantification aléatoire à l'échelle du pixel et les anneaux disparaissent.
+   Ce n'est pas une texture — c'est un tramage ordonné, invisible à l'œil et
+   bien plus juste qu'un grain posé par-dessus. Non animé : il ne doit pas
+   scintiller. */
+.snow-bg::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(105deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.16) 46%,
-    transparent 62%);
-  transform: translateX(-120%);
-  transition: transform 750ms cubic-bezier(0.22, 0.7, 0.2, 1);
   pointer-events: none;
-}
-.lg-dark:hover::after { transform: translateX(120%); }
-
-/* Réponse à l'appui : le retour visuel part du pointer-down, pas du relâché,
-   et il est court — au-delà, ça traîne. */
-.lg-press {
-  transition:
-    transform 160ms cubic-bezier(0.22, 0.7, 0.2, 1),
-    box-shadow 220ms cubic-bezier(0.22, 0.7, 0.2, 1),
-    background-color 220ms ease;
-  will-change: transform;
-}
-.lg-press:hover { transform: translateY(-1.5px); }
-.lg-press:active {
-  transform: scale(0.965);
-  transition-duration: 90ms;
+  background-image: repeating-conic-gradient(
+    rgba(15, 15, 15, 0.011) 0% 25%,
+    rgba(255, 255, 255, 0.011) 0% 50%);
+  background-size: 2px 2px;
 }
 
-/* ── Le fond vivant ─────────────────────────────────────────────────────
-   Trois nappes de périodes très différentes (34 / 47 / 61 s) : aucune ne
-   boucle avec les autres, donc le fond ne se répète jamais. Cycles très
-   lents et couches translucides — on reste loin de la zone qui fatigue
-   l'œil, et tout est coupé si l'utilisateur demande moins d'animation. */
-.snow-rays {
-  position: absolute;
-  inset-inline: -8%;
-  bottom: 0;
-  height: 66%;
-  pointer-events: none;
-  -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,0.85) 26%, transparent 74%);
-  mask-image:         linear-gradient(to top, #000 0%, rgba(0,0,0,0.85) 26%, transparent 74%);
+/* 1 · la lueur basse — la source, ancrée sous le cadre */
+.snow-bg-lueur {
+  left: -18%; right: -18%;
+  bottom: -16%;
+  height: 84%;
+  background: radial-gradient(64% 100% at 50% 100%,
+    rgba(66, 126, 245, 0.300)   0%,
+    rgba(72, 132, 246, 0.200)  24%,
+    rgba(84, 140, 248, 0.145)  35%,
+    rgba(96, 150, 250, 0.100)  46%,
+    rgba(120, 166, 252, 0.036) 68%,
+    rgba(160, 190, 255, 0)     88%);
+  animation-name: snow-lueur;
+  animation-duration: 53s;
+  animation-delay: -17s;
 }
-.snow-rays::before,
-.snow-rays::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  filter: blur(18px);
-  will-change: transform, opacity;
-}
-.snow-rays::before {
-  background-image: repeating-linear-gradient(90deg,
-    rgba(66,126,245,0)    0px,
-    rgba(66,126,245,0.60) 24px,
-    rgba(66,126,245,0)    58px,
-    rgba(66,126,245,0.34) 84px,
-    rgba(66,126,245,0)   120px);
-  animation: snow-drift-a 34s ease-in-out infinite alternate;
-}
-.snow-rays::after {
-  background-image: repeating-linear-gradient(90deg,
-    rgba(66,126,245,0)    0px,
-    rgba(96,150,250,0.30) 46px,
-    rgba(96,150,250,0)   152px);
-  animation: snow-drift-b 47s ease-in-out infinite alternate;
-}
-/* halo qui respire au-dessus des rayons : donne de la profondeur au fond */
-.snow-bloom {
-  position: absolute;
-  inset-inline: -20%;
-  bottom: -18%;
-  height: 78%;
-  pointer-events: none;
-  background: radial-gradient(60% 55% at 50% 100%,
-    rgba(96,150,250,0.30) 0%,
-    rgba(96,150,250,0.12) 42%,
-    rgba(96,150,250,0) 72%);
-  animation: snow-bloom 61s ease-in-out infinite alternate;
-  will-change: transform, opacity;
-}
-@keyframes snow-drift-a {
-  from { transform: translate3d(-2.2%, 2%, 0) scaleY(1);    opacity: 0.62; }
-  to   { transform: translate3d( 2.2%, -1%, 0) scaleY(1.10); opacity: 0.92; }
-}
-@keyframes snow-drift-b {
-  from { transform: translate3d( 3%, -1%, 0) scaleY(1.08); opacity: 0.85; }
-  to   { transform: translate3d(-3%,  2%, 0) scaleY(1);    opacity: 0.50; }
-}
-@keyframes snow-bloom {
-  from { transform: translate3d(-4%, 3%, 0) scale(1);    opacity: 0.75; }
-  to   { transform: translate3d( 4%, -2%, 0) scale(1.14); opacity: 1; }
+@keyframes snow-lueur {
+  from { transform: translate3d(-3.0%,  2.0%, 0) scale(1);    opacity: 0.70; }
+  to   { transform: translate3d( 3.0%, -2.0%, 0) scale(1.12); opacity: 1;    }
 }
 
-/* ── Intro « way » ──────────────────────────────────────────────────────
-   Les lettres se matérialisent : flou, échelle et opacité bougent ensemble,
-   pour qu'on lise l'arrivée d'une matière et non un simple fondu. */
+/* 2 · la nappe haute — le contrepoids, plus claire et moitié moins dense.
+   C'est elle que le verre de la nav a derrière lui : sans elle, la pilule
+   n'aurait rien à réfracter et redeviendrait un aplat. */
+.snow-bg-nappe {
+  left: -14%; right: -14%;
+  top: -24%;
+  height: 76%;
+  /* Centre à 26 % de la boîte, c'est-à-dire À la hauteur de la nav : c'est là
+     que la pente de luminance doit être franche, sinon la pilule n'a qu'un
+     aplat derrière elle et le verre ne se voit pas. La nappe est éteinte à
+     78 % de son rayon, soit bien au-dessus du titre — contraste de l'encre
+     mesuré plus bas. */
+  background: radial-gradient(62% 100% at 50% 26%,
+    rgba(96, 150, 250, 0.240)   0%,
+    rgba(120, 166, 252, 0.130) 34%,
+    rgba(150, 188, 254, 0.048) 58%,
+    rgba(180, 208, 255, 0)     78%);
+  animation-name: snow-nappe;
+  animation-duration: 71s;
+  animation-delay: -41s;
+}
+@keyframes snow-nappe {
+  from { transform: translate3d( 2.2%, -1.6%, 0) scale(1);    opacity: 0.55; }
+  to   { transform: translate3d(-2.2%,  1.6%, 0) scale(1.09); opacity: 0.96; }
+}
+
+/* 3 · dérive basse-gauche. `closest-side` : l'ellipse épouse la boîte et
+   atteint alpha 0 sur ses bords — aucune arête à masquer, donc la boîte peut
+   rester petite. C'est le levier mémoire principal. */
+.snow-bg-derive-a {
+  left: -16%;
+  bottom: -10%;
+  width: 82%;
+  height: 74%;
+  background: radial-gradient(closest-side at 50% 50%,
+    rgba(66, 126, 245, 0.210)  0%,
+    rgba(90, 145, 248, 0.090) 46%,
+    rgba(140, 180, 255, 0)   100%);
+  animation-name: snow-derive-a;
+  animation-duration: 89s;
+  animation-delay: -7s;
+}
+@keyframes snow-derive-a {
+  from { transform: translate3d(-8%,  4%, 0) scale(1);    opacity: 0.45; }
+  to   { transform: translate3d( 9%, -5%, 0) scale(1.15); opacity: 0.95; }
+}
+
+/* 4 · dérive haute-droite. Elle part de scale(1.12) vers scale(1) pendant
+   que la 3 fait l'inverse : les deux ne respirent jamais dans le même sens.
+   Seule nappe qui traverse la zone du titre, d'où son alpha plafonné. */
+.snow-bg-derive-b {
+  right: -12%;
+  top: -8%;
+  width: 70%;
+  height: 64%;
+  background: radial-gradient(closest-side at 50% 50%,
+    rgba(96, 150, 250, 0.140)   0%,
+    rgba(120, 166, 252, 0.055) 48%,
+    rgba(160, 195, 255, 0)    100%);
+  animation-name: snow-derive-b;
+  animation-duration: 113s;
+  animation-delay: -66s;
+}
+@keyframes snow-derive-b {
+  from { transform: translate3d( 7%, -4%, 0) scale(1.12); opacity: 0.48; }
+  to   { transform: translate3d(-8%,  5%, 0) scale(1);    opacity: 0.88; }
+}
+
+
+/* ── Intro « way » — les lettres arrivent du fond de la scène ────────────
+
+   « De derrière » est pris au mot : perspective par lettre, départ à
+   translateZ(-2.6em) — soit 0,62× de taille apparente, floue parce que hors
+   du plan de netteté — puis atterrissage à Z=0.
+
+   Quatre couches, une responsabilité chacune. C'est ce qui rend la mesure
+   fiable et le centrage exact :
+     .snow-intro         plein écran, centre la scène, ne bouge jamais
+      .snow-intro-stage  porte UNIQUEMENT la sortie
+       .snow-intro-word  porte UNIQUEMENT le recentrage horizontal
+        .snow-letter     porte la LARGEUR + la perspective, jamais de transform
+         .snow-letter-i  porte le mouvement
+
+   Le piège de la mesure est réglé là : c'est l'ENFANT qui est scalé en Z, et
+   un transform n'affecte pas la mise en page. getBoundingClientRect() sur le
+   parent renvoie donc toujours l'avance typographique réelle, même en plein
+   vol. */
 .snow-intro {
   position: fixed;
   inset: 0;
   z-index: 60;
   display: grid;
   place-items: center;
-  pointer-events: none;
+  pointer-events: none;   /* l'intro ne vole jamais un clic */
 }
+
+/* La scène entière part vers l'avant pendant la passation. Pas de
+   perspective ici : sur un plan plat, un scale() donne exactement la même
+   projection, pour zéro contexte de rendu 3D plein écran. */
+.snow-intro-stage {
+  opacity: 1;
+  filter: blur(0px);
+  transform: scale(1);
+  transform-origin: 50% 50%;
+  will-change: transform, opacity, filter;
+}
+
+/* Le mot glisse vers la gauche à mesure qu'il s'allonge, pour que la partie
+   visible reste optiquement centrée. 480 ms = la fenêtre de matérialisation
+   d'une lettre : le glissé et l'arrivée se terminent ensemble.
+   Ease-out et pas ease-in-out : la valeur est reciblée trois fois en 380 ms,
+   un ease-in-out produirait trois micro-ralentis. */
 .snow-intro-word {
   display: flex;
+  align-items: flex-start;
   line-height: 1;
-  font-size: clamp(4.2rem, 13vw, 10rem);
+  font-size: clamp(3.25rem, 10vw, 7.5rem);
   color: #0F0F0F;
-  transition: transform 1.25s cubic-bezier(0.32, 0.72, 0.15, 1);
+  font-family: "Instrument Sans", "Instrument Sans Fallback",
+               ui-sans-serif, system-ui, sans-serif;
+  font-weight: 580;               /* à 120 px, la graisse du titre paraîtrait
+                                     plus lourde : l'encre perçue croît avec
+                                     le corps */
+  letter-spacing: var(--snow-tk-mark);
+  font-size-adjust: ex-height 0.51;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Chaque lettre étant sa propre boîte, le crénage entre paires est perdu
+     de toute façon. On le désactive explicitement : la géométrie mesurée
+     devient rigoureusement celle du rendu. */
+  font-kerning: none;
+  font-variant-ligatures: none;
+
+  /* Centrage vertical OPTIQUE. `place-items: center` centre la BOÎTE, pas
+     l'encre — et l'encre de « way » n'est pas centrée dans son cadratin : pas
+     de capitale ni d'ascendante, mais un jambage sous la ligne de base. Avec
+     line-height: 1 et les métriques d'Instrument Sans (asc 0,97 / desc 0,25),
+     la ligne de base tombe à 0,86 em du haut, donc l'encre — de 0,35 em à
+     1,07 em — a son centre à 0,71 em au lieu de 0,50 em. Le mot est 0,196 em
+     trop bas : 24 px à 120 px, mesuré au scan de pixels, pas estimé.
+     Porté par `translate` et non par `transform` : une propriété, une
+     responsabilité — `transform` reste au recentrage horizontal animé, et les
+     deux se composent au lieu de s'écraser. */
+  translate: 0 -0.196em;
+
+  transform: translate3d(0, 0, 0);
+  transition: transform 480ms var(--snow-land);
   will-change: transform;
 }
-.snow-letter {
-  opacity: 0;
-  filter: blur(30px);
-  transform: scale(1.05);
-  transition:
-    opacity 1.9s cubic-bezier(0.22, 0.7, 0.2, 1),
-    filter  1.9s cubic-bezier(0.22, 0.7, 0.2, 1),
-    transform 1.9s cubic-bezier(0.22, 0.7, 0.2, 1);
-  will-change: opacity, filter, transform;
-}
-.snow-letter--in { opacity: 1; filter: blur(0); transform: scale(1); }
 
-/* La passation : le mot se dématérialise pendant que l'accueil se
-   matérialise, sur la MÊME courbe inversée et en même temps — il n'y a
-   jamais d'image morte entre les deux. */
+/* Le letter-spacing négatif s'applique AUSSI après la dernière lettre : sans
+   compensation, le mot est décalé de 0,019 em vers la gauche (2,3 px à
+   7,5rem). On rend ce décalage. */
+.snow-intro-word > .snow-letter:last-child {
+  margin-inline-end: calc(-1 * var(--snow-tk-mark));
+}
+
+/* La couche « largeur » : jamais transformée, c'est elle qu'on mesure.
+   perspective en em et non en px : la profondeur suit la taille du texte,
+   donc l'effet est identique sur mobile et sur grand écran.
+   4.2em de perspective + translateZ(-2.6em) → échelle apparente 0,618. La
+   lettre part petite mais bien présente ; rien ne surgit du néant. */
+.snow-letter {
+  display: block;
+  flex: 0 0 auto;
+  line-height: 1;
+  perspective: 4.2em;
+  perspective-origin: 50% 50%;   /* centre de la lettre → zéro dérive en X */
+  transform-style: flat;
+}
+
+/* La couche « mouvement ». Trois propriétés, trois durées, une intention :
+     opacity   340 ms — elle apparaît
+     filter    480 ms — elle entre dans le plan de netteté
+     transform 860 ms — elle se pose
+   Ce décalage est ce qui fait lire « ça vient de loin » plutôt que « ça
+   apparaît sur place ». La lettre est lisible à 480 ms ; les 380 ms qui
+   restent sont un tassement sub-pixel qu'on sent sans le voir.
+   Ordre du transform : translate3d PUIS rotateX — l'inverse ferait pivoter
+   l'axe de la translation et la lettre partirait aussi vers le bas. */
+.snow-letter-i {
+  display: block;                /* un inline ne se transforme pas */
+  line-height: 1;
+  opacity: 0;
+  filter: blur(var(--snow-blur));
+  transform: translate3d(0, -0.06em, -2.6em) rotateX(7deg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition:
+    opacity   340ms var(--snow-ease),
+    filter    480ms var(--snow-ease),
+    transform 860ms var(--snow-land);
+  will-change: transform, filter, opacity;
+}
+.snow-letter--in > .snow-letter-i {
+  opacity: 1;
+  filter: blur(0px);
+  transform: translate3d(0, 0, 0) rotateX(0deg);
+}
+/* Une fois posée, on retire le calque : un élément qui garde un filter et un
+   will-change reste rasterisé à l'échelle où il a été promu, et le glyphe
+   resterait mou pendant toute la respiration du mot. blur(0px) → none et
+   l'identité → none n'interpolent rien : aucun saut. */
+.snow-letter--landed > .snow-letter-i {
+  filter: none;
+  transform: none;
+  will-change: auto;
+}
+
+
+/* ── La passation ────────────────────────────────────────────────────────
+   Un seul mouvement de caméra, pas deux animations juxtaposées : la caméra
+   avance, traverse le mot (qui grossit, se défocalise et disparaît) et se
+   pose sur l'accueil. On sort toujours plus vite qu'on entre — 540 ms contre
+   860 ms. */
 .snow-intro--out {
   opacity: 0;
-  filter: blur(22px);
-  transform: scale(1.05);
+  filter: blur(10px);
+  transform: scale(1.12);
   transition:
-    opacity 1s cubic-bezier(0.5, 0, 0.75, 0.3),
-    filter 1s cubic-bezier(0.5, 0, 0.75, 0.3),
-    transform 1s cubic-bezier(0.5, 0, 0.75, 0.3);
+    opacity   380ms var(--snow-ease),
+    filter    460ms var(--snow-ease),
+    transform 540ms var(--snow-leave);
 }
-.snow-home {
-  opacity: 0;
-  filter: blur(14px);
-  transform: scale(0.985) translateY(10px);
-  transition:
-    opacity 1.25s cubic-bezier(0.22, 0.7, 0.2, 1),
-    filter 1.25s cubic-bezier(0.22, 0.7, 0.2, 1),
-    transform 1.25s cubic-bezier(0.22, 0.7, 0.2, 1);
-  will-change: opacity, filter, transform;
-}
-.snow-home--in { opacity: 1; filter: blur(0); transform: scale(1) translateY(0); }
 
-/* onglet actif : le trait pousse depuis le centre */
+/* .snow-home ne porte QUE de l'opacité. Non négociable : un `filter` ou un
+   `will-change: filter/transform` sur ce conteneur en ferait un « backdrop
+   root », et tous les backdrop-filter qu'il contient ne verraient plus le
+   fond de la page mais une surface plate — le liquid glass deviendrait un
+   rectangle laiteux, en permanence. Le code précédent avait exactement ce
+   bug. Corollaire : pas de transform non plus, sinon le <header> en
+   position: fixed se retrouve contenu par ce conteneur. */
+.snow-home { position: relative; z-index: 1; }
+
+/* Le fondu est porté par les ENFANTS, jamais par le conteneur. Une opacité
+   < 1 est, avec `filter`, le déclencheur n°1 de « backdrop root » : sur un
+   ancêtre du verre, elle ferait voir à backdrop-filter une surface plate au
+   lieu de la page, et la pilule deviendrait un rectangle laiteux pendant
+   toute la passation. Le bouton porte donc sa propre opacité — sur l'élément
+   qui PORTE le backdrop-filter, c'est sans danger : il n'est backdrop root que
+   pour ses descendants. */
+.snow-fade { opacity: 0; transition: opacity 460ms var(--snow-ease); }
+.snow-home--in .snow-fade { opacity: 1; }
+/* `opacity: 0` ne retire ni le hit-testing ni l'ordre de tabulation : sans
+   ça, un clic pendant l'intro atteint le bouton invisible et ouvre la modale
+   par-dessus. Ceinture ici, bretelles avec `inert` côté TSX. */
+.snow-home:not(.snow-home--in) { pointer-events: none; }
+
+/* La profondeur vit sur le contenu, pas sur le châssis : la nav se fond
+   (c'est du chrome), le héros monte (c'est du contenu). */
+.snow-rise {
+  transform: translate3d(0, 10px, 0) scale(0.988);
+  transform-origin: 50% 50%;
+  transition: transform 540ms var(--snow-land);
+  will-change: transform;
+}
+.snow-home--in .snow-rise { transform: translate3d(0, 0, 0) scale(1); }
+
+/* État posé. `transform: none` plutôt que `scale(1)` : un scale, même
+   exactement égal à 1, laisse le texte rasterisé sur un calque séparé. On
+   veut des glyphes nets. */
+.snow-home--settled .snow-fade { transition: none; }
+.snow-home--settled .snow-rise {
+  transform: none;
+  transition: none;
+  will-change: auto;
+}
+
+
+/* ── Liquid glass ────────────────────────────────────────────────────────
+   Un seul élément en verre sur toute la page — le bouton « Prendre
+   rendez-vous ». Il porte seul la promesse, donc tout est ici.
+
+   Il est CLAIR et réellement transparent : 0,34 de blanc au sommet, 0,14 au
+   pied. Sur un fond blanc neige, une pilule d'encre sombre — même à 0,66
+   d'alpha, le plancher qu'impose du texte blanc lisible — se lit comme un
+   aplat gris, pas comme du verre. Avec de l'encre foncée sur du verre clair,
+   l'alpha peut descendre où on veut : le label est à 17:1, et ce qui passe
+   au travers se voit enfin. C'est la seule configuration qui tient à la fois
+   « vraiment transparent » et le contraste.
+
+   La transparence ne suffit pas à faire lire « verre ». Il faut les quatre
+   indices optiques :
+     · une arête spéculaire nette au sommet, là où la lumière entre ;
+     · une arête sombre au PIED, et au pied seulement — le dessous d'une
+       lentille ne renvoie pas de lumière, il en mange. Elle donne l'épaisseur
+       et elle dessine la limite du contrôle : rgba(15,15,15,0.52) sur #FFFAFA
+       donne 3,5:1, au-dessus du plancher de 3:1 qu'exige WCAG 1.4.11. Assombrir
+       toute la moitié basse, en revanche, donnerait un biseau de plastique ;
+     · un anneau conique dont la luminosité tourne avec le périmètre ;
+     · une bande de bord qui porte son PROPRE backdrop-filter — le bord ne
+       montre pas la même image que le centre : c'est ça, la réfraction. */
+.lg {
+  position: relative;
+  isolation: isolate;
+  border-radius: 9999px;
+  color: #0F0F0F;
+
+  /* blur 16 : assez pour que le fond devienne une nappe de couleur et non une
+     image reconnaissable — la signature du verre dépoli.
+     saturate 200 : le flou délave la couleur, on la rend, sinon le bleu du
+     fond vire au gris et la pilule redevient un aplat. */
+  backdrop-filter: blur(16px) saturate(200%);
+  -webkit-backdrop-filter: blur(16px) saturate(200%);
+
+  /* La matière : du blanc à 0,26 au sommet, 0,08 au pied. Assez pour donner
+     un corps à la lentille, assez peu pour qu'on voie au travers. */
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.26)   0%,
+    rgba(255, 255, 255, 0.15)  54%,
+    rgba(255, 255, 255, 0.08) 100%);
+
+  /* Des FILETS, pas un biseau. Deux ombres internes larges — une claire en
+     haut, une sombre en bas — donneraient un bouton de plastique bombé : le
+     réflexe exact qu'il faut tuer ici. Le verre se dit avec un trait clair
+     d'un pixel au sommet, l'arête sombre du pied (portée par ::before) et une
+     ombre portée courte qui le décolle du papier. Rien d'autre. */
+  box-shadow:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.85),
+    0 1px 2px -1px  rgba(15, 15, 15, 0.16),
+    0 6px 14px -8px rgba(15, 15, 15, 0.22);
+}
+
+/* ── L'arête ─────────────────────────────────────────────────────────────
+   Un anneau d'un pixel, et un anneau SEULEMENT. La recette naïve — deux
+   dégradés coniques en background-clip: border-box sous une teinte en
+   padding-box — ne marche que si la teinte est opaque : ici elle est à 0,08
+   d'alpha, donc le conique transparaît sur toute la face et on retrouve le
+   dégradé gris d'un bouton en plastique. D'où le découpage au masque :
+   `padding: 1px` creuse une boîte de contenu, et le masque en exclusion ne
+   laisse que la couronne entre les deux. Les deux boîtes sont des rectangles
+   ARRONDIS (le rayon intérieur suit), donc l'anneau reste parfait jusque dans
+   les deux caps de la pilule.
+
+   L'anneau ne porte PAS de backdrop-filter à lui : `.lg` est déjà un backdrop
+   root (isolation: isolate + son propre backdrop-filter), donc le backdrop
+   d'un descendant n'est plus la page mais l'intérieur de `.lg` — le filtre
+   serait du code mort. La déviation du bord vient d'ailleurs : l'anneau est le
+   seul endroit où la luminosité tourne avec le périmètre, sur une matière que
+   le flou du parent a déjà décalée par rapport au fond nu.
+
+   Les angles ne sont pas décoratifs : sur une pilule de ~180 × 41 px, le coin
+   haut-droit tombe à 77°, le cap droit à 90°, le coin bas-droit à 103°. D'où
+   le spéculaire au sommet, la compression du blanc de la page aux deux caps,
+   et l'arête sombre au pied — et au pied SEULEMENT, parce qu'assombrir toute
+   la moitié basse ferait un biseau. C'est elle qui dessine la limite du
+   contrôle : rgba(15,15,15,0.52) sur #FFFAFA donne 3,5:1, au-dessus du
+   plancher de 3:1 qu'exige WCAG 1.4.11. */
+.lg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  z-index: 0;
+  --lg-sweep: 0deg;
+
+  background:
+    /* le reflet qui VOYAGE sur l'arête au survol : un arc étroit, transparent
+       partout ailleurs. Il passe sur le bord et jamais sur la face — c'est
+       physiquement juste (un spéculaire naît de la courbure du bord) et ça ne
+       touche pas au contraste du label. */
+    conic-gradient(from var(--lg-sweep, 0deg) at 50% 50%,
+      rgba(255, 255, 255, 0)     0deg,
+      rgba(255, 255, 255, 0)    26deg,
+      rgba(255, 255, 255, 0.65) 44deg,
+      rgba(255, 255, 255, 0.98) 52deg,
+      rgba(255, 255, 255, 0.65) 60deg,
+      rgba(255, 255, 255, 0)    78deg,
+      rgba(255, 255, 255, 0)   360deg),
+    conic-gradient(from 0deg at 50% 50%,
+      rgba(255, 255, 255, 0.95)   0deg,
+      rgba(255, 255, 255, 0.55)  70deg,
+      rgba(15, 15, 15, 0.08)     96deg,
+      rgba(15, 15, 15, 0.42)    150deg,
+      rgba(15, 15, 15, 0.52)    180deg,
+      rgba(15, 15, 15, 0.42)    210deg,
+      rgba(15, 15, 15, 0.08)    264deg,
+      rgba(255, 255, 255, 0.55) 290deg,
+      rgba(255, 255, 255, 0.95) 360deg);
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+
+/* Le reflet qui balaie la face : un voile, pic à 0,30 d'alpha de blanc. Sur du
+   verre clair il éclaircit au lieu d'assombrir, donc il ne coûte rien au
+   contraste de l'encre — le plafond dur qui bridait la version sombre n'existe
+   plus ici.
+   Pas d'overflow: hidden sur le parent — dans WebKit, il casse le clipping des
+   backdrop-filter enfants. On anime background-position, et le fond est déjà
+   clippé au rayon. */
+.lg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  background-image: linear-gradient(105deg,
+    rgba(255, 255, 255, 0)    40%,
+    rgba(255, 255, 255, 0.30) 50%,
+    rgba(255, 255, 255, 0)    60%);
+  background-size: 260% 100%;
+  background-position: 100% 0;   /* hors champ, à gauche */
+  background-repeat: no-repeat;
+}
+
+/* Le balayage n'existe que là où un vrai pointeur peut survoler. */
+@media (hover: hover) and (pointer: fine) {
+  .lg { transition: box-shadow 320ms var(--snow-ease); }
+  .lg::before { transition: --lg-sweep 1100ms var(--snow-ease); }
+  .lg::after { transition: background-position 900ms var(--snow-ease); }
+  .lg:hover::before { --lg-sweep: 360deg; }
+  .lg:hover {
+    box-shadow:
+      inset 0 1px 0.5px rgba(255, 255, 255, 1),
+      0 1px 2px -1px    rgba(15, 15, 15, 0.18),
+      0 10px 20px -10px rgba(15, 15, 15, 0.26);
+  }
+  .lg:hover::after { background-position: 0% 0; }
+}
+
+/* Le label. Le margin droit négatif rend l'espace de chasse ajouté après la
+   dernière lettre par le letter-spacing : sans lui, le texte est optiquement
+   décalé à gauche dans une pilule à paddings égaux. */
+/* Surtout pas de `display` ici : à spécificité égale et déclaré plus loin que
+   `@tailwind utilities`, il battrait `.hidden` / `.sm:hidden` et le bouton
+   afficherait les DEUX libellés sur mobile. Un <span> est déjà inline, et
+   letter-spacing, marge, graisse et z-index s'appliquent tous à une boîte
+   inline. */
+.lg-label {
+  position: relative;
+  z-index: 1;
+  font-weight: 500;
+  letter-spacing: 0.012em;
+  margin-right: -0.012em;
+}
+
+/* Le retour à l'appui part du pointer-down, pas du relâché — c'est la
+   condition n°1 de la sensation de direct. On utilise les propriétés
+   INDIVIDUELLES translate et scale : avec un seul `transform`, le scale de
+   l'appui écraserait le lift du survol ; là, elles se composent.
+   Interruptible par construction : une transition repart toujours de la
+   valeur calculée courante. Asymétrique : 110 ms pour s'enfoncer, 240 pour
+   revenir. Pas de will-change — backdrop-filter promeut déjà l'élément, et
+   une promotion permanente sur une surface de verre force un
+   ré-échantillonnage plus agressif de l'arrière-plan. */
+.lg-press {
+  translate: 0 0;
+  scale: 1;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    translate 240ms var(--snow-ease),
+    scale     240ms var(--snow-ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .lg-press:hover { translate: 0 -1.5px; }
+}
+.lg-press:active {
+  scale: 0.972;
+  translate: 0 0;
+  transition-duration: 110ms, 110ms;
+}
+
+
+
+/* ── L'onglet actif : le trait pousse depuis le centre ───────────────────*/
 .snow-tab { position: relative; }
 .snow-tab::after {
   content: "";
@@ -682,9 +1226,9 @@
   border-radius: 2px;
   background: #0F0F0F;
   transform: translateX(-50%);
-  transition: width 260ms cubic-bezier(0.22, 0.7, 0.2, 1);
+  transition: width 260ms var(--snow-ease);
 }
-.snow-tab[aria-current="page"]::after { width: calc(100% - 1.75rem); }
+.snow-tab[aria-current="page"]::after,
 .snow-tab:hover::after { width: calc(100% - 1.75rem); }
 
 .snow a:focus-visible,
@@ -694,21 +1238,110 @@
   border-radius: 9999px;
 }
 
-/* Moins de transparence demandée : le verre devient opaque et net. */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PRÉFÉRENCES SYSTÈME
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* backdrop-filter absent (vieux Firefox, WebView embarquées) : sans flou, on
+   verrait le fond NET au travers du verre. On remonte la matière à un blanc
+   quasi opaque ; l'anneau de ::before, lui, reste — ce sont des dégradés, seul
+   son backdrop-filter tombe. Le relief survit donc entièrement. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .lg {
+    background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(246, 248, 254, 0.95) 100%);
+  }
+}
+
+/* Moins de transparence : la matière devient un solide. On retire le
+   backdrop-filter ET les deux pseudo-éléments — garder une réfraction sur un
+   fond opaque serait un mensonge visuel — et on rend la limite du contrôle par
+   une vraie bordure. Le fond, qui est une transparence lui aussi, s'assourdit. */
 @media (prefers-reduced-transparency: reduce) {
-  .lg { background: #FFFFFF; backdrop-filter: none; -webkit-backdrop-filter: none; }
-  .lg-dark { background: #0F0F0F; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .snow { --snow-blur: 0px; }
+  .snow-bg { opacity: 0.55; }
+  .snow-intro--out { filter: none; }
+  .lg {
+    background: #FFFFFF;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 1px solid rgba(15, 15, 15, 0.52);   /* 3,5:1 contre la page */
+    box-shadow:
+      inset 0 1px 0.5px rgba(255, 255, 255, 0.9),
+      0 1px 2px -1px rgba(15, 15, 15, 0.16),
+      0 6px 14px -8px rgba(15, 15, 15, 0.22);
+  }
+  .lg::before, .lg::after { display: none; }
 }
+
+/* Contraste renforcé : le verre devient une commande franche, zéro effet, et
+   le champ lumineux s'efface. #0F0F0F sur #FFFFFF = 19,4:1. */
 @media (prefers-contrast: more) {
-  .lg { background: #FFFFFF; border-color: #0F0F0F; }
-  .lg-dark { background: #0F0F0F; border-color: #FFFAFA; }
+  .snow { --snow-blur: 0px; }
+  .snow-bg { opacity: 0.30; }
+  .snow-bg > i { animation: none; }
+  .snow-lede { color: rgba(15, 15, 15, 0.92); }   /* 8,2:1 → 15,8:1 */
+  .snow-intro--out { filter: none; }
+  .lg {
+    background: #FFFFFF;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 1.5px solid #0F0F0F;
+    box-shadow: none;
+  }
+  .lg::before, .lg::after { display: none; }
 }
-/* Moins d'animation : on garde le sens, on retire le mouvement. */
+
+/* Mode couleurs forcées (Windows High Contrast) : on laisse le système
+   décider, en s'assurant que la limite du bouton reste dessinée. */
+@media (forced-colors: active) {
+  .lg {
+    border: 1px solid ButtonBorder;
+    background: ButtonFace;
+    color: ButtonText;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .lg::before, .lg::after { display: none; }
+}
+
+/* Moins d'animation : on garde le sens et la matière, on retire le
+   mouvement. Le composant saute déjà l'intro entièrement en JS ; ces règles
+   sont le filet, pour que rien ne finisse invisible, flou ou coincé en Z.
+   Le fond ne disparaît pas : il se fige sur une pose choisie — le milieu de
+   cycle, légèrement biaisé vers la droite pour que la composition ne soit pas
+   mortellement symétrique. Pose écrite en dur plutôt que
+   `animation-play-state: paused`, parce que la règle globale
+   `animation-duration: 0.01ms !important` de @layer base la casserait. */
 @media (prefers-reduced-motion: reduce) {
-  .snow-rays::before, .snow-rays::after, .snow-bloom { animation: none; }
-  .snow-letter, .snow-intro-word, .snow-home, .snow-intro--out { transition: none; }
-  .snow-letter { opacity: 1; filter: none; transform: none; }
-  .snow-home { opacity: 1; filter: none; transform: none; }
-  .lg-press:hover, .lg-press:active { transform: none; }
-  .lg-dark::after { display: none; }
+  .snow-bg > i { animation: none; }
+  .snow-bg-lueur    { transform: translate3d( 0.8%,  0.2%, 0) scale(1.06); opacity: 0.92; }
+  .snow-bg-nappe    { transform: translate3d(-0.6%,  0,    0) scale(1.04); opacity: 0.80; }
+  .snow-bg-derive-a { transform: translate3d( 1.5%, -0.8%, 0) scale(1.08); opacity: 0.74; }
+  .snow-bg-derive-b { transform: translate3d(-1.0%,  0.6%, 0) scale(1.05); opacity: 0.70; }
+
+  .snow-letter { perspective: none; }
+  .snow-letter-i,
+  .snow-intro-word,
+  .snow-intro-stage,
+  .snow-intro--out,
+  .snow-home,
+  .snow-rise {
+    transition: none;
+    transform: none;
+    filter: none;
+    opacity: 1;
+    will-change: auto;
+  }
+
+  .lg, .lg::after { transition: none; }
+  .lg:hover::before { --lg-sweep: 0deg; }
+  .lg:hover::after { background-position: 100% 0; }
+  .lg-press { transition: none; }
+  .lg-press:hover, .lg-press:active { translate: 0 0; scale: 1; }
+  /* on conserve un retour à l'appui non vestibulaire : une clarté, pas un
+     déplacement */
+  .lg-press:active { filter: brightness(1.18); }
 }
