@@ -3,26 +3,24 @@ import ContactModal, { openContact } from "@/components/site/ContactModal";
 
 /* Accueil « neige » — fond #FFFAFA, encre #0F0F0F.
 
-   Intro : « way » se pose lettre par lettre, chacune fondant à l'écran au
-   ralenti (très flou → net). Le mot reste optiquement CENTRÉ pendant qu'il se
-   construit : on mesure la largeur réelle de chaque lettre une fois la police
-   chargée, puis on décale la rangée de (largeur totale − largeur visible) / 2.
-   Résultat : le « w » seul est au centre exact de l'écran, et le mot glisse
-   doucement à mesure qu'il s'allonge.
+   Intro : « way » se pose lettre par lettre. Chaque lettre se matérialise
+   (flou, échelle et opacité ensemble) et le mot reste optiquement centré
+   pendant qu'il s'allonge : on mesure la largeur réelle de chaque lettre une
+   fois la police chargée, puis on décale la rangée de
+   (largeur totale − largeur visible) / 2.
 
-   Les rayons bleus sont une seule instance, en dehors de l'intro comme de
-   l'accueil : le fond ne bouge pas d'un pixel au moment du fondu. */
+   Passation : le mot se dématérialise PENDANT que l'accueil se matérialise,
+   sur la même courbe inversée et au même instant. Il n'y a jamais d'image
+   morte entre les deux, et le fond ne bouge pas puisqu'il est commun. */
 
 const LETTERS = ["w", "a", "y"] as const;
 
-/* rythme de l'intro (ms) — lent, comme demandé.
-   LETTER_MS doit rester égal à la transition de .snow-letter : le mot ne part
-   en fondu qu'une fois la dernière lettre complètement posée. */
-const FIRST_MS = 350;   // avant la première lettre
-const STEP_MS = 1300;   // écart entre deux lettres
-const LETTER_MS = 2000; // durée du fondu d'une lettre
-const HOLD_MS = 1100;   // le mot complet respire
-const LEAVE_MS = 1300;  // fondu de sortie
+/* rythme de l'intro (ms) */
+const FIRST_MS = 350;    // avant la première lettre
+const STEP_MS = 1250;    // écart entre deux lettres
+const LETTER_MS = 1900;  // = transition de .snow-letter
+const HOLD_MS = 900;     // le mot complet respire
+const HANDOFF_MS = 1250; // = transition de .snow-home
 
 const NAV = [
   { label: "Accueil", href: "#top", current: true },
@@ -37,9 +35,9 @@ export default function Accueil() {
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const [step, setStep] = useState(reduced ? LETTERS.length : 0);
-  const [phase, setPhase] = useState<"intro" | "leaving" | "home">(reduced ? "home" : "intro");
+  /* "intro" → "handoff" (les deux se croisent) → "home" (l'intro sort du DOM) */
+  const [phase, setPhase] = useState<"intro" | "handoff" | "home">(reduced ? "home" : "intro");
   const [widths, setWidths] = useState<number[] | null>(null);
-
   const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
   /* largeur réelle de chaque lettre, une fois la police chargée */
@@ -62,7 +60,6 @@ export default function Accueil() {
     return () => { document.documentElement.style.background = ""; };
   }, []);
 
-  /* déroulé de l'intro */
   useEffect(() => {
     const reveal = () => {
       (window as unknown as { __wayRevealed?: boolean }).__wayRevealed = true;
@@ -74,9 +71,10 @@ export default function Accueil() {
     LETTERS.forEach((_, i) => {
       timers.push(window.setTimeout(() => setStep(i + 1), FIRST_MS + i * STEP_MS));
     });
-    const doneAt = FIRST_MS + (LETTERS.length - 1) * STEP_MS + LETTER_MS + HOLD_MS;
-    timers.push(window.setTimeout(() => setPhase("leaving"), doneAt));
-    timers.push(window.setTimeout(() => { setPhase("home"); reveal(); }, doneAt + LEAVE_MS));
+    // la passation démarre une fois la dernière lettre complètement posée
+    const handoffAt = FIRST_MS + (LETTERS.length - 1) * STEP_MS + LETTER_MS + HOLD_MS;
+    timers.push(window.setTimeout(() => { setPhase("handoff"); reveal(); }, handoffAt));
+    timers.push(window.setTimeout(() => setPhase("home"), handoffAt + HANDOFF_MS));
     return () => timers.forEach(window.clearTimeout);
   }, [reduced]);
 
@@ -88,18 +86,22 @@ export default function Accueil() {
     return (total - shown) / 2;
   })();
 
+  const homeIn = phase !== "intro";
+
   return (
     <div className="snow relative min-h-screen overflow-hidden">
       <ContactModal />
 
-      {/* fond vivant — une seule instance, partagée par l'intro et l'accueil */}
+      {/* fond vivant — une seule instance, partagée par l'intro et l'accueil,
+          donc rien ne saute au moment de la passation */}
+      <div className="snow-bloom" aria-hidden />
       <div className="snow-rays" aria-hidden />
 
       {/* ── intro « way » ── */}
       {phase !== "home" && (
-        <div className={`snow-intro${phase === "leaving" ? " snow-intro--leave" : ""}`} aria-hidden>
+        <div className="snow-intro" aria-hidden>
           <div
-            className="snow-intro-word snow-serif-i"
+            className={`snow-intro-word snow-serif-i${phase === "handoff" ? " snow-intro--out" : ""}`}
             style={{ transform: `translateX(${shift}px)` }}
           >
             {LETTERS.map((ch, i) => (
@@ -116,43 +118,34 @@ export default function Accueil() {
       )}
 
       {/* ── accueil ── */}
-      <div className={`snow-home${phase !== "intro" ? " snow-home--in" : ""}`}>
-        {/* nav : grille 1fr / auto / 1fr et padding symétrique → les liens
-            tombent au centre exact, quelle que soit la largeur du logo */}
-        <header className="fixed inset-x-0 top-5 z-40 flex justify-center px-4">
-          <nav
-            className="grid w-full max-w-[860px] items-center rounded-full p-1.5"
-            style={{
-              gridTemplateColumns: "1fr auto 1fr",
-              background: "#FFFFFF",
-              boxShadow: "inset 0 0 0 1px rgba(15,15,15,0.07), 0 10px 30px -18px rgba(15,15,15,0.25)",
-            }}
-          >
-            <a href="#top" className="flex items-center gap-2 justify-self-start pl-2.5" aria-label="Way agency, accueil">
-              <svg viewBox="0 0 48 48" className="h-[21px] w-[21px]" fill="none" aria-hidden>
+      <div className={`snow-home${homeIn ? " snow-home--in" : ""}`}>
+        {/* nav sans fond : le verre est réservé au bouton, là où il attire
+            l'œil — deux surfaces translucides superposées tueraient la
+            lisibilité. Grille 1fr/auto/1fr, colonnes fixées explicitement. */}
+        <header className="fixed inset-x-0 top-5 z-40 flex justify-center px-5">
+          <nav className="grid w-full max-w-[880px] items-center" style={{ gridTemplateColumns: "1fr auto 1fr" }}>
+            <a
+              href="#top"
+              className="lg-press justify-self-start rounded-full"
+              aria-label="Way, accueil"
+              style={{ gridColumn: 1 }}
+            >
+              <svg viewBox="0 0 48 48" className="h-[26px] w-[26px]" fill="none" aria-hidden>
                 <circle cx="24" cy="24" r="21" stroke="#0F0F0F" strokeWidth="3" />
                 <path d="M13 18 L18.75 31 L24 21 L29.25 31 L35 18" stroke="#0F0F0F" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span className="text-[15px] leading-none tracking-[-0.01em]">
-                <span className="font-semibold">Way</span>
-                {/* « agency » et le libellé long du bouton disparaissent à
-                    l'étroit : sinon les deux se chevauchent sur mobile */}
-                <span className="ml-1 hidden font-normal sm:inline" style={{ color: "rgba(15,15,15,0.5)" }}>agency</span>
-              </span>
             </a>
 
-            {/* colonnes fixées explicitement : masqués, les liens ne sont plus
-                un élément de grille et le bouton remonterait à leur place */}
             <div className="hidden items-center justify-self-center md:flex" style={{ gridColumn: 2 }}>
               {NAV.map((n) => (
                 <a
                   key={n.label}
                   href={n.href}
                   aria-current={n.current ? "page" : undefined}
-                  className="snow-tab rounded-full px-3.5 py-2 text-[14px] transition-colors"
-                  style={{ color: n.current ? "#0F0F0F" : "rgba(15,15,15,0.55)" }}
+                  className="snow-tab rounded-full px-3.5 py-2 text-[14px] font-medium transition-colors"
+                  style={{ color: n.current ? "#0F0F0F" : "rgba(15,15,15,0.68)" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#0F0F0F")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = n.current ? "#0F0F0F" : "rgba(15,15,15,0.55)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = n.current ? "#0F0F0F" : "rgba(15,15,15,0.68)")}
                 >
                   {n.label}
                 </a>
@@ -161,23 +154,34 @@ export default function Accueil() {
 
             <button
               onClick={() => openContact()}
-              className="justify-self-end whitespace-nowrap rounded-full px-3.5 py-2 text-[14px] font-medium transition-transform duration-200 hover:-translate-y-px sm:px-4"
-              style={{ background: "#0F0F0F", color: "#FFFAFA", gridColumn: 3 }}
+              className="lg-dark lg-press justify-self-end whitespace-nowrap rounded-full px-4 py-2.5 text-[14px] font-medium sm:px-5"
+              style={{ gridColumn: 3 }}
             >
-              <span className="sm:hidden">Rendez-vous</span>
-              <span className="hidden sm:inline">Prendre rendez-vous</span>
+              <span className="relative z-10 sm:hidden">Rendez-vous</span>
+              <span className="relative z-10 hidden sm:inline">Prendre rendez-vous</span>
             </button>
           </nav>
         </header>
 
         <main id="top" className="relative flex min-h-screen flex-col items-center justify-center px-6 text-center">
-          <h1 className="text-[clamp(2.4rem,7vw,5.4rem)] font-bold leading-[1.04] tracking-[-0.04em]">
-            Créer. Échouer. <span className="snow-serif-i font-medium">Évoluer.</span>
+          <h1 className="snow-display text-[clamp(2.6rem,7.4vw,5.8rem)]">
+            Créer. Échouer. <i>Évoluer.</i>
           </h1>
 
-          <p className="mt-7 max-w-[38ch] text-[15px] leading-relaxed" style={{ color: "rgba(15,15,15,0.55)" }}>
+          <p
+            className="mt-8 max-w-[40ch] text-[16px] font-medium leading-relaxed"
+            style={{ color: "rgba(15,15,15,0.74)" }}
+          >
             Studio créatif à Strasbourg. Des sites qu'on refait jusqu'à ce qu'ils soient justes.
           </p>
+
+          <button
+            onClick={() => openContact()}
+            className="lg lg-press mt-10 rounded-full px-6 py-3 text-[15px] font-semibold"
+            style={{ color: "#0F0F0F" }}
+          >
+            Parler du projet
+          </button>
         </main>
       </div>
     </div>
