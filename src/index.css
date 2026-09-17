@@ -472,10 +472,9 @@
    ACCUEIL « NEIGE » — fond blanc neige #FFFAFA, encre minuit #0F0F0F.
 
    Une seule voix typographique : Instrument Sans (grotesque) porte le titre,
-   le mot-marque et l'interface ; Instrument Serif italique porte LE mot
-   d'accent, et lui seul. Les deux familles partagent exactement la même
-   hauteur d'x (0,510 em) et la même hauteur de capitale (0,720 em) : les
-   « É » de « Échouer. » et « Évoluer. » s'alignent sans correction.
+   le mot-marque et l'interface. Le TITRE, lui, est écrit à la main —
+   Gloria Hallelujah — et c'est le seul endroit de la page où l'on quitte le
+   grotesque : un contraste voulu entre la voix de l'agence et son outillage.
 
    Trois mécaniques vivent ici :
      · le fond, un champ de lumière en quatre nappes, jamais deux fois le même ;
@@ -501,22 +500,6 @@
   descent-override: 25.4%;
   line-gap-override: 0%;
 }
-@font-face {
-  font-family: "Instrument Serif Fallback";
-  font-style: italic;
-  /* Une face qui s'ANNONCE italique n'est jamais obliquée par le moteur : si
-     elle pointe vers le romain, « Évoluer. » s'affiche DROIT pendant tout le
-     swap. On ne cite donc que des italiques réelles. */
-  src: local("Georgia Italic"), local("Georgia-Italic"),
-       local("Times New Roman Italic"), local("TimesNewRomanPS-ItalicMT"),
-       local("Liberation Serif Italic"), local("Noto Serif Italic"),
-       local("DejaVu Serif Italic");
-  size-adjust: 105.9%;
-  ascent-override: 93.5%;
-  descent-override: 29.3%;
-  line-gap-override: 0%;
-}
-
 /* L'angle du reflet du verre doit être interpolable : sans @property, une
    custom property est une chaîne et ne se transitionne pas. */
 @property --lg-sweep {
@@ -538,9 +521,9 @@
                ui-sans-serif, system-ui, sans-serif;
   font-kerning: normal;
   font-variant-ligatures: common-ligatures contextual;
-  /* `style` autorisé (l'italique reste garanti si le serif ne charge pas),
-     `weight` interdit : pas de faux-gras sur Instrument Serif, qui n'a que 400. */
-  font-synthesis: style;
+  /* aucune synthèse : ni faux-gras ni fausse italique sur une famille qui
+     n'a qu'une graisse et pas d'italique. */
+  font-synthesis: none;
 
   /* approche par rôle — un seul endroit à régler */
   --snow-tk-mark:    -0.038em;  /* mot-marque ~120 px */
@@ -567,23 +550,39 @@
 }
 
 
-/* ── Le titre ────────────────────────────────────────────────────────────
-   clamp(2.3rem, 6.4vw, 4.25rem) → 36,8 px … 68 px, contre 5,8rem avant.
-   « Créer. Échouer. Évoluer. » mesure 9,724 em ; à 68 px = 661 px. En
-   dessous de 418 px le titre passe sur deux lignes équilibrées, jamais trois
-   (la plus longue, « Créer. Échouer. », fait 6,702 em → 247 px à 36,8 px,
-   pour 272 px utiles à 320 px de large).
-   Le grotesque semi-gras a plus d'encre que la serif qu'il remplace : à 68 px
-   il pèse autant que l'ancienne à 93 px, tout en étant 27 % plus petit. */
+/* ── Le titre, écrit à la main ────────────────────────────────────────────
+   Gloria Hallelujah : un feutre monoligne, DROIT, aux lettres détachées et
+   larges, avec une ligne de base qui rebondit — c'est exactement le geste de
+   la référence. Les autres candidates ont été rendues côte à côte, à ce corps,
+   et écartées chacune pour une raison : Caveat et Kalam sont PENCHÉES (la
+   référence est droite), Indie Flower et Architects Daughter sont trop maigres
+   pour porter un titre, Gochi Hand arrondit tout et vire au ballon, Permanent
+   Marker passe tout en capitales.
+
+   DEUX RÈGLES QUI NE VALENT QUE POUR UNE MANUSCRITE, et qu'on ne peut pas
+   hériter du grotesque qu'elle remplace :
+
+   1. L'APPROCHE NE DOIT PAS ÊTRE NÉGATIVE. Un grotesque de display se resserre
+      en grandissant (on avait -0,028 em) parce que ses fûts sont verticaux et
+      parallèles. Une manuscrite a des lettres détachées, aux terminaisons qui
+      partent en biais : la resserrer les fait se cogner. On passe à +0,006 em
+      — la référence est plutôt aérée.
+
+   2. IL FAUT PLUS DE CORPS ET PLUS D'INTERLIGNE. Gloria Hallelujah a une
+      hauteur d'x petite par rapport au cadratin et un trait monoligne fin :
+      à corps égal elle pèse bien moins qu'Instrument Sans 600. On monte de
+      4,25rem à 4,6rem au maximum pour retrouver la même présence, tout en
+      restant plus petit que les 5,8rem du premier jet. Et son accent aigu
+      monte très haut au-dessus de la capitale : line-height 1,28 le loge, là
+      où 1,05 le rognait. */
 .snow-display {
-  font-family: "Instrument Sans", "Instrument Sans Fallback",
-               ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(2.3rem, 6.4vw, 4.25rem);
-  font-weight: 600;
-  line-height: 1.05;          /* l'accent du É monte à 0.95 em ; 1.02 le frôlait */
-  letter-spacing: var(--snow-tk-display);
+  font-family: "Gloria Hallelujah", "Bradley Hand", "Segoe Print", cursive;
+  font-size: clamp(2.05rem, 5.9vw, 4.6rem);
+  font-weight: 400;                   /* la famille n'a qu'une graisse */
+  font-synthesis: none;               /* et surtout pas de faux-gras dessus */
+  line-height: 1.28;
+  letter-spacing: 0.006em;
   margin: 0;
-  font-size-adjust: ex-height 0.51;   /* no-op une fois Instrument chargé ; cale le secours */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-wrap: balance;
@@ -592,42 +591,18 @@
 }
 
 /* Centrage optique du titre. Un texte centré n'est PAS optiquement centré :
-   l'approche négative s'ajoute aussi APRÈS le dernier caractère, et le point
-   final italique a une approche droite large. Mesuré au pixel sur le rendu
-   (scan des colonnes d'encre) : l'encre tombe 0,027 em trop à gauche, soit
-   2 px à 68 px. Un padding p décale l'encre de p/2, d'où p = 0,054 em.
-   Uniquement au-dessus de 26rem : en dessous, le titre passe sur deux lignes,
-   la dernière ligne change et l'encre est déjà centrée — mesuré à 0 px. */
-@media (min-width: 26rem) {
-  .snow-display { padding-inline-start: 0.054em; }
+   les approches latérales du premier et du dernier glyphe diffèrent, et
+   l'approche s'applique aussi APRÈS le dernier caractère. Mesuré au scan des
+   colonnes d'encre sur le rendu : l'encre tombe 0,0155 em trop à gauche, soit
+   1,1 px à 73,6 px. Un padding p décale l'encre de p/2, d'où p = 0,031 em.
+   La valeur est propre à CETTE police et à CE texte — elle valait 0,054 em du
+   temps du grotesque + point italique. À remesurer si l'un des deux change.
+   Le seuil est à 27,5rem parce que la bascule 1 → 2 lignes est mesurée entre
+   416 et 440 px : en dessous, la dernière ligne change et l'encre est déjà
+   centrée (mesurée à -0,5 px). */
+@media (min-width: 27.5rem) {
+  .snow-display { padding-inline-start: 0.031em; }
 }
-
-/* Le mot d'accent. AUCUN changement de corps : mêmes hauteurs d'x et de
-   capitale, donc les deux « É » sont sur la même ligne au pixel. Ce qu'il
-   faut compenser, c'est l'espace : le É italique a une approche gauche
-   négative, la chasse blanche avant « Évoluer. » tombe à 0,166 em contre
-   0,264 em entre les deux premiers mots — le mot d'accent paraît collé. On
-   rend 0,09 em. */
-.snow-display i {
-  font-family: "Instrument Serif", "Instrument Serif Fallback", Georgia, serif;
-  font-style: italic;
-  font-weight: 400;                 /* Instrument Serif n'existe qu'en 400 */
-  font-synthesis: style;            /* pas de faux-gras — mais l'oblique de
-                                       secours doit rester possible, sinon le
-                                       mot d'accent s'affiche droit */
-  font-size-adjust: ex-height 0.51;
-  letter-spacing: var(--snow-tk-italic);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* L'écart devant le mot d'accent. Le É italique a une approche gauche
-   négative : la chasse blanche avant « Évoluer. » tombe à 0,166 em contre
-   0,264 em entre les deux premiers mots, et le mot paraît collé. On rend
-   0,09 em — porté par l'ESPACE et non par une marge sur le <i>, parce qu'un
-   espace se collapse à la coupure de ligne et une marge, non : sur deux
-   lignes, la marge décalerait l'encre de la seconde ligne vers la droite. */
-.snow-display .snow-gap { word-spacing: 0.09em; }
 
 /* Le chapô. 16 → 19 px, mesure 46ch : les 84 caractères tombent en deux
    lignes pleines sous un titre de 661 px, plutôt qu'en trois lignes courtes.
@@ -653,23 +628,54 @@
 }
 
 
-/* ── Le fond vivant ──────────────────────────────────────────────────────
-   Un champ de lumière, pas une texture. Les rayures floutées d'avant
-   coûtaient un blur(18px) plein écran — un tampon hors écran et une
-   gaussienne à chaque re-rastérisation. Ici, zéro filter : un dégradé radial
-   est déjà continu, il coûte UNE peinture puis plus rien.
+/* ══════════════════════════════════════════════════════════════════════════
+   LE VITRAGE — le fond de l'accueil. Il remplace les quatre nappes radiales
+   qui vivaient ici : les deux dérives en diagonale disparaissent, leur travail
+   est fait par le champ de lames, et la nappe haute est repassée en bandes
+   pour parler la même langue que le sol.
 
-   Quatre nappes : la lueur basse (la source), la nappe haute (perspective
-   aérienne : ce qui est loin pâlit, et ça équilibre une composition qui
-   n'était lestée qu'en bas), et deux dérives qui traversent en diagonale.
+   Dix-neuf lames de verre dépoli plantées au pied de l'écran et vues par la
+   tranche. Une seule source de lumière, basse et à gauche : chaque lame porte
+   son arête lumineuse à GAUCHE, son cœur clair au milieu, et sa retombée
+   longue à DROITE. Le rapport est 13 % / 46 % de la largeur de la lame — 3,5
+   pour 1. C'est cette asymétrie, et rien d'autre, qui fait la différence
+   entre une rayure et une lame : un profil symétrique n'encode aucune
+   direction de lumière, et l'œil le lit comme une marque POSÉE SUR la
+   surface. Un profil asymétrique encode une source unique et une épaisseur,
+   et l'œil le résout comme un objet DEBOUT DANS la scène — exactement le
+   terminateur d'un cylindre au crayon. Que la retombée soit PLUS LONGUE que
+   la montée est la signature d'un corps translucide et non opaque : la
+   lumière entre par la face éclairée, diffuse à l'intérieur, et ressort de
+   l'autre côté en floraison graduelle au lieu d'une arête d'ombre.
 
-   Périodes 53 / 71 / 89 / 113 s — quatre nombres premiers. En alternate les
-   cycles perçus valent 106 / 142 / 178 / 226 s ; leur PPCM dépasse deux ans.
-   Aucune boucle commune n'est perceptible. Les délais négatifs ouvrent la
-   page sur un champ DÉJÀ en mouvement, jamais sur une pose de départ.
+   Sur un fond blanc, une arête spéculaire ne peut pas être « plus claire ».
+   Elle est donc écrite comme la marche d'alpha la plus RAIDE du flanc gauche,
+   dans le bleu le plus saturé ; le reflet perçu vient du contraste avec l'air
+   à alpha zéro juste à côté, pas d'une addition de lumière. Les dix-neuf
+   arêtes sont du même côté : une direction de lumière constante sur
+   dix-neuf objets, c'est ce qui fait lire un champ comme UNE scène éclairée
+   plutôt que comme dix-neuf marques sans rapport.
 
-   Seuls transform et opacity sont animés : le compositeur les lit sans
-   repasser par le style, le layout ou la peinture. */
+   Dix-neuf, et pas moins : à 1440 px, dix-neuf lames donnent un pas moyen de
+   76 px, avec des largeurs de 17 px (1,2 %) à 151 px (10,5 %) — quatre
+   épaisses, six moyennes, neuf fils. Sous dix, les largeurs ne peuvent plus
+   être vraiment inégales et le champ redevient des rayures. Au-delà de
+   vingt-cinq, le pas tombe sous 55 px, les retombées se recouvrent et le
+   champ redevient une texture — du velours côtelé. Les boîtes sont
+   disjointes AU REPOS, mais huit paires voisines se recouvrent au maximum de
+   leur course : la borne de contraste n'est donc PAS déductible de la
+   géométrie. Elle a été mesurée sur le pixel rendu, à quatre instants
+   répartis sur quinze secondes d'animation — voir le bloc CONTRASTE.
+
+   Périodes et vitesses : voir le bloc « le mouvement » plus bas. Les délais
+   négatifs, choisis pour n'être pas des fractions simples de leurs périodes,
+   ouvrent la page sur un champ DÉJÀ en mouvement.
+
+   Zéro filter. La douceur est écrite dans les arrêts : onze latéralement,
+   onze verticalement. Un arrêt de dégradé est gratuit — le rasteriseur
+   l'interpole dans le remplissage qu'il allait faire de toute façon.
+   ══════════════════════════════════════════════════════════════════════════ */
+
 .snow-bg {
   position: fixed;
   /* -32px, soit plus que la dérive au pointeur (16 px en x, 10 px en y) :
@@ -679,11 +685,31 @@
   inset: -32px;
   z-index: 0;
   pointer-events: none;
-  overflow: hidden;                 /* les nappes débordent volontairement */
+  overflow: hidden;                 /* les nappes et la lame 19 débordent */
   contain: layout paint style;
-  transform: translate3d(0, 0, 0);  /* promotion — pas besoin de will-change en plus */
+  transform: translate3d(0, 0, 0);  /* promotion — pas besoin de will-change */
   background: #FFFAFA;
+
+  /* Les deux seules molettes du champ.
+     --lame-densite multiplie l'alpha des dix-neuf lames d'un seul endroit,
+     --lame-k multiplie leur hauteur (voir la règle mobile plus bas).
+     Les valeurs 1,9 et 1,28 ne sont pas le réglage d'origine (1 et 1) : le
+     champ à 1 était tellement discret qu'il ne se lisait plus comme un
+     vitrage. Elles ont été choisies en comparant quatre densités rendues côte
+     à côte avec la référence du client, puis le contraste a été REMESURÉ sur
+     le pixel — pas recalculé à partir de la borne théorique. Résultats plus
+     bas dans ce fichier. Si le bleu devient trop présent en situation,
+     descendre --lame-densite ; toute hausse au-delà de 2 demande de remesurer. */
+  --lame-densite: 1.9;
+  --lame-k: 1.28;
 }
+
+/* Réutilisé tel quel, et c'est délibéré : les lames sont des enfants DIRECTS
+   `<i>` de .snow-bg, donc elles héritent d'ici la courbe sinusoïdale, l'infini
+   et l'alternance — et surtout les trois règles `animation: none` déjà
+   présentes plus bas dans le fichier les couvrent sans qu'on touche à un seul
+   sélecteur de media query. Un conteneur intermédiaire aurait cassé les trois
+   en silence. */
 .snow-bg > i {
   position: absolute;
   display: block;
@@ -692,42 +718,105 @@
      l'animation — ce que will-change empêcherait. */
   /* sinusoïdale : dérivée nulle aux deux bouts. En alternate, `linear`
      produirait une discontinuité de vitesse au demi-tour, que l'œil attrape
-     même sur 53 s. */
+     même sur 103 s. */
   animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
   animation-iteration-count: infinite;
   animation-direction: alternate;
 }
 
-/* Le tramage. Sur 8 bits par canal, une rampe de 0,30 d'alpha étalée sur
-   700 px ne dispose que d'une trentaine de valeurs : les paliers se voient, en
-   arcs concentriques. Un damier d'un pixel à ± 2/255 rend le pas de
-   quantification aléatoire à l'échelle du pixel et les anneaux disparaissent.
-   Ce n'est pas une texture — c'est un tramage ordonné, invisible à l'œil et
-   bien plus juste qu'un grain posé par-dessus. Non animé : il ne doit pas
+/* ── Le tramage — DEUX pas, pas plus d'amplitude ──────────────────────────
+   Les nappes radiales quantifiaient sur UN axe : une rampe d'alpha par
+   couche, les paliers sortaient en arcs concentriques, et un damier de 2 px à
+   ±0,011 suffisait.
+
+   Une lame quantifie sur DEUX axes, et c'est pire que deux fois pire. Le
+   dégradé latéral (la peinture) et le masque vertical (l'alpha) sont deux
+   rampes 8 bits INDÉPENDANTES qui se multiplient : les marches sortent en
+   lignes horizontales ET verticales, et à leur croisement l'œil récupère une
+   grille — or le système visuel est bien meilleur à détecter une droite qu'un
+   arc. Le chiffre : la lame 06 fait 501 px de haut ; son masque étale 256
+   niveaux sur 501 px, mais l'alpha final au cœur plafonne à 0,165, donc
+   l'écart total de sortie ne vaut que ~17 niveaux sur 501 px, soit UNE marche
+   visible tous les 29 px, en ligne droite, en travers d'une lame de 158 px.
+   C'est franchement au-dessus du seuil.
+
+   L'amplitude, elle, n'a pas besoin de monter : ±0,011 d'alpha ≈ ±2,8 niveaux
+   de sortie, neuf fois la marche de 1 niveau à randomiser. Ce qui manque,
+   c'est la DÉCORRÉLATION : un damier de pas 2 px sur une échelle de marches
+   de pas ~29 px peut se verrouiller et produire un moiré. On ajoute donc un
+   second damier de pas 5 px, décalé d'un demi-pixel entier : PPCM(2, 5) = 10,
+   aucune période commune ne peut s'accrocher. Deux images de fond sur le même
+   pseudo-élément : zéro couche de plus.
+   z-index: 2 explicite — avec dix-neuf frères positionnés, compter sur
+   l'ordre du DOM n'est plus une intention lisible. Non animé : ça ne doit pas
    scintiller. */
 .snow-bg::after {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 2;
   pointer-events: none;
-  background-image: repeating-conic-gradient(
-    rgba(15, 15, 15, 0.011) 0% 25%,
-    rgba(255, 255, 255, 0.011) 0% 50%);
-  background-size: 2px 2px;
+  background-image:
+    repeating-conic-gradient(rgba(15, 15, 15, 0.011) 0% 25%, rgba(255, 255, 255, 0.011) 0% 50%),
+    repeating-conic-gradient(rgba(15, 15, 15, 0.008) 0% 25%, rgba(255, 255, 255, 0.008) 0% 50%);
+  background-size: 2px 2px, 5px 5px;
+  background-position: 0 0, 1px 2px;
+}
+/* Le tramage doit valoir 2 et 5 pixels PHYSIQUES, pas 2 et 5 px CSS. Sur un
+   écran retina, un damier de 2 px CSS fait 4 px physiques : il cesse d'être
+   un tramage et devient un tissage qu'on voit. On divise donc les pas par le
+   DPR pour retrouver la même grille à l'échelle du capteur — et c'est là que
+   le tramage fonctionne, puisque c'est là que la quantification a lieu. */
+@media (min-resolution: 2dppx) {
+  .snow-bg::after {
+    background-size: 1px 1px, 2.5px 2.5px;
+    background-position: 0 0, 0.5px 1px;
+  }
+}
+@media (min-resolution: 3dppx) {
+  .snow-bg::after {
+    background-size: 0.667px 0.667px, 1.667px 1.667px;
+    background-position: 0 0, 0.333px 0.667px;
+  }
 }
 
-/* 1 · la lueur basse — la source, ancrée sous le cadre */
+
+/* ── CONTRASTE — mesuré, pas déduit ──────────────────────────────────────
+   Les lames se recouvrent sous animation, donc aucune borne géométrique n'est
+   exacte. Les valeurs ci-dessous viennent d'un scan du pixel RENDU : on prend,
+   dans chaque bande horizontale, le pixel le plus dense qui soit franchement
+   bleuté (b > r + 2, pour exclure l'encre et son antialiasing), et on calcule
+   le ratio WCAG 2.x contre l'encre. Quatre instants, répartis sur quinze
+   secondes d'animation, à 1440×900 et 390×844.
+
+   Pire cas sur les quinze secondes :
+     bande du titre   encre #0F0F0F        11,41:1   (plancher demandé 7:1)
+     bande du chapô   rgba(15,15,15,0.74)   6,89:1   (plancher 4,5:1)
+     pied du champ    encre #0F0F0F        12,64:1
+     pied du champ    chapô                 5,27:1
+   Sur mobile, la bande du titre ne contient AUCUN pixel bleuté : le champ y
+   est du #FFFAFA pur, soit 18,54:1.
+   Ces chiffres dépendent de --lame-densite (1,9). Toute hausse demande de
+   refaire la mesure, pas de refaire le calcul. */
+
+/* ── 1 · le lit de lumière ────────────────────────────────────────────────
+   Ce n'est plus la source du champ, c'est le SOL dans lequel les lames sont
+   plantées. Sans lui, dix-neuf dégradés sur du blanc pur se lisent comme
+   dix-neuf objets peints ; avec lui, ils se lisent comme dix-neuf objets
+   DEBOUT DANS une lumière. Alpha de crête 0,300 → 0,190 et hauteur 84 % →
+   62 % : les lames portent la densité maintenant, et c'est le levier mémoire
+   principal. À 62 % de hauteur depuis bottom:-14 %, la nappe est éteinte à
+   48 % de la boîte, donc STRICTEMENT NULLE dans la zone du titre. */
 .snow-bg-lueur {
-  left: -18%; right: -18%;
-  bottom: -16%;
-  height: 84%;
-  background: radial-gradient(64% 100% at 50% 100%,
-    rgba(66, 126, 245, 0.300)   0%,
-    rgba(72, 132, 246, 0.200)  24%,
-    rgba(84, 140, 248, 0.145)  35%,
-    rgba(96, 150, 250, 0.100)  46%,
-    rgba(120, 166, 252, 0.036) 68%,
-    rgba(160, 190, 255, 0)     88%);
+  left: -10%; right: -10%;
+  bottom: -14%;
+  height: 62%;
+  background: radial-gradient(70% 100% at 50% 100%,
+    rgba(66, 126, 245, 0.190)   0%,
+    rgba(78, 136, 247, 0.124)  26%,
+    rgba(96, 150, 250, 0.072)  44%,
+    rgba(120, 166, 252, 0.026) 70%,
+    rgba(160, 190, 255, 0)     90%);
   animation-name: snow-lueur;
   animation-duration: 53s;
   animation-delay: -17s;
@@ -737,72 +826,311 @@
   to   { transform: translate3d( 3.0%, -2.0%, 0) scale(1.12); opacity: 1;    }
 }
 
-/* 2 · la nappe haute — le contrepoids, plus claire et moitié moins dense.
-   C'est elle que le verre de la nav a derrière lui : sans elle, la pilule
-   n'aurait rien à réfracter et redeviendrait un aplat. */
+/* ── 2 · le vitrage haut ─────────────────────────────────────────────────
+   Un lavis radial centré en haut n'avait AUCUNE relation formelle avec les
+   verticales du bas : c'était le vestige du fond précédent, gardé pour une
+   seule raison technique — nourrir le backdrop-filter de la pilule en verre,
+   qui sans lui n'aurait qu'un aplat blanc à ré-échantillonner. Deux idées
+   empilées, donc un décor cher à un seul sujet.
+   Il parle maintenant la même langue : les mêmes bandes verticales, à
+   largeurs inégales, mais pendues au HAUT et éteintes vers le bas, quatre fois
+   plus pâles que celles du sol. Haut et bas se répondent au lieu de coexister,
+   et la pilule garde une pente de luminance derrière elle — pas un aplat.
+   Les arrêts sont ici en pourcentage de la LARGEUR D'ÉCRAN et non d'une lame :
+   chaque bande fait 6 à 14 % de l'écran, et la montée la plus raide occupe
+   2,2 %, soit 32 px à 1440 — aucun bord net n'est géométriquement possible. */
 .snow-bg-nappe {
-  left: -14%; right: -14%;
-  top: -24%;
-  height: 76%;
-  /* Centre à 26 % de la boîte, c'est-à-dire À la hauteur de la nav : c'est là
-     que la pente de luminance doit être franche, sinon la pilule n'a qu'un
-     aplat derrière elle et le verre ne se voit pas. La nappe est éteinte à
-     78 % de son rayon, soit bien au-dessus du titre — contraste de l'encre
-     mesuré plus bas. */
-  background: radial-gradient(62% 100% at 50% 26%,
-    rgba(96, 150, 250, 0.240)   0%,
-    rgba(120, 166, 252, 0.130) 34%,
-    rgba(150, 188, 254, 0.048) 58%,
-    rgba(180, 208, 255, 0)     78%);
+  left: -8%; right: -8%;
+  top: -14%;
+  height: 52%;
+  background-image: linear-gradient(90deg,
+    rgb(150 188 254 / 0)      0%,
+    rgb(108 158 251 / 0.052)  6%,
+    rgb(96 150 250 / 0.068)  11%,   /* large */
+    rgb(120 166 252 / 0.030) 19%,
+    rgb(150 188 254 / 0)     25%,
+    rgb(150 188 254 / 0)     29%,
+    rgb(104 156 250 / 0.044) 33%,   /* moyenne */
+    rgb(140 180 253 / 0)     40%,
+    rgb(140 180 253 / 0)     47%,
+    rgb(112 160 250 / 0.030) 51%,   /* fil */
+    rgb(150 188 254 / 0)     55%,
+    rgb(150 188 254 / 0)     61%,
+    rgb(100 152 250 / 0.058) 68%,   /* large */
+    rgb(126 170 252 / 0.026) 77%,
+    rgb(150 188 254 / 0)     83%,
+    rgb(150 188 254 / 0)     87%,
+    rgb(110 160 251 / 0.038) 92%,   /* moyenne */
+    rgb(150 188 254 / 0)    100%);
+  /* l'extinction vers le bas, miroir de celle des lames du sol */
+  -webkit-mask-image: linear-gradient(to bottom,
+    rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0.86) 20%, rgb(0 0 0 / 0.58) 42%,
+    rgb(0 0 0 / 0.30) 62%, rgb(0 0 0 / 0.11) 80%, rgb(0 0 0 / 0) 100%);
+          mask-image: linear-gradient(to bottom,
+    rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0.86) 20%, rgb(0 0 0 / 0.58) 42%,
+    rgb(0 0 0 / 0.30) 62%, rgb(0 0 0 / 0.11) 80%, rgb(0 0 0 / 0) 100%);
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
   animation-name: snow-nappe;
   animation-duration: 71s;
   animation-delay: -41s;
 }
+/* Elle dérive et respire latéralement, comme les lames — jamais en scaleY :
+   son bord bas est un fondu, l'étirer verticalement le ferait respirer sur le
+   titre. */
 @keyframes snow-nappe {
-  from { transform: translate3d( 2.2%, -1.6%, 0) scale(1);    opacity: 0.55; }
-  to   { transform: translate3d(-2.2%,  1.6%, 0) scale(1.09); opacity: 0.96; }
+  from { transform: translate3d( 26px, 0, 0) scaleX(1);     opacity: 0.62; }
+  to   { transform: translate3d(-18px, 0, 0) scaleX(1.045); opacity: 1;    }
 }
 
-/* 3 · dérive basse-gauche. `closest-side` : l'ellipse épouse la boîte et
-   atteint alpha 0 sur ses bords — aucune arête à masquer, donc la boîte peut
-   rester petite. C'est le levier mémoire principal. */
-.snow-bg-derive-a {
-  left: -16%;
-  bottom: -10%;
-  width: 82%;
-  height: 74%;
-  background: radial-gradient(closest-side at 50% 50%,
-    rgba(66, 126, 245, 0.210)  0%,
-    rgba(90, 145, 248, 0.090) 46%,
-    rgba(140, 180, 255, 0)   100%);
-  animation-name: snow-derive-a;
-  animation-duration: 89s;
-  animation-delay: -7s;
-}
-@keyframes snow-derive-a {
-  from { transform: translate3d(-8%,  4%, 0) scale(1);    opacity: 0.45; }
-  to   { transform: translate3d( 9%, -5%, 0) scale(1.15); opacity: 0.95; }
+/* ── 3 · la lame ──────────────────────────────────────────────────────────
+   La matière, écrite une fois, paramétrée par --a (l'alpha de l'arête, le
+   maximum de la lame).
+
+   `bottom: 20px` et non 0 : la boîte descend 32 px sous le pli, et le pied
+   est la partie la plus dense de la lame — la gâcher hors écran serait
+   absurde. À 20 px du bas de la boîte, le pied est 12 px SOUS le bord de
+   l'écran, soit plus que les 10 px de dérive verticale : sa coupe n'est
+   jamais découverte, dans aucun des deux sens.
+
+   `transform-origin: 50% 100%` : le scaleY fait monter le sommet en laissant
+   le pied planté, et le scaleX écarte les deux bords autour de l'axe. */
+.snow-lame {
+  bottom: 20px;
+  transform-origin: 50% 100%;
+
+  --A: calc(var(--a) * var(--lame-densite));
+
+  /* Le profil latéral — la tranche de verre. Montée 0 → 13 %, retombée
+     54 → 100 % : 3,5 pour 1. L'arête est le stop à 13 %, dans le bleu le plus
+     saturé du fichier ; les 9,5 % et 17 % qui l'encadrent la rendent RAIDE et
+     non pointue — une arête pointue redevient un trait. */
+  --blade: linear-gradient(90deg,
+    rgb(120 168 252 / 0)                       0%,   /* l'air */
+    rgb(92 148 249 / calc(var(--A) * 0.26))    5%,
+    rgb(62 120 243 / calc(var(--A) * 0.82))    9.5%, /* la montée */
+    rgb(58 118 242 / var(--A))                13%,   /* L'ARÊTE */
+    rgb(74 134 246 / calc(var(--A) * 0.78))   17%,   /* détente immédiate */
+    rgb(98 152 250 / calc(var(--A) * 0.60))   24%,
+    rgb(110 161 251 / calc(var(--A) * 0.55))  36%,   /* le cœur clair */
+    rgb(116 165 251 / calc(var(--A) * 0.50))  54%,
+    rgb(124 170 252 / calc(var(--A) * 0.34))  70%,   /* la longue retombée */
+    rgb(140 182 253 / calc(var(--A) * 0.16))  85%,
+    rgb(164 198 255 / 0)                     100%);
+
+  /* Le pied. Une lame vue par la tranche est plus dense en bas : la lumière
+     y a traversé plus de matière. Trois stops, éteints à 26 % de la hauteur. */
+  --pied: linear-gradient(to top,
+    rgb(52 112 241 / calc(var(--A) * 0.20))    0%,
+    rgb(66 126 245 / calc(var(--A) * 0.12))    9%,
+    rgb(90 146 248 / 0)                       26%);
+
+  /* Le reflet interne — la face ARRIÈRE de la lame vue à travers la face
+     avant. Réservé aux quatre épaisses : sur une lame de 10 px il n'y a pas
+     la place, et sur une moyenne ça bouillonne. C'est le détail qui vend
+     « vue par la tranche » plutôt que « bande ». Composé sur le cœur, il
+     plafonne à 0,201·(a/0,30), soit toujours SOUS l'arête. */
+  --reflet: linear-gradient(90deg,
+    rgb(66 126 245 / 0)                       46%,
+    rgb(66 126 245 / calc(var(--A) * 0.20))   57%,
+    rgb(66 126 245 / 0)                       66%);
+
+  /* L'extinction verticale, portée par un masque et non par la peinture :
+     un linear-gradient ne peut pas multiplier un autre linear-gradient.
+     Profil SUPER-exponentiel : les ratios successifs valent 0,985 / 0,893 /
+     0,818 / 0,722 / 0,654 / 0,559 / 0,500 / 0,400 / 0,263, donc décroissants,
+     là où une exponentielle les garderait constants. Dense au pied, longue
+     traîne. Une rampe
+     LINÉAIRE donnerait un « bout de bande » que l'œil trouve tout de suite ;
+     une exponentielle ne présente jamais de terminus, et c'est comme ça que
+     les sommets de la référence se dissolvent. À 90 % de la hauteur l'alpha
+     est déjà à 0,038.
+     Le masque est une opération de rastérisation, mise en cache dans la
+     texture de la couche : il coûte une fois, puis plus rien tant que seuls
+     transform et opacity bougent. C'est exactement la « portée au-delà de
+     transform/opacity » que craft-floor autorise — mask, oui ; blur sur une
+     grande surface, non. */
+  --extinction: linear-gradient(to top,
+    rgb(0 0 0 / 1)       0%,
+    rgb(0 0 0 / 0.985)   7%,
+    rgb(0 0 0 / 0.880)  18%,
+    rgb(0 0 0 / 0.720)  30%,
+    rgb(0 0 0 / 0.520)  45%,
+    rgb(0 0 0 / 0.340)  58%,
+    rgb(0 0 0 / 0.190)  70%,
+    rgb(0 0 0 / 0.095)  81%,
+    rgb(0 0 0 / 0.038)  90%,
+    rgb(0 0 0 / 0.010)  96%,
+    rgb(0 0 0 / 0)     100%);
+
+  background-image: var(--pied), var(--blade);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+
+  -webkit-mask-image: var(--extinction);
+          mask-image: var(--extinction);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
 }
 
-/* 4 · dérive haute-droite. Elle part de scale(1.12) vers scale(1) pendant
-   que la 3 fait l'inverse : les deux ne respirent jamais dans le même sens.
-   Seule nappe qui traverse la zone du titre, d'où son alpha plafonné. */
-.snow-bg-derive-b {
-  right: -12%;
-  top: -8%;
-  width: 70%;
-  height: 64%;
-  background: radial-gradient(closest-side at 50% 50%,
-    rgba(96, 150, 250, 0.140)   0%,
-    rgba(120, 166, 252, 0.055) 48%,
-    rgba(160, 195, 255, 0)    100%);
-  animation-name: snow-derive-b;
-  animation-duration: 113s;
-  animation-delay: -66s;
+/* ── Les fils ─────────────────────────────────────────────────────────────
+   Un profil en POURCENTAGE de la largeur ne peut pas servir les deux bouts du
+   champ : les 13 % de montée de `--blade` valent 20 px sur une lame de 151 px
+   (doux) mais 1,4 px sur un fil de 11 px — une marche de 0 à 0,40 d'alpha en
+   1,4 px, c'est un trait net au rasoir, précisément ce que la référence du
+   client n'a pas. Les neuf fils reçoivent donc leur propre profil, étalé sur
+   42 % de leur largeur et plafonné plus bas : la montée fait alors 6 à 8 px.
+   L'arête reste du même côté et la retombée reste la plus longue — la
+   direction de lumière du champ est conservée, seule la RAIDEUR change. */
+.snow-lame--fil {
+  --blade: linear-gradient(90deg,
+    rgb(120 168 252 / 0)                      0%,
+    rgb(96 150 250 / calc(var(--A) * 0.30))  14%,
+    rgb(70 130 245 / calc(var(--A) * 0.74))  30%,
+    rgb(64 124 244 / calc(var(--A) * 0.90))  42%,   /* l'arête, adoucie */
+    rgb(84 142 248 / calc(var(--A) * 0.72))  55%,
+    rgb(108 158 251 / calc(var(--A) * 0.46)) 72%,   /* la retombée */
+    rgb(136 178 253 / calc(var(--A) * 0.18)) 88%,
+    rgb(164 198 255 / 0)                    100%);
 }
-@keyframes snow-derive-b {
-  from { transform: translate3d( 7%, -4%, 0) scale(1.12); opacity: 0.48; }
-  to   { transform: translate3d(-8%,  5%, 0) scale(1);    opacity: 0.88; }
+
+/* Les quatre épaisses, et elles seules, portent le reflet interne. */
+.snow-lame-01,
+.snow-lame-06,
+.snow-lame-15,
+.snow-lame-19 {
+  background-image: var(--reflet), var(--pied), var(--blade);
+}
+
+
+/* ── 4 · la partition ─────────────────────────────────────────────────────
+   Dix-neuf lames, quatre groupes séparés par des respirations. Les boîtes ne
+   se touchent jamais : chaque dégradé latéral part de 0 et revient à 0, donc
+   aucun pixel n'est couvert deux fois. Couverture 69 % de la largeur, blanc
+   31 % — la référence (a) est dense en bas et blanche en haut, l'irrégularité
+   qui se lit est celle des HAUTEURS, pas celle des vides.
+
+   La règle de composition, et c'est la contrainte 8 tenue par la GÉOMÉTRIE et
+   non par un réglage : les lames hautes vivent dans les tiers gauche et
+   droit ; les six du tiers central (07 à 12) plafonnent à 27 % de la boîte,
+   soit un sommet à 248 px au-dessus du bas de l'écran — 179 px SOUS le bas du
+   chapô. La plus haute de tout le champ (06, 48 %) culmine à 0,499 H depuis
+   le haut, quand l'encre la plus basse du titre est à 0,462 H : là où le titre
+   vit, l'alpha des lames est nul, pas « faible ».
+   Vérifié à 1440/900, 1440/1024, 768/1024, 640/900 et 375/667. */
+.snow-lame-01 { left: -2.0%; width:  8.0%; height: calc(44% * var(--lame-k)); --a: 0.28; animation-name: lame-coule-a; animation-duration:  37s; animation-delay: -23s; }
+.snow-lame-02 { left:  7.2%; width:  1.6%; height: calc(30% * var(--lame-k)); --a: 0.20; animation-name: lame-fil-a;   animation-duration:  18s; animation-delay: -11s; }
+.snow-lame-03 { left:  9.0%; width:  4.6%; height: calc(38% * var(--lame-k)); --a: 0.24; animation-name: lame-coule-b; animation-duration:  29s; animation-delay: -44s; }
+.snow-lame-04 { left: 14.4%; width:  1.3%; height: calc(22% * var(--lame-k)); --a: 0.16; animation-name: lame-fil-b;   animation-duration:  14s; animation-delay:  -7s; }
+.snow-lame-05 { left: 18.6%; width:  1.5%; height: calc(32% * var(--lame-k)); --a: 0.19; animation-name: lame-fil-c;   animation-duration:  22s; animation-delay: -31s; }
+.snow-lame-06 { left: 23.8%; width: 10.5%; height: calc(48% * var(--lame-k)); --a: 0.30; animation-name: lame-coule-c; animation-duration:  47s; animation-delay: -17s; }
+.snow-lame-07 { left: 35.6%; width:  1.8%; height: calc(27% * var(--lame-k)); --a: 0.18; animation-name: lame-fil-a;   animation-duration:  17s; animation-delay: -19s; }
+.snow-lame-08 { left: 41.4%; width:  3.6%; height: calc(26% * var(--lame-k)); --a: 0.17; animation-name: lame-coule-a; animation-duration:  23s; animation-delay:  -5s; }
+.snow-lame-09 { left: 46.2%; width:  1.4%; height: calc(14% * var(--lame-k)); --a: 0.11; animation-name: lame-fil-b;   animation-duration:  13s; animation-delay: -13s; }
+.snow-lame-10 { left: 51.6%; width:  5.2%; height: calc(31% * var(--lame-k)); --a: 0.16; animation-name: lame-coule-b; animation-duration:  31s; animation-delay: -52s; }
+.snow-lame-11 { left: 58.0%; width:  1.7%; height: calc(13% * var(--lame-k)); --a: 0.10; animation-name: lame-fil-c;   animation-duration:  12s; animation-delay:  -3s; }
+.snow-lame-12 { left: 61.2%; width:  2.6%; height: calc(18% * var(--lame-k)); --a: 0.12; animation-name: lame-coule-c; animation-duration:  19s; animation-delay: -27s; }
+.snow-lame-13 { left: 67.8%; width:  1.5%; height: calc(25% * var(--lame-k)); --a: 0.16; animation-name: lame-fil-a;   animation-duration:  11s; animation-delay:  -9s; }
+.snow-lame-14 { left: 69.8%; width:  4.4%; height: calc(31% * var(--lame-k)); --a: 0.19; animation-name: lame-coule-a; animation-duration:  34s; animation-delay: -38s; }
+.snow-lame-15 { left: 74.8%; width:  9.2%; height: calc(40% * var(--lame-k)); --a: 0.26; animation-name: lame-coule-b; animation-duration:  43s; animation-delay: -61s; }
+.snow-lame-16 { left: 84.8%; width:  1.4%; height: calc(33% * var(--lame-k)); --a: 0.21; animation-name: lame-fil-b;   animation-duration:  26s; animation-delay: -21s; }
+.snow-lame-17 { left: 88.0%; width:  3.8%; height: calc(45% * var(--lame-k)); --a: 0.27; animation-name: lame-coule-c; animation-duration:  41s; animation-delay: -47s; }
+.snow-lame-18 { left: 92.6%; width:  1.2%; height: calc(23% * var(--lame-k)); --a: 0.17; animation-name: lame-fil-c;   animation-duration:  38s; animation-delay: -35s; }
+.snow-lame-19 { left: 94.4%; width:  6.4%; height: calc(45% * var(--lame-k)); --a: 0.27; animation-name: lame-coule-a; animation-duration:  46s; animation-delay: -73s; }
+
+
+/* ── 5 · le mouvement ─────────────────────────────────────────────────────
+   Six formes de mouvement, dix-neuf durées et dix-neuf phases distinctes.
+   L'identité d'une lame, c'est le triplet (forme × durée × phase) : deux lames
+   qui partagent une forme ne sont jamais ni adjacentes ni en phase.
+
+   CE QUI A ÉTÉ CORRIGÉ, ET POURQUOI. Le premier réglage étalait les courses
+   sur des périodes de 17 à 103 s. Mesuré, ça donnait 0,13 à 0,73 px/s en
+   latéral et 0,07 à 0,88 px/s au sommet : on ne voit RIEN en trois secondes,
+   alors que la moitié de la demande du client est « qui sois animer donc
+   bouge ». Les courses sont donc multipliées par 2,7 et les périodes ramenées
+   dans 11-47 s. Vitesses obtenues : 0,9 à 4,3 px/s en latéral, 2,5 à 4,1 px/s
+   pour le sommet des fils. On voit le champ bouger en le regardant cinq
+   secondes, sans qu'il devienne jamais un défilement.
+
+   Dix-neuf durées DISTINCTES entre 11 et 47 s, dont aucune n'égale celles des
+   deux nappes (53 s et 71 s). Ce ne sont plus dix-neuf nombres premiers — il
+   n'en existe que onze dans cet intervalle — mais leur PPCM reste
+   astronomique, donc la configuration exacte du champ ne se reproduit jamais.
+   En alternance, la plus rapide fait 0,045 Hz : très loin des 0,2 Hz que
+   l'accessibilité vestibulaire proscrit. L'ordre est conservé — les épaisses
+   restent les plus lentes, les fils les plus vifs.
+
+   Ce qui fait COULER : scaleX et translateX ont des effets géométriquement
+   différents sur les deux bords. Le translateX déplace le corps entier ; le
+   scaleX écarte les deux bords en sens OPPOSÉS autour de l'axe. Composés, le
+   bord gauche et le bord droit d'une même lame avancent à des vitesses
+   différentes et parfois de signes contraires. C'est ça, un écoulement — un
+   simple glissement garderait les deux bords solidaires.
+
+   Le partage est physique et pas décoratif :
+     · les lames ÉPAISSES fléchissent → le scaleX domine (1 → 1,085 sur 151 px,
+       c'est 6,4 px de course par bord) ;
+     · les FILS ne fléchissent pas → le scaleY domine (1 → 1,15 sur une lame de
+       300 px, c'est 45 px de sommet qui monte et descend : c'est LA silhouette
+       d'égaliseur de la référence (a) qui bouge). Un scaleX de 1,08 sur un fil
+       de 16 px vaudrait 0,6 px par bord — invisible.
+   Les échelles restent sous 1,15 : la pré-rastérisation à l'échelle maximale
+   coûte 32 % d'aire en plus.
+   Aucune courbe déclarée ici : elle vient de `.snow-bg > i`. */
+@keyframes lame-coule-a {
+  from { transform: translate3d(-24px, 0, 0) scaleX(1)     scaleY(1);     opacity: 0.74; }
+  to   { transform: translate3d( 19px, 0, 0) scaleX(1.080) scaleY(1.055); opacity: 1;    }
+}
+
+@keyframes lame-coule-b {
+  /* sens inverse : elle se resserre pendant que la a s'élargit */
+  from { transform: translate3d( 30px, 0, 0) scaleX(1.085) scaleY(1.045); opacity: 1;    }
+  to   { transform: translate3d(-16px, 0, 0) scaleX(1)     scaleY(1);     opacity: 0.70; }
+}
+
+@keyframes lame-coule-c {
+  /* la plus grande excursion latérale : 81 px de course */
+  from { transform: translate3d(-38px, 0, 0) scaleX(1.020) scaleY(1.070); opacity: 0.78; }
+  to   { transform: translate3d( 43px, 0, 0) scaleX(1.075) scaleY(1);     opacity: 1;    }
+}
+
+@keyframes lame-fil-a {
+  from { transform: translate3d(-11px, 0, 0) scaleX(1)     scaleY(1);     opacity: 0.52; }
+  to   { transform: translate3d( 13px, 0, 0) scaleX(1.040) scaleY(1.150); opacity: 0.96; }
+}
+
+@keyframes lame-fil-b {
+  from { transform: translate3d( 16px, 0, 0) scaleX(1.040) scaleY(1.130); opacity: 0.94; }
+  to   { transform: translate3d( -8px, 0, 0) scaleX(1)     scaleY(1);     opacity: 0.55; }
+}
+
+@keyframes lame-fil-c {
+  from { transform: translate3d(-19px, 0, 0) scaleX(1.030) scaleY(1);     opacity: 0.60; }
+  to   { transform: translate3d( 11px, 0, 0) scaleX(1)     scaleY(1.140); opacity: 1;    }
+}
+
+
+
+/* ── 6 · en dessous de 40rem ──────────────────────────────────────────────
+   À 375 px, dix-neuf lames donnent un pas de 19 px : ce n'est plus un champ
+   de lames, c'est du velours côtelé. On retire les neuf fils — dix lames, pas
+   moyen 37 px, couverture 59 % — et on écrase toutes les hauteurs à 70 %, ce
+   qui met le sommet du champ à 36,4 % de la boîte, très loin sous un titre
+   qui passe alors sur deux lignes. Bénéfice second : douze couches au lieu de
+   vingt-et-une là où la mémoire de couche est multipliée par le DPR au carré.
+   Les deux nappes rétrécissent pour la même raison. */
+@media (max-width: 40rem) {
+  .snow-bg { --lame-k: 0.70; }
+  .snow-lame-02, .snow-lame-04, .snow-lame-05, .snow-lame-07,
+  .snow-lame-09, .snow-lame-11, .snow-lame-13, .snow-lame-16,
+  .snow-lame-18 { display: none; }
+  .snow-bg-lueur { left: -4%; right: -4%; height: 52%; }
+  .snow-bg-nappe { left: -4%; right: -4%; height: 44%; }
 }
 
 
@@ -845,9 +1173,9 @@
 }
 
 /* Le mot glisse vers la gauche à mesure qu'il s'allonge, pour que la partie
-   visible reste optiquement centrée. 480 ms = la fenêtre de matérialisation
+   visible reste optiquement centrée. 640 ms = la fenêtre de matérialisation
    d'une lettre : le glissé et l'arrivée se terminent ensemble.
-   Ease-out et pas ease-in-out : la valeur est reciblée trois fois en 380 ms,
+   Ease-out et pas ease-in-out : la valeur est reciblée trois fois en 720 ms,
    un ease-in-out produirait trois micro-ralentis. */
 .snow-intro-word {
   display: flex;
@@ -884,7 +1212,7 @@
   translate: 0 -0.196em;
 
   transform: translate3d(0, 0, 0);
-  transition: transform 480ms var(--snow-land);
+  transition: transform 640ms var(--snow-land);
   will-change: transform;
 }
 
@@ -910,11 +1238,11 @@
 }
 
 /* La couche « mouvement ». Trois propriétés, trois durées, une intention :
-     opacity   340 ms — elle apparaît
-     filter    480 ms — elle entre dans le plan de netteté
-     transform 860 ms — elle se pose
+     opacity   450 ms — elle apparaît
+     filter    640 ms — elle entre dans le plan de netteté
+     transform 1150 ms — elle se pose
    Ce décalage est ce qui fait lire « ça vient de loin » plutôt que « ça
-   apparaît sur place ». La lettre est lisible à 480 ms ; les 380 ms qui
+   apparaît sur place ». La lettre est lisible à 640 ms ; les 510 ms qui
    restent sont un tassement sub-pixel qu'on sent sans le voir.
    Ordre du transform : translate3d PUIS rotateX — l'inverse ferait pivoter
    l'axe de la translation et la lettre partirait aussi vers le bas. */
@@ -927,9 +1255,9 @@
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transition:
-    opacity   340ms var(--snow-ease),
-    filter    480ms var(--snow-ease),
-    transform 860ms var(--snow-land);
+    opacity   450ms var(--snow-ease),
+    filter    640ms var(--snow-ease),
+    transform 1150ms var(--snow-land);
   will-change: transform, filter, opacity;
 }
 .snow-letter--in > .snow-letter-i {
@@ -951,16 +1279,16 @@
 /* ── La passation ────────────────────────────────────────────────────────
    Un seul mouvement de caméra, pas deux animations juxtaposées : la caméra
    avance, traverse le mot (qui grossit, se défocalise et disparaît) et se
-   pose sur l'accueil. On sort toujours plus vite qu'on entre — 540 ms contre
-   860 ms. */
+   pose sur l'accueil. On sort toujours plus vite qu'on entre — 720 ms contre
+   1150 ms. */
 .snow-intro--out {
   opacity: 0;
   filter: blur(10px);
   transform: scale(1.12);
   transition:
-    opacity   380ms var(--snow-ease),
-    filter    460ms var(--snow-ease),
-    transform 540ms var(--snow-leave);
+    opacity   500ms var(--snow-ease),
+    filter    620ms var(--snow-ease),
+    transform 720ms var(--snow-leave);
 }
 
 /* .snow-home ne porte QUE de l'opacité. Non négociable : un `filter` ou un
@@ -979,7 +1307,7 @@
    toute la passation. Le bouton porte donc sa propre opacité — sur l'élément
    qui PORTE le backdrop-filter, c'est sans danger : il n'est backdrop root que
    pour ses descendants. */
-.snow-fade { opacity: 0; transition: opacity 460ms var(--snow-ease); }
+.snow-fade { opacity: 0; transition: opacity 620ms var(--snow-ease); }
 .snow-home--in .snow-fade { opacity: 1; }
 /* `opacity: 0` ne retire ni le hit-testing ni l'ordre de tabulation : sans
    ça, un clic pendant l'intro atteint le bouton invisible et ouvre la modale
@@ -991,7 +1319,7 @@
 .snow-rise {
   transform: translate3d(0, 10px, 0) scale(0.988);
   transform-origin: 50% 50%;
-  transition: transform 540ms var(--snow-land);
+  transition: transform 720ms var(--snow-land);
   will-change: transform;
 }
 .snow-home--in .snow-rise { transform: translate3d(0, 0, 0) scale(1); }
@@ -1261,7 +1589,11 @@
    une vraie bordure. Le fond, qui est une transparence lui aussi, s'assourdit. */
 @media (prefers-reduced-transparency: reduce) {
   .snow { --snow-blur: 0px; }
+  /* `opacity` sur .snow-bg aplatit les 21 couches dans une seule surface de
+     rendu : avec les animations qui tournent, cette surface serait redessinée
+     à chaque image, bien plus cher que la composition directe. On les coupe. */
   .snow-bg { opacity: 0.55; }
+  .snow-bg > i { animation: none; }
   .snow-intro--out { filter: none; }
   .lg {
     background: #FFFFFF;
@@ -1316,11 +1648,22 @@
    `animation-play-state: paused`, parce que la règle globale
    `animation-duration: 0.01ms !important` de @layer base la casserait. */
 @media (prefers-reduced-motion: reduce) {
+
   .snow-bg > i { animation: none; }
-  .snow-bg-lueur    { transform: translate3d( 0.8%,  0.2%, 0) scale(1.06); opacity: 0.92; }
-  .snow-bg-nappe    { transform: translate3d(-0.6%,  0,    0) scale(1.04); opacity: 0.80; }
-  .snow-bg-derive-a { transform: translate3d( 1.5%, -0.8%, 0) scale(1.08); opacity: 0.74; }
-  .snow-bg-derive-b { transform: translate3d(-1.0%,  0.6%, 0) scale(1.05); opacity: 0.70; }
+
+  .snow-lame   { transform: translate3d(   0, 0, 0) scaleX(1.030) scaleY(1.015); opacity: 0.88; }
+  .snow-lame-02,
+  .snow-lame-09,
+  .snow-lame-16 { transform: translate3d(-5px, 0, 0) scaleX(1)     scaleY(1.050); opacity: 0.72; }
+  .snow-lame-06 { transform: translate3d( 7px, 0, 0) scaleX(1.050) scaleY(1.020); opacity: 1;    }
+  .snow-lame-15 { transform: translate3d(-9px, 0, 0) scaleX(1.020) scaleY(1);     opacity: 0.94; }
+  .snow-lame-11,
+  .snow-lame-13 { transform: translate3d( 3px, 0, 0) scaleX(1)     scaleY(1.040); opacity: 0.66; }
+
+  /* milieu de cycle, légèrement biaisé à droite pour que la composition ne
+     soit pas mortellement symétrique */
+  .snow-bg-lueur { transform: translate3d( 0.8%, 0.2%, 0) scale(1.06); opacity: 0.92; }
+  .snow-bg-nappe { transform: translate3d(  4px, 0,    0) scaleX(1.025); opacity: 0.82; }
 
   .snow-letter { perspective: none; }
   .snow-letter-i,
