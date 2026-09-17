@@ -3,24 +3,43 @@ import ContactModal, { openContact } from "@/components/site/ContactModal";
 
 /* Accueil « neige » — fond #FFFAFA, encre #0F0F0F.
 
-   Intro : « way » se pose lettre par lettre. Chaque lettre se matérialise
-   (flou, échelle et opacité ensemble) et le mot reste optiquement centré
-   pendant qu'il s'allonge : on mesure la largeur réelle de chaque lettre une
-   fois la police chargée, puis on décale la rangée de
-   (largeur totale − largeur visible) / 2.
+   Intro : « way » se pose lettre par lettre, chaque lettre arrivant du fond
+   de la scène (perspective + translateZ négatif) et non par un fondu sur
+   place. Le mot reste optiquement centré pendant qu'il s'allonge : on mesure
+   la position de bord droit de chaque lettre une fois la police chargée, puis
+   on décale la rangée de la moitié de ce qui reste caché à droite.
 
-   Passation : le mot se dématérialise PENDANT que l'accueil se matérialise,
-   sur la même courbe inversée et au même instant. Il n'y a jamais d'image
-   morte entre les deux, et le fond ne bouge pas puisqu'il est commun. */
+   Passation : le mot se dématérialise PENDANT que l'accueil se matérialise.
+   Il n'y a jamais d'image morte entre les deux, et le fond ne bouge pas
+   puisqu'il est commun aux deux phases — une seule instance dans le DOM,
+   jamais conditionnée par la phase, jamais remontée. */
 
 const LETTERS = ["w", "a", "y"] as const;
 
-/* rythme de l'intro (ms) */
-const FIRST_MS = 350;    // avant la première lettre
-const STEP_MS = 1250;    // écart entre deux lettres
-const LETTER_MS = 1900;  // = transition de .snow-letter
-const HOLD_MS = 900;     // le mot complet respire
-const HANDOFF_MS = 1250; // = transition de .snow-home
+/* Rythme de l'intro (ms). 1,80 s du chargement à l'accueil posé, contre ~7 s
+   avant. La vitesse vient du RECOUVREMENT et du point d'ancrage, pas du
+   raccourcissement des courbes :
+     140  départ « w »
+     330  départ « a »
+     520  départ « y »
+     940  « y » perçue posée
+    1260  fin de la respiration, la passation démarre
+    1800  accueil posé, intro démontée
+   La passation est calée sur l'atterrissage PERÇU (420 ms) et non sur la fin
+   nominale de la transition (860 ms). Sous --snow-land, cubic-bezier(0.23, 1,
+   0.32, 1), la lettre a fait 95 % de sa course en 420 ms : les 440 ms qui
+   restent sont un tassement sub-pixel. Les caler dans le temps d'écran, comme
+   le faisait la version précédente, c'était 830 ms — 36 % du total — où il ne
+   se passe plus rien. Ils se terminent maintenant SOUS la sortie, invisibles.
+   Pour régler au feeling, ne toucher que STEP_MS (± 30 ms) : c'est lui qui
+   porte le rythme. */
+const FIRST_MS = 140;      // avant la première lettre — couvre le premier paint
+const STEP_MS = 190;       // écart entre deux DÉPARTS de lettre
+const LETTER_MS = 860;     // = transition transform de .snow-letter-i
+const PERCEIVED_MS = 420;  // atterrissage PERÇU (cf. ci-dessous)
+const HOLD_MS = 320;       // le mot complet respire
+const HANDOFF_MS = 540;    // = la plus longue transition de la passation
+const SETTLE_PAD_MS = 40;  // marge avant de retirer le calque d'une lettre posée
 
 const NAV = [
   { label: "Accueil", href: "#top", current: true },
@@ -35,21 +54,48 @@ export default function Accueil() {
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const [step, setStep] = useState(reduced ? LETTERS.length : 0);
+  const [landed, setLanded] = useState(reduced ? LETTERS.length : 0);
   /* "intro" → "handoff" (les deux se croisent) → "home" (l'intro sort du DOM) */
   const [phase, setPhase] = useState<"intro" | "handoff" | "home">(reduced ? "home" : "intro");
-  const [widths, setWidths] = useState<number[] | null>(null);
-  const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  /* bord droit de chaque lettre, relatif au bord gauche du mot */
+  const [edges, setEdges] = useState<number[] | null>(null);
 
-  /* largeur réelle de chaque lettre, une fois la police chargée */
+  const wordRef = useRef<HTMLDivElement | null>(null);
+  const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const bgRef = useRef<HTMLDivElement | null>(null);
+  const phaseRef = useRef(phase);
+  useEffect(() => { phaseRef.current = phase; }, [phase]);
+
+  /* Mesure. Deux protections contre le piège du rect transformé :
+     — structurelle : le span externe .snow-letter ne porte aucun transform,
+       c'est son enfant qui est scalé en Z. Le rect d'un élément est sa propre
+       boîte, pas l'union de ses descendants, et un transform n'affecte pas la
+       mise en page : on peut donc mesurer en plein vol ;
+     — de garde : on ne mesure que pendant la phase "intro", parce que
+       .snow-intro-stage porte un scale(1.12) pendant la passation, et celui-là,
+       étant un ancêtre, multiplierait bien le rect.
+     Les bords sont relatifs au mot, donc invariants au recentrage en cours.
+     Jamais d'arrondi : offsetWidth est entier, getBoundingClientRect est
+     sub-pixel, et un demi-pixel se voit sur un glyphe de 120 px. */
   useLayoutEffect(() => {
     if (reduced) return;
     let alive = true;
     const measure = () => {
-      if (!alive) return;
-      const w = letterRefs.current.map((el) => el?.getBoundingClientRect().width ?? 0);
-      if (w.every((n) => n > 0)) setWidths(w);
+      if (!alive || phaseRef.current !== "intro" || !wordRef.current) return;
+      const left = wordRef.current.getBoundingClientRect().left;
+      const next = letterRefs.current.map((el) =>
+        el ? el.getBoundingClientRect().right - left : 0,
+      );
+      if (next.every((n) => n > 0)) setEdges(next);
     };
-    document.fonts?.ready.then(measure).catch(measure);
+    /* document.fonts.ready attend toutes les polices déclarées, mais on force
+       d'abord la graisse exacte du mot-marque : sans ça, la première mesure
+       peut tomber sur la police de secours. */
+    const fonts = document.fonts;
+    Promise.resolve(fonts?.load('580 1em "Instrument Sans"'))
+      .then(() => fonts?.ready)
+      .then(measure)
+      .catch(measure);
     measure();
     window.addEventListener("resize", measure);
     return () => { alive = false; window.removeEventListener("resize", measure); };
@@ -68,81 +114,194 @@ export default function Accueil() {
     if (reduced) { reveal(); return; }
 
     const timers: number[] = [];
+    const handoffAt = FIRST_MS + (LETTERS.length - 1) * STEP_MS + PERCEIVED_MS + HOLD_MS;
+
     LETTERS.forEach((_, i) => {
-      timers.push(window.setTimeout(() => setStep(i + 1), FIRST_MS + i * STEP_MS));
+      const at = FIRST_MS + i * STEP_MS;
+      timers.push(window.setTimeout(() => setStep(i + 1), at));
+      timers.push(window.setTimeout(() => setLanded(i + 1), at + LETTER_MS + SETTLE_PAD_MS));
     });
-    // la passation démarre une fois la dernière lettre complètement posée
-    const handoffAt = FIRST_MS + (LETTERS.length - 1) * STEP_MS + LETTER_MS + HOLD_MS;
     timers.push(window.setTimeout(() => { setPhase("handoff"); reveal(); }, handoffAt));
     timers.push(window.setTimeout(() => setPhase("home"), handoffAt + HANDOFF_MS));
-    return () => timers.forEach(window.clearTimeout);
+
+    /* On ne verrouille jamais l'entrée : un clic ou une touche pendant l'intro
+       saute directement à la passation. Ça se fait sans à-coup précisément
+       parce que tout est en transitions et pas en keyframes — une transition
+       se recible depuis la valeur courante, une keyframe repartirait de zéro. */
+    const skip = () => {
+      /* uniquement pendant l'intro : sans cette garde, le premier clic sur
+         l'accueil rejouerait la passation. */
+      if (phaseRef.current !== "intro") return;
+      window.removeEventListener("pointerdown", skip);
+      window.removeEventListener("keydown", skip);
+      timers.forEach(window.clearTimeout);
+      setStep(LETTERS.length);
+      setLanded(LETTERS.length);
+      setPhase("handoff");
+      reveal();
+      timers.push(window.setTimeout(() => setPhase("home"), HANDOFF_MS));
+    };
+    window.addEventListener("pointerdown", skip);
+    window.addEventListener("keydown", skip);
+
+    return () => {
+      timers.forEach(window.clearTimeout);
+      window.removeEventListener("pointerdown", skip);
+      window.removeEventListener("keydown", skip);
+    };
   }, [reduced]);
 
-  /* décalage qui garde le mot centré pendant qu'il se construit */
+  /* La dérive au pointeur : le champ de lumière ne suit pas le curseur, il se
+     PENCHE vers lui. L'autre sens (parallaxe inverse) se lit « je me déplace
+     dans la scène » ; celui-ci se lit « la lumière se tourne vers moi » — plus
+     calme, et c'est lui qui fait que le verre du bouton réfracte quelque chose
+     qui change. La boucle s'arrête d'elle-même dès que l'écart passe sous
+     0,05 px : coût nul au repos. Dépendances vides — il ne doit jamais se
+     remonter, sinon la transformée repart de zéro. */
+  useEffect(() => {
+    const el = bgRef.current;
+    if (!el) return;
+    const mmMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mmFine = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+    let raf = 0, idle = true, last = 0;
+    let tx = 0, ty = 0, gx = 0, gy = 0;
+    const MAX_X = 16, MAX_Y = 10;   // px — plafond assumé
+    const TAU = 380;                // ms — constante de temps
+
+    const write = () => {
+      el.style.transform = `translate3d(${tx.toFixed(2)}px, ${ty.toFixed(2)}px, 0)`;
+    };
+    const loop = (t: number) => {
+      const dt = last ? Math.min(t - last, 50) : 16;
+      last = t;
+      const k = 1 - Math.exp(-dt / TAU);   // lissage indépendant du frame-rate
+      tx += (gx - tx) * k;
+      ty += (gy - ty) * k;
+      write();
+      if (Math.abs(gx - tx) < 0.05 && Math.abs(gy - ty) < 0.05) {
+        tx = gx; ty = gy; write(); idle = true; raf = 0; last = 0; return;
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    const wake = () => {
+      if (idle) { idle = false; last = 0; raf = requestAnimationFrame(loop); }
+    };
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+      gx = ((e.clientX / window.innerWidth) * 2 - 1) * MAX_X;
+      gy = ((e.clientY / window.innerHeight) * 2 - 1) * MAX_Y;
+      wake();
+    };
+    const onOut = () => { gx = 0; gy = 0; wake(); };
+
+    const unbind = () => {
+      window.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerleave", onOut);
+      window.removeEventListener("blur", onOut);
+    };
+    const bind = () => {
+      unbind();
+      if (mmMotion.matches || !mmFine.matches) { gx = 0; gy = 0; wake(); return; }
+      window.addEventListener("pointermove", onMove, { passive: true });
+      document.addEventListener("pointerleave", onOut);
+      window.addEventListener("blur", onOut);
+    };
+
+    bind();
+    mmMotion.addEventListener("change", bind);
+    mmFine.addEventListener("change", bind);
+    return () => {
+      unbind();
+      mmMotion.removeEventListener("change", bind);
+      mmFine.removeEventListener("change", bind);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  /* Le décalage qui garde le mot centré pendant qu'il se construit : la moitié
+     de ce qui reste caché à droite. Exact quelles que soient l'approche et les
+     marges, parce qu'il ne compare que des bords réellement rendus — et
+     rigoureusement 0 à la dernière étape, par construction et non par arrondi. */
   const shift = (() => {
-    if (!widths) return 0;
-    const total = widths.reduce((a, b) => a + b, 0);
-    const shown = widths.slice(0, Math.max(step, 1)).reduce((a, b) => a + b, 0);
-    return (total - shown) / 2;
+    if (!edges) return 0;
+    const k = Math.max(step, 1);
+    if (k >= LETTERS.length) return 0;
+    return (edges[LETTERS.length - 1] - edges[k - 1]) / 2;
   })();
 
   const homeIn = phase !== "intro";
 
   return (
-    <div className="snow relative min-h-screen overflow-hidden">
+    <div className="snow relative min-h-[100svh] overflow-hidden">
       <ContactModal />
 
-      {/* fond vivant — une seule instance, partagée par l'intro et l'accueil,
-          donc rien ne saute au moment de la passation */}
-      <div className="snow-bloom" aria-hidden />
-      <div className="snow-rays" aria-hidden />
+      {/* Le champ de lumière — une seule instance, partagée par l'intro et par
+          l'accueil, donc rien ne saute au moment de la passation. Il reste un
+          frère de .snow-intro et de .snow-home, jamais un enfant : c'est ce qui
+          le laisse entrer dans le backdrop du bouton en verre. */}
+      <div className="snow-bg" aria-hidden ref={bgRef}>
+        <i className="snow-bg-lueur" />
+        <i className="snow-bg-nappe" />
+        <i className="snow-bg-derive-a" />
+        <i className="snow-bg-derive-b" />
+      </div>
 
       {/* ── intro « way » ── */}
       {phase !== "home" && (
         <div className="snow-intro" aria-hidden>
-          <div
-            className={`snow-intro-word snow-serif-i${phase === "handoff" ? " snow-intro--out" : ""}`}
-            style={{ transform: `translateX(${shift}px)` }}
-          >
-            {LETTERS.map((ch, i) => (
-              <span
-                key={ch}
-                ref={(el) => { letterRefs.current[i] = el; }}
-                className={`snow-letter${i < step ? " snow-letter--in" : ""}`}
-              >
-                {ch}
-              </span>
-            ))}
+          <div className={`snow-intro-stage${phase === "handoff" ? " snow-intro--out" : ""}`}>
+            <div
+              ref={wordRef}
+              className="snow-intro-word"
+              style={{ transform: `translate3d(${shift}px, 0, 0)` }}
+            >
+              {LETTERS.map((ch, i) => (
+                <span
+                  key={ch}
+                  ref={(el) => { letterRefs.current[i] = el; }}
+                  className={
+                    "snow-letter" +
+                    (i < step ? " snow-letter--in" : "") +
+                    (i < landed ? " snow-letter--landed" : "")
+                  }
+                >
+                  <span className="snow-letter-i">{ch}</span>
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       )}
 
       {/* ── accueil ── */}
-      <div className={`snow-home${homeIn ? " snow-home--in" : ""}`}>
-        {/* nav sans fond : le verre est réservé au bouton, là où il attire
+      <div
+        className={`snow-home${homeIn ? " snow-home--in" : ""}${phase === "home" ? " snow-home--settled" : ""}`}
+        /* invisible ne veut pas dire inatteignable : sans `inert`, la
+           tabulation entre dans un accueil qu'on ne voit pas encore. */
+        {...(phase === "intro" ? ({ inert: "" } as Record<string, string>) : {})}
+      >
+        {/* Le fondu de la passation est porté par les enfants (.snow-fade) et
+            jamais par ce conteneur : une opacité < 1 sur un ancêtre du bouton
+            en verre le priverait de son backdrop-filter le temps de la
+            passation. Nav sans fond : le verre est réservé au bouton, là où il attire
             l'œil — deux surfaces translucides superposées tueraient la
-            lisibilité. Grille 1fr/auto/1fr, colonnes fixées explicitement. */}
+            lisibilité. Grille 1fr/auto/1fr avec la première colonne vide
+            depuis le retrait du logo : c'est elle qui garantit que le groupe
+            d'onglets reste centré sur l'axe de la page quelle que soit la
+            largeur du bouton. Le header reste HORS de .snow-rise, pour que son
+            position: fixed ne soit pas contenu par un ancêtre transformé. */}
         <header className="fixed inset-x-0 top-5 z-40 flex justify-center px-5">
           <nav className="grid w-full max-w-[880px] items-center" style={{ gridTemplateColumns: "1fr auto 1fr" }}>
-            <a
-              href="#top"
-              className="lg-press justify-self-start rounded-full"
-              aria-label="Way, accueil"
-              style={{ gridColumn: 1 }}
-            >
-              <svg viewBox="0 0 48 48" className="h-[26px] w-[26px]" fill="none" aria-hidden>
-                <circle cx="24" cy="24" r="21" stroke="#0F0F0F" strokeWidth="3" />
-                <path d="M13 18 L18.75 31 L24 21 L29.25 31 L35 18" stroke="#0F0F0F" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </a>
+            <div aria-hidden style={{ gridColumn: 1 }} />
 
-            <div className="hidden items-center justify-self-center md:flex" style={{ gridColumn: 2 }}>
+            <div data-nav-links className="snow-fade hidden items-center justify-self-center md:flex" style={{ gridColumn: 2 }}>
               {NAV.map((n) => (
                 <a
                   key={n.label}
                   href={n.href}
                   aria-current={n.current ? "page" : undefined}
-                  className="snow-tab rounded-full px-3.5 py-2 text-[14px] font-medium transition-colors"
+                  className="snow-tab snow-ui rounded-full px-3.5 py-2 text-[14px] transition-colors"
                   style={{ color: n.current ? "#0F0F0F" : "rgba(15,15,15,0.68)" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#0F0F0F")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = n.current ? "#0F0F0F" : "rgba(15,15,15,0.68)")}
@@ -153,35 +312,32 @@ export default function Accueil() {
             </div>
 
             <button
+              type="button"
               onClick={() => openContact()}
-              className="lg-dark lg-press justify-self-end whitespace-nowrap rounded-full px-4 py-2.5 text-[14px] font-medium sm:px-5"
+              className="lg lg-press snow-fade justify-self-end whitespace-nowrap rounded-full px-5 py-2.5 text-[14px]"
               style={{ gridColumn: 3 }}
             >
-              <span className="relative z-10 sm:hidden">Rendez-vous</span>
-              <span className="relative z-10 hidden sm:inline">Prendre rendez-vous</span>
+              <span className="lg-label sm:hidden">Rendez-vous</span>
+              <span className="lg-label hidden sm:inline">Prendre rendez-vous</span>
             </button>
           </nav>
         </header>
 
-        <main id="top" className="relative flex min-h-screen flex-col items-center justify-center px-6 text-center">
-          <h1 className="snow-display text-[clamp(2.6rem,7.4vw,5.8rem)]">
-            Créer. Échouer. <i>Évoluer.</i>
+        {/* Le padding bas remonte le bloc d'environ 3 % de la hauteur d'écran :
+            un bloc centré mathématiquement dans un plein écran se lit toujours
+            trop bas. C'est la seule asymétrie volontaire de la page, et c'est
+            elle qui la fait paraître symétrique. */}
+        <main
+          id="top"
+          className="snow-rise snow-fade relative flex min-h-[100svh] flex-col items-center justify-center px-6 pb-[clamp(1rem,4svh,3rem)] text-center"
+        >
+          <h1 className="snow-display">
+            Créer. Échouer.<span className="snow-gap"> </span><i>Évoluer.</i>
           </h1>
 
-          <p
-            className="mt-8 max-w-[40ch] text-[16px] font-medium leading-relaxed"
-            style={{ color: "rgba(15,15,15,0.74)" }}
-          >
+          <p className="snow-lede">
             Studio créatif à Strasbourg. Des sites qu'on refait jusqu'à ce qu'ils soient justes.
           </p>
-
-          <button
-            onClick={() => openContact()}
-            className="lg lg-press mt-10 rounded-full px-6 py-3 text-[15px] font-semibold"
-            style={{ color: "#0F0F0F" }}
-          >
-            Parler du projet
-          </button>
         </main>
       </div>
     </div>
