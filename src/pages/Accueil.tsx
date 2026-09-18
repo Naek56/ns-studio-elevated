@@ -16,30 +16,31 @@ import ContactModal, { openContact } from "@/components/site/ContactModal";
 
 const LETTERS = ["w", "a", "y"] as const;
 
-/* Rythme de l'intro (ms). 1,80 s du chargement à l'accueil posé, contre ~7 s
-   avant. La vitesse vient du RECOUVREMENT et du point d'ancrage, pas du
-   raccourcissement des courbes :
-     140  départ « w »
-     330  départ « a »
-     520  départ « y »
-     940  « y » perçue posée
-    1260  fin de la respiration, la passation démarre
-    1800  accueil posé, intro démontée
-   La passation est calée sur l'atterrissage PERÇU (420 ms) et non sur la fin
-   nominale de la transition (860 ms). Sous --snow-land, cubic-bezier(0.23, 1,
-   0.32, 1), la lettre a fait 95 % de sa course en 420 ms : les 440 ms qui
-   restent sont un tassement sub-pixel. Les caler dans le temps d'écran, comme
-   le faisait la version précédente, c'était 830 ms — 36 % du total — où il ne
-   se passe plus rien. Ils se terminent maintenant SOUS la sortie, invisibles.
-   Pour régler au feeling, ne toucher que STEP_MS (± 30 ms) : c'est lui qui
+/* Rythme de l'intro (ms). 2,82 s du chargement à l'accueil posé.
+   Le premier jet mettait ~7 s : beaucoup trop. Le deuxième est tombé à 1,80 s :
+   l'arrivée des lettres devenait un clignement, on ne la lisait plus. On
+   reprend l'écart entre les deux — le rythme est ralenti de 90 %, pas les
+   courbes :
+     220  départ « w »
+     580  départ « a »
+     940  départ « y »
+    1500  « y » perçue posée
+    2100  fin de la respiration, la passation démarre
+    2820  accueil posé, intro démontée
+   La passation reste calée sur l'atterrissage PERÇU (560 ms) et non sur la fin
+   nominale de la transition (1150 ms). Sous --snow-land, cubic-bezier(0.23, 1,
+   0.32, 1), la lettre a fait 95 % de sa course en 48,8 % du temps : les 590 ms
+   qui restent sont un tassement sub-pixel, et les caler dans le temps d'écran
+   serait de l'écran mort. Ils se terminent SOUS la sortie, invisibles.
+   Pour régler au feeling, ne toucher que STEP_MS (± 40 ms) : c'est lui qui
    porte le rythme. */
-const FIRST_MS = 140;      // avant la première lettre — couvre le premier paint
-const STEP_MS = 190;       // écart entre deux DÉPARTS de lettre
-const LETTER_MS = 860;     // = transition transform de .snow-letter-i
-const PERCEIVED_MS = 420;  // atterrissage PERÇU (cf. ci-dessous)
-const HOLD_MS = 320;       // le mot complet respire
-const HANDOFF_MS = 540;    // = la plus longue transition de la passation
-const SETTLE_PAD_MS = 40;  // marge avant de retirer le calque d'une lettre posée
+const FIRST_MS = 220;      // avant la première lettre — couvre le premier paint
+const STEP_MS = 360;       // écart entre deux DÉPARTS de lettre
+const LETTER_MS = 1150;    // = transition transform de .snow-letter-i
+const PERCEIVED_MS = 560;  // atterrissage PERÇU (cf. ci-dessus)
+const HOLD_MS = 600;       // le mot complet respire
+const HANDOFF_MS = 720;    // = la plus longue transition de la passation
+const SETTLE_PAD_MS = 50;  // marge avant de retirer le calque d'une lettre posée
 
 const NAV = [
   { label: "Accueil", href: "#top", current: true },
@@ -236,15 +237,42 @@ export default function Accueil() {
     <div className="snow relative min-h-[100svh] overflow-hidden">
       <ContactModal />
 
-      {/* Le champ de lumière — une seule instance, partagée par l'intro et par
-          l'accueil, donc rien ne saute au moment de la passation. Il reste un
-          frère de .snow-intro et de .snow-home, jamais un enfant : c'est ce qui
-          le laisse entrer dans le backdrop du bouton en verre. */}
+      {/* Le vitrage — dix-neuf lames de verre plantées au pied de l'écran, plus
+          deux nappes de lumière. UNE seule instance, partagée par l'intro et par
+          l'accueil, donc rien ne saute au moment de la passation. Frère de
+          .snow-intro et de .snow-home, jamais un enfant : c'est ce qui le laisse
+          entrer dans le backdrop du bouton en verre.
+
+          Les lames sont des enfants DIRECTS : `.snow-bg > i` leur donne la
+          courbe, l'infini et l'alternance, et les règles `animation: none` des
+          media queries d'accessibilité les couvrent sans toucher un sélecteur.
+          Un conteneur intermédiaire aurait cassé les trois en silence.
+          Ce bloc ne doit JAMAIS être remonté ni conditionné par la phase :
+          les dix-neuf animations à délai négatif repartiraient de leur origine
+          et tout le champ claquerait à la passation. */}
       <div className="snow-bg" aria-hidden ref={bgRef}>
         <i className="snow-bg-lueur" />
         <i className="snow-bg-nappe" />
-        <i className="snow-bg-derive-a" />
-        <i className="snow-bg-derive-b" />
+
+        <i className="snow-lame snow-lame-01" />
+        <i className="snow-lame snow-lame--fil snow-lame-02" />
+        <i className="snow-lame snow-lame-03" />
+        <i className="snow-lame snow-lame--fil snow-lame-04" />
+        <i className="snow-lame snow-lame--fil snow-lame-05" />
+        <i className="snow-lame snow-lame-06" />
+        <i className="snow-lame snow-lame--fil snow-lame-07" />
+        <i className="snow-lame snow-lame-08" />
+        <i className="snow-lame snow-lame--fil snow-lame-09" />
+        <i className="snow-lame snow-lame-10" />
+        <i className="snow-lame snow-lame--fil snow-lame-11" />
+        <i className="snow-lame snow-lame-12" />
+        <i className="snow-lame snow-lame--fil snow-lame-13" />
+        <i className="snow-lame snow-lame-14" />
+        <i className="snow-lame snow-lame-15" />
+        <i className="snow-lame snow-lame--fil snow-lame-16" />
+        <i className="snow-lame snow-lame-17" />
+        <i className="snow-lame snow-lame--fil snow-lame-18" />
+        <i className="snow-lame snow-lame-19" />
       </div>
 
       {/* ── intro « way » ── */}
@@ -331,9 +359,7 @@ export default function Accueil() {
           id="top"
           className="snow-rise snow-fade relative flex min-h-[100svh] flex-col items-center justify-center px-6 pb-[clamp(1rem,4svh,3rem)] text-center"
         >
-          <h1 className="snow-display">
-            Créer. Échouer.<span className="snow-gap"> </span><i>Évoluer.</i>
-          </h1>
+          <h1 className="snow-display">Créer. Échouer. Évoluer.</h1>
 
           <p className="snow-lede">
             Studio créatif à Strasbourg. Des sites qu'on refait jusqu'à ce qu'ils soient justes.
