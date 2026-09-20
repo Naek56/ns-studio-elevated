@@ -471,13 +471,12 @@
 /* ══════════════════════════════════════════════════════════════════════════
    ACCUEIL « NEIGE » — fond blanc neige #FFFAFA, encre minuit #0F0F0F.
 
-   Une seule voix typographique : Instrument Sans (grotesque) porte le titre,
-   le mot-marque et l'interface. Le TITRE, lui, est écrit à la main —
-   Gloria Hallelujah — et c'est le seul endroit de la page où l'on quitte le
-   grotesque : un contraste voulu entre la voix de l'agence et son outillage.
+   Deux voix : Instrument Sans (grotesque) porte le mot-marque, le chapô et
+   l'interface ; le TITRE est en chasse fixe — Roboto Mono — et c'est le seul
+   endroit de la page où l'on quitte le grotesque.
 
    Trois mécaniques vivent ici :
-     · le fond, un champ de lumière en quatre nappes, jamais deux fois le même ;
+     · le fond, un vitrage de dix-neuf lames animées, jamais deux fois le même ;
      · l'intro, où les lettres arrivent du fond de la scène (profondeur en Z) ;
      · le verre, une seule pilule translucide qui réfracte ce fond.
    ══════════════════════════════════════════════════════════════════════════ */
@@ -550,59 +549,66 @@
 }
 
 
-/* ── Le titre, écrit à la main ────────────────────────────────────────────
-   Gloria Hallelujah : un feutre monoligne, DROIT, aux lettres détachées et
-   larges, avec une ligne de base qui rebondit — c'est exactement le geste de
-   la référence. Les autres candidates ont été rendues côte à côte, à ce corps,
-   et écartées chacune pour une raison : Caveat et Kalam sont PENCHÉES (la
-   référence est droite), Indie Flower et Architects Daughter sont trop maigres
-   pour porter un titre, Gochi Hand arrondit tout et vire au ballon, Permanent
-   Marker passe tout en capitales.
+/* ── Le titre, en chasse fixe ────────────────────────────────────────────
+   Roboto Mono. Une monospace au grand corps, c'est l'inverse exact de la
+   manuscrite qu'elle remplace, et trois réglages doivent être repris à zéro :
 
-   DEUX RÈGLES QUI NE VALENT QUE POUR UNE MANUSCRITE, et qu'on ne peut pas
-   hériter du grotesque qu'elle remplace :
+   1. LA CHASSE EST FIXE, DONC LA LIGNE EST LONGUE. Chaque glyphe avance de
+      0,6 em, espaces et points compris : « Créer. Échouer. Évoluer. » fait
+      24 caractères, soit 14,4 em bruts là où la manuscrite en faisait 11,5 —
+      la même ligne au même corps serait 25 % plus large. Le corps maximal
+      redescend donc de 4,6rem à 3,3rem, et l'approche repasse en NÉGATIF
+      (-0,035 em) : sur une chasse fixe, resserrer ne fait pas se cogner les
+      lettres, ça reprend une partie de l'air que la grille impose entre
+      elles. C'est exactement l'inverse de la règle qui valait pour la
+      manuscrite, qui avait des lettres détachées à terminaisons obliques.
 
-   1. L'APPROCHE NE DOIT PAS ÊTRE NÉGATIVE. Un grotesque de display se resserre
-      en grandissant (on avait -0,028 em) parce que ses fûts sont verticaux et
-      parallèles. Une manuscrite a des lettres détachées, aux terminaisons qui
-      partent en biais : la resserrer les fait se cogner. On passe à +0,006 em
-      — la référence est plutôt aérée.
+   2. L'INTERLIGNE REDESCEND. Le 1,28 logeait l'accent aigu de Gloria
+      Hallelujah, qui monte très au-dessus de la capitale. Roboto Mono a des
+      métriques ordinaires : 1,14 suffit, et au-delà les deux lignes du mobile
+      se désolidarisent.
 
-   2. IL FAUT PLUS DE CORPS ET PLUS D'INTERLIGNE. Gloria Hallelujah a une
-      hauteur d'x petite par rapport au cadratin et un trait monoligne fin :
-      à corps égal elle pèse bien moins qu'Instrument Sans 600. On monte de
-      4,25rem à 4,6rem au maximum pour retrouver la même présence, tout en
-      restant plus petit que les 5,8rem du premier jet. Et son accent aigu
-      monte très haut au-dessus de la capitale : line-height 1,28 le loge, là
-      où 1,05 le rognait. */
+   3. LA GRAISSE REMONTE À 500. Une chasse fixe dessine des fûts plus fins à
+      corps égal — c'est le prix de la grille — et le 400 de la manuscrite
+      s'effacerait sous le champ de lames. 500 est le dernier cran avant que
+      les contreformes du « é » et du « É » ne commencent à se fermer.
+
+   Elle est chargée en 300..700 parce que c'est un seul fichier variable :
+   demander une graisse de plus ne coûte pas un octet. */
 .snow-display {
-  font-family: "Gloria Hallelujah", "Bradley Hand", "Segoe Print", cursive;
-  font-size: clamp(2.05rem, 5.9vw, 4.6rem);
-  font-weight: 400;                   /* la famille n'a qu'une graisse */
-  font-synthesis: none;               /* et surtout pas de faux-gras dessus */
-  line-height: 1.28;
-  letter-spacing: 0.006em;
+  font-family: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: clamp(1.7rem, 4.7vw, 3.3rem);
+  font-weight: 500;
+  line-height: 1.14;
+  letter-spacing: -0.035em;
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-wrap: balance;
   hyphens: none;
   font-kerning: normal;
+  /* une chasse fixe n'a pas de variantes contextuelles à activer, et une
+     ligature y serait un contresens : elle casserait la grille. */
+  font-variant-ligatures: none;
 }
 
 /* Centrage optique du titre. Un texte centré n'est PAS optiquement centré :
-   les approches latérales du premier et du dernier glyphe diffèrent, et
-   l'approche s'applique aussi APRÈS le dernier caractère. Mesuré au scan des
-   colonnes d'encre sur le rendu : l'encre tombe 0,0155 em trop à gauche, soit
-   1,1 px à 73,6 px. Un padding p décale l'encre de p/2, d'où p = 0,031 em.
-   La valeur est propre à CETTE police et à CE texte — elle valait 0,054 em du
-   temps du grotesque + point italique. À remesurer si l'un des deux change.
-   Le seuil est à 27,5rem parce que la bascule 1 → 2 lignes est mesurée entre
-   416 et 440 px : en dessous, la dernière ligne change et l'encre est déjà
-   centrée (mesurée à -0,5 px). */
-@media (min-width: 27.5rem) {
-  .snow-display { padding-inline-start: 0.031em; }
-}
+   l'approche négative s'applique aussi APRÈS le dernier caractère, et les
+   approches latérales du premier et du dernier glyphe diffèrent.
+
+   Mesuré au scan des colonnes d'encre sur le rendu, à cinq largeurs : l'encre
+   tombe à gauche de 0,0663 em à 52,8 px (1 ligne), 0,0693 em à 36,1 px
+   (1 ligne) et 0,0735 em à 27,2 px (2 lignes). Trois valeurs quasi
+   identiques — et c'est une propriété de la CHASSE FIXE : tous les glyphes
+   partagent la même gouttière, donc le défaut ne dépend plus de quelles
+   lettres commencent et finissent la ligne, seulement de l'approche qui
+   traîne derrière la dernière. Conséquence pratique : contrairement à la
+   manuscrite et au grotesque d'avant, la correction n'a PAS besoin d'être
+   conditionnée au nombre de lignes, donc plus de media query ici.
+
+   Un padding p décale l'encre de p/2, d'où p = 2 × 0,070 = 0,140 em.
+   Résidus mesurés après correction : +0,20 px, +0,03 px, -0,10 px. */
+.snow-display { padding-inline-start: 0.140em; }
 
 /* Le chapô. 16 → 19 px, mesure 46ch : les 84 caractères tombent en deux
    lignes pleines sous un titre de 661 px, plutôt qu'en trois lignes courtes.
@@ -789,11 +795,12 @@
    le ratio WCAG 2.x contre l'encre. Quatre instants, répartis sur quinze
    secondes d'animation, à 1440×900 et 390×844.
 
-   Pire cas sur les quinze secondes :
-     bande du titre   encre #0F0F0F        11,41:1   (plancher demandé 7:1)
-     bande du chapô   rgba(15,15,15,0.74)   6,89:1   (plancher 4,5:1)
+   Pire cas sur les quinze secondes (titre en Roboto Mono, qui monte un peu
+   plus haut que la manuscrite d'avant et se pose donc sur un champ plus vide) :
+     bande du titre   encre #0F0F0F        15,76:1   (plancher demandé 7:1)
+     bande du chapô   rgba(15,15,15,0.74)   7,14:1   (plancher 4,5:1)
      pied du champ    encre #0F0F0F        12,64:1
-     pied du champ    chapô                 5,27:1
+     pied du champ    chapô                 5,84:1
    Sur mobile, la bande du titre ne contient AUCUN pixel bleuté : le champ y
    est du #FFFAFA pur, soit 18,54:1.
    Ces chiffres dépendent de --lame-densite (1,9). Toute hausse demande de
