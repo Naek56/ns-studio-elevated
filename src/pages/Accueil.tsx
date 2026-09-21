@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ContactModal, { openContact } from "@/components/site/ContactModal";
-import { Component as BgGradient } from "@/components/ui/bg-gradient";
+import { Tiles } from "@/components/ui/tiles";
 
 /* Accueil « neige » — fond #FFFAFA, encre #0F0F0F.
 
@@ -168,23 +168,21 @@ export default function Accueil() {
     <div className="snow relative min-h-[100svh] overflow-hidden">
       <ContactModal />
 
-      {/* Le fond : un seul dégradé radial, du blanc neige au cœur à l'encre
-          sur les bords. UNE seule instance, partagée par l'intro et par
-          l'accueil, donc rien ne saute au moment de la passation. Frère de
-          .snow-intro et de .snow-home, jamais un enfant : c'est ce qui le
-          laisse entrer dans le backdrop du bouton en verre.
-          Le repli en blanc neige est passé en className plutôt que laissé au
-          `bg-white` du composant : si le style en ligne ne s'applique pas, la
-          page reste en neige au lieu de tomber sur le blanc pur. */}
+      {/* Le fond : la grille de tuiles. UNE seule instance, partagée par
+          l'intro et par l'accueil, donc rien ne saute au moment de la
+          passation. Frère de .snow-intro et de .snow-home, jamais un enfant :
+          c'est ce qui le laisse entrer dans le backdrop du bouton en verre.
+
+          ATTENTION AUX NOMS DE PROPS : ils sont inversés par rapport à ce
+          qu'on voit. `rows` compte les éléments du conteneur flex, qui se
+          posent HORIZONTALEMENT — c'est donc le nombre de colonnes à l'écran.
+          `cols` compte leurs enfants, empilés verticalement : c'est le nombre
+          de lignes. 46 × 26 tuiles couvrent 2208 × 1248 px en 48 px (au-delà
+          de 768 px de large) et 1656 × 936 px en 36 px en dessous — donc tout
+          écran jusqu'à 2208 px, le surplus étant centré puis coupé par le
+          clip de .snow-bg. */}
       <div className="snow-bg" aria-hidden>
-        {/* Le dégradé, en base du calque. Le violet du composant d'origine est
-            remplacé par l'encre du site : une seule valeur de noir sur toute
-            la page plutôt qu'un #000 de plus à côté du #0F0F0F. Les autres
-            paramètres sont ceux d'origine — cœur à 50 % 10 %, rayon 125 %,
-            palier à 40 %.
-            C'est lui qui porte la couleur du fond : le `background: #FFFAFA`
-            de .snow-bg ne reste que comme second repli. */}
-        <BgGradient className="bg-[#FFFAFA]" gradientFrom="#FFFAFA" gradientTo="#0F0F0F" />
+        <Tiles rows={46} cols={26} tileSize="md" />
       </div>
 
       {/* ── intro « way » ── */}
