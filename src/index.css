@@ -549,82 +549,45 @@
 }
 
 
-/* ── Le titre, en chasse fixe ────────────────────────────────────────────
-   Roboto Mono. Trois réglages sont propres à une monospace au grand corps, et
-   aucun ne s'hérite d'un grotesque ou d'une manuscrite :
+/* ── Le titre ─────────────────────────────────────────────────────────────
+   Inter, en 600. La page n'ayant plus de chapô, le titre porte seul le héros :
+   c'est la raison pour laquelle il descend à 4rem sans disparaître. 64 px pour
+   « find your way » donnent une ligne de 372 px, soit 26 % de la largeur utile
+   à 1440 — contre 46 % en chasse fixe. La mesure est plus petite ET la ligne
+   est plus courte, parce qu'Inter avance en moyenne 0,455 em par caractère là
+   où une monospace en impose 0,6, espaces compris.
 
-   1. LA CHASSE EST FIXE, DONC LA LARGEUR SE CALCULE. Chaque glyphe avance de
-      0,6 em, espaces compris ; avec l'approche de -0,035 em, « find your way »
-      fait 13 × 0,565 = 7,345 em. Le corps maximal de 5,6rem donne donc une
-      ligne de 658 px exactement — 46 % de la largeur utile à 1440. Et le
-      minimum de 2,2rem donne 258 px pour 272 px utiles à 320 px : le titre
-      tient sur UNE ligne à toutes les largeurs, il n'y a aucun cas à deux
-      lignes à traiter. (Le titre précédent faisait 24 caractères et devait
-      être plafonné à 3,3rem : c'était sa longueur qui bridait le corps, pas
-      la police.)
-
-   2. L'APPROCHE EST NÉGATIVE. Sur une chasse fixe, resserrer ne fait pas se
-      cogner les lettres : ça reprend une partie de l'air que la grille impose
-      entre elles. C'est l'inverse de la règle qui vaut pour des lettres
-      détachées à terminaisons obliques.
-
-   3. LA GRAISSE EST À 500. Une chasse fixe dessine des fûts plus fins à corps
-      égal — c'est le prix de la grille — et 400 s'effacerait sur le blanc.
-      500 est le dernier cran avant que les contreformes ne se referment.
-
-   Elle est chargée en 300..700 parce que c'est un seul fichier variable :
-   demander une graisse de plus ne coûte pas un octet. */
+   L'approche est à -0,025 em. Le plancher de craft est à -0,04 em, mais entre
+   -0,02 et -0,03 le texte se tient sans que les fûts se touchent, et Inter a
+   des contreformes assez ouvertes pour l'absorber. Le titre tient sur UNE
+   ligne de 320 à 1920 px : il n'y a aucun cas à deux lignes à traiter. */
 .snow-display {
-  font-family: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: clamp(2.2rem, 6.4vw, 5.6rem);
-  font-weight: 500;
-  line-height: 1.14;
-  letter-spacing: -0.035em;
+  font-family: Inter, "Instrument Sans Fallback", ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(2rem, 5.2vw, 4rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-wrap: balance;
   hyphens: none;
   font-kerning: normal;
-  /* une chasse fixe n'a pas de variantes contextuelles à activer, et une
-     ligature y serait un contresens : elle casserait la grille. */
-  font-variant-ligatures: none;
+  font-variant-ligatures: common-ligatures contextual;
 }
 
 /* Centrage optique du titre. Un texte centré n'est PAS optiquement centré :
    l'approche négative s'applique aussi APRÈS le dernier caractère, et les
    approches latérales du premier et du dernier glyphe diffèrent.
 
-   Mesuré au scan des colonnes d'encre sur le rendu, à quatre corps : l'encre
-   tombe à DROITE de 0,0446 em (89,6 px), 0,0427 em (81,9 px), 0,0407 em
-   (49,2 px) et 0,0426 em (35,2 px). Quatre valeurs quasi identiques : sur une
-   chasse fixe le défaut ne dépend plus de QUELLES lettres ouvrent et ferment
-   la ligne, tous les glyphes partageant la même gouttière — la correction n'a
-   donc pas besoin d'être conditionnée à la largeur.
-
-   Le sens a changé avec le texte : « Créer. Échouer. Évoluer. » se finissait
-   par un point et tombait à gauche, « find your way » ouvre sur un « f » étroit
-   dans sa case et tombe à droite. C'est pourquoi la valeur se remesure à chaque
-   changement de texte, et pourquoi le padding est ici sur la FIN.
-   Un padding p décale l'encre de p/2, d'où p = 2 × 0,0427 = 0,0854 em.
-   Résidus mesurés après correction : +0,17 px au plus grand corps, 0,00 px au
-   plus petit. */
-.snow-display { padding-inline-end: 0.0854em; }
-
-/* Le chapô. 16 → 19 px, mesure 46ch : les 84 caractères tombent en deux
-   lignes pleines sous un titre de 661 px, plutôt qu'en trois lignes courtes.
-   Contraste mesuré : rgba(15,15,15,0.74) sur #FFFAFA = 8,2:1. */
-.snow-lede {
-  font-size: clamp(1rem, 0.55vw + 0.86rem, 1.1875rem);
-  font-weight: 400;
-  line-height: 1.55;
-  letter-spacing: var(--snow-tk-lede);
-  color: rgba(15, 15, 15, 0.74);
-  max-width: min(100%, 46ch);
-  margin-inline: auto;
-  margin-top: clamp(1.25rem, 1.6vw, 1.75rem);
-  text-wrap: balance;
-}
+   Mesuré au scan des colonnes d'encre en DPR 2 — donc au quart de pixel, pas
+   au demi : l'encre tombe à droite de 0,5 px à 64 px et à 39,9 px, et de
+   0,25 px à 32 px. Un padding p décale l'encre de p/2, d'où p = 0,018 em.
+   Résidus après correction : -0,08 / +0,14 / -0,04 px selon le corps.
+   La valeur est propre à CETTE police et à CE texte. Elle valait 0,0854 em en
+   chasse fixe, et elle était du côté OPPOSÉ du temps d'un titre qui finissait
+   par un point : à remesurer dès que l'un des deux change. */
+.snow-display { padding-inline-end: 0.018em; }
 
 /* Interface : 14-15 px, approche très légèrement positive — l'inverse du
    display, parce qu'aux petits corps les contreformes se referment. */
@@ -689,8 +652,8 @@
   --geo: 1;
 }
 
-/* Les trois plans. `overflow: visible` parce que les cercles débordent
-   volontairement de leur boîte, et c'est le clip de .snow-bg qui les coupe. */
+/* Les trois plans. `overflow: visible` parce qu'une forme peut déborder de sa
+   boîte, et c'est le clip de .snow-bg qui la coupe. */
 .snow-bg > svg {
   position: absolute;
   display: block;
@@ -704,11 +667,30 @@
   animation-iteration-count: infinite;
   animation-direction: alternate;
 }
-.snow-bg > svg [stroke] {
+/* Le sélecteur porte sur TOUS les descendants, et c'est load-bearing.
+   `vector-effect` n'est PAS une propriété héritée : posée sur le <g>, elle n'a
+   aucun effet sur les <path> qu'il contient, et `stroke-width: 1` y redevient
+   1 unité du viewBox — donc 9 px à l'écran sur un plan de 160 unités étalé sur
+   1440. C'est le défaut qui donnait des traits épais et mous au lieu d'une
+   épure. Posée sur les formes elles-mêmes, l'épaisseur repasse en pixels de la
+   fenêtre. */
+.snow-bg > svg * {
   fill: none;
   vector-effect: non-scaling-stroke;   /* voir règle 2 */
-  stroke-linecap: round;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+
+  /* UN PIXEL DU CAPTEUR, ET PAS UN DE PLUS. Sous `non-scaling-stroke`,
+     l'épaisseur est exprimée en px CSS — donc 1px fait DEUX pixels physiques
+     sur un écran retina, et le trait y paraît deux fois plus gros que sur un
+     écran ordinaire. On divise par le DPR : le trait fait alors exactement un
+     pixel du capteur partout, c'est-à-dire le plus fin qu'un écran sache
+     tracer. C'est ce qui permet de monter l'encre à 0,115-0,20 — bien plus
+     visible qu'avant — sans que le tracé s'épaississe. */
+  stroke-width: 1px;
 }
+@media (min-resolution: 2dppx) { .snow-bg > svg * { stroke-width: 0.5px; } }
+@media (min-resolution: 3dppx) { .snow-bg > svg * { stroke-width: 0.34px; } }
 
 
 /* ── CONTRASTE — mesuré, pas déduit ──────────────────────────────────────
@@ -728,60 +710,61 @@
    mesure, pas de refaire le calcul. */
 
 
-/* ── 1 · la grille ────────────────────────────────────────────────────────
+/* ── 1 · la trame ───────────────────────────────────────────────────────
    Plein cadre, `preserveAspectRatio="none"` : les verticales restent
    verticales et les horizontales horizontales, seul leur écartement suit le
    format. C'est le seul plan qui peut se permettre ce mode — une ellipse ou
    un triangle y seraient déformés.
-   Elle dérive latéralement, jamais verticalement : une grille qui monte se
-   lit comme un défilement de page. */
-.snow-geo-grille {
+   Elle dérive latéralement, jamais verticalement : une trame qui monte se lit
+   comme un défilement de page. */
+.snow-geo-trame {
   inset: 0;
   width: 100%;
   height: 100%;
-  animation-name: geo-grille;
+  animation-name: geo-trame;
   animation-duration: 55s;
   animation-delay: -21s;
 }
-@keyframes geo-grille {
-  from { transform: translate3d(-20px, 0, 0); opacity: calc(0.76 * var(--geo)); }
-  to   { transform: translate3d( 20px, 0, 0); opacity: calc(1    * var(--geo)); }
+@keyframes geo-trame {
+  from { transform: translate3d(-14px, 0, 0); opacity: calc(0.82 * var(--geo)); }
+  to   { transform: translate3d( 14px, 0, 0); opacity: calc(1    * var(--geo)); }
 }
 
 /* ── 2 · les cercles ──────────────────────────────────────────────────────
    Un carré, donc les cercles restent des cercles sans que
-   `preserveAspectRatio` ait son mot à dire. Deux grands qui se coupent —
-   le geste exact de la seconde référence — et un petit qui casse la paire.
-   Il TOURNE : c'est le mouvement le plus lisible du lot, parce qu'un cercle
-   qui tourne ne se trahit que par ses intersections, et ce sont précisément
-   elles qu'on regarde. 8° en 80 s, soit 0,59 px/s au bord du grand cercle. */
+   `preserveAspectRatio` ait son mot à dire. Posés bas et à gauche, et
+   nettement plus petits qu'avant : 38vw au lieu de 58, donc un rayon de
+   148 px à 1440 au lieu de 261. Le tracé se regarde, il ne se subit pas.
+   Ils TOURNENT : c'est le mouvement le plus lisible du lot, parce qu'un
+   cercle qui tourne ne se trahit que par ses intersections, et ce sont
+   précisément elles qu'on regarde. */
 .snow-geo-cercles {
-  /* Posé BAS et à gauche, jamais au centre : le premier jet remplissait tout
-     l'écran et le titre se lisait par-dessus un entrelacs. L'arc supérieur des
-     deux grands cercles passe maintenant sous le chapô, pas au travers. */
-  left: 34%;
-  top: 92%;
-  width: clamp(460px, 58vw, 900px);
-  height: clamp(460px, 58vw, 900px);
-  margin-left: calc(clamp(460px, 58vw, 900px) / -2);
-  margin-top: calc(clamp(460px, 58vw, 900px) / -2);
+  left: 33%;
+  top: 74%;
+  width: clamp(300px, 38vw, 580px);
+  height: clamp(300px, 38vw, 580px);
+  margin-left: calc(clamp(300px, 38vw, 580px) / -2);
+  margin-top: calc(clamp(300px, 38vw, 580px) / -2);
   animation-name: geo-cercles;
   animation-duration: 80s;
   animation-delay: -34s;
 }
 @keyframes geo-cercles {
-  from { transform: translate3d(-2.4%,  1.0%, 0) rotate(-4deg); opacity: calc(0.70 * var(--geo)); }
-  to   { transform: translate3d( 2.4%, -1.0%, 0) rotate(4deg);  opacity: calc(1    * var(--geo)); }
+  from { transform: translate3d(-2.6%,  1.1%, 0) rotate(-5deg); opacity: calc(0.74 * var(--geo)); }
+  to   { transform: translate3d( 2.6%, -1.1%, 0) rotate(5deg);  opacity: calc(1    * var(--geo)); }
 }
 
 /* ── 3 · les angles ───────────────────────────────────────────────────────
-   Rectangles, triangles et segments obliques. Plein cadre en 16:10, avec
-   `preserveAspectRatio="xMidYMid slice"` : les angles restent des angles quel
-   que soit le format de l'écran — sous `none`, un angle de 45° deviendrait 27°
-   sur un téléphone et deux triangles semblables cesseraient de l'être.
-   Tout le tracé est repoussé sur les BORDS : la bande centrale est vide par
-   construction, et c'est elle qui reçoit le titre. C'est la géométrie qui
-   protège la lisibilité, pas un masque ni un réglage d'opacité.
+   Un rectangle, un triangle, deux traits de cote. Plein cadre en 16:10, avec
+   `preserveAspectRatio="xMidYMid meet"` : le dessin TIENT dans le cadre au
+   lieu d'être recadré dedans. C'est ça, le dézoom — et sur un écran plus haut
+   que 16:10 il reste des marges blanches en haut et en bas, ce qui est juste :
+   une épure est posée sur une feuille, elle n'en déborde pas. « meet » plutôt
+   que « none » parce que sous `none` un angle de 45° deviendrait 27° sur un
+   téléphone.
+   Rien entre y 34 et 62 : la bande centrale est vide par construction, et
+   c'est elle qui reçoit le titre. C'est la géométrie qui protège la
+   lisibilité, pas un masque ni un réglage d'opacité.
    Il dérive à contresens de la grille — c'est cet écart de vitesse entre deux
    plans, et pas la vitesse elle-même, qui donne la profondeur. Pas de rotation
    ici : un rectangle qui pivote se voit tout de suite, et deux plans qui
@@ -794,6 +777,16 @@
   animation-duration: 67s;
   animation-delay: -13s;
 }
+/* Sur un écran étroit, « meet » ajuste le dessin à la LARGEUR : il n'occupe
+   plus qu'une bande de 244 px de haut, centrée — c'est-à-dire pile là où vit
+   le titre. On ancre donc la boîte en bas : le dessin se recentre dans les
+   62 % inférieurs et passe sous le titre au lieu de l'encadrer. Le haut de
+   l'écran ne garde que la trame, ce qui est le bon degré de dépouillement
+   pour un téléphone. */
+@media (max-width: 40rem) {
+  .snow-geo-angles { inset: auto 0 0 0; height: 62%; }
+}
+
 @keyframes geo-angles {
   from { transform: translate3d( 16px, -6px, 0); opacity: calc(0.66 * var(--geo)); }
   to   { transform: translate3d(-16px,  6px, 0); opacity: calc(0.96 * var(--geo)); }
@@ -1281,7 +1274,6 @@
   /* Contraste renforcé : le tracé recule pour que le texte domine. */
   .snow-bg { --geo: 0.45; }
   .snow-bg > svg { animation: none; }
-  .snow-lede { color: rgba(15, 15, 15, 0.92); }   /* 8,2:1 → 15,8:1 */
   .snow-intro--out { filter: none; }
   .lg {
     background: #FFFFFF;
@@ -1321,7 +1313,7 @@
      la règle globale `animation-duration: 0.01ms !important` de @layer base
      la casserait. */
   .snow-bg > svg { animation: none; }
-  .snow-geo-grille  { transform: translate3d(  6px, 0, 0);                    opacity: calc(0.92 * var(--geo)); }
+  .snow-geo-trame  { transform: translate3d(  6px, 0, 0);                    opacity: calc(0.92 * var(--geo)); }
   .snow-geo-cercles { transform: translate3d(-1.1%,  0.5%, 0) rotate(-1.8deg); opacity: calc(0.88 * var(--geo)); }
   .snow-geo-angles  { transform: translate3d(  5px, -2px, 0);                  opacity: calc(0.84 * var(--geo)); }
 
