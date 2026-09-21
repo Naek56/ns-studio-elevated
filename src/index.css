@@ -666,6 +666,18 @@
   animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
   animation-iteration-count: infinite;
   animation-direction: alternate;
+
+  /* LE TRACÉ S'INVERSE AVEC LE FOND. Depuis que le fond va du blanc au noir,
+     une épure à l'encre disparaît dans sa moitié basse. `difference` calcule
+     |fond − trait| : un trait BLANC devient donc noir sur le blanc et blanc
+     sur le noir, et son contraste reste exactement le même aux deux bouts.
+     C'est pour ça que les traits du SVG sont écrits en rgba(255,255,255,α) et
+     non en encre — lus seuls, ils paraissent invisibles ; c'est le mélange qui
+     leur donne leur valeur.
+     Le mélange est confiné : .snow-bg porte `contain: paint`, donc il isole
+     son groupe et le tracé ne se mélange jamais avec le titre, qui vit dans
+     .snow-home, peint après. */
+  mix-blend-mode: difference;
 }
 /* Le sélecteur porte sur TOUS les descendants, et c'est load-bearing.
    `vector-effect` n'est PAS une propriété héritée : posée sur le <g>, elle n'a
