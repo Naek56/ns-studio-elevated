@@ -598,210 +598,31 @@
 }
 
 
-/* ══════════════════════════════════════════════════════════════════════════
-   LE CALQUE DE CONSTRUCTION — le fond de l'accueil.
+/* ── Le fond ──────────────────────────────────────────────────────────────
+   Un seul dégradé radial, et rien d'autre : plus de trame, plus de cercles,
+   plus d'angles, plus rien d'animé. Le calque ne porte donc plus qu'un enfant,
+   <BgGradient>, qui peint le blanc neige au cœur et l'encre sur les bords.
 
-   Il remplace le vitrage bleu par un tracé d'épure : des lignes, des cercles,
-   des rectangles et des triangles, à l'encre, sur le blanc neige. C'est le
-   registre des deux références — des traits de construction fins, la géométrie
-   AVANT le dessin — mais en noir sur blanc plutôt qu'en dégradé bleu.
+   `inset: 0` et non plus -32px : cette marge n'existait que pour que la dérive
+   au pointeur ne découvre jamais de bande blanche sur le bord d'attaque. La
+   dérive est retirée avec le reste du mouvement, la marge n'a plus d'objet.
 
-   TROIS RÈGLES QUI TIENNENT TOUT LE DESSIN :
+   `position: fixed` reste : le fond ne doit pas défiler. `contain: layout
+   paint style` reste aussi — il isole le calque, ce qui garantit que rien de
+   ce qui est peint ici ne peut déborder sur l'accueil.
 
-   1. IRRÉGULIER, PAS ALÉATOIRE. Les verticales ne sont pas à pas constant
-      (6,5 / 18 / 23,5 / 37 / 52,5 / 61 / 74,5 / 81 / 93) et la moitié des
-      traits s'arrêtent avant le bord : c'est ce qui fait lire une épure et
-      non un papier millimétré. Mais chaque trait reste RECTILIGNE et chaque
-      cercle reste un cercle — l'irrégularité est dans le placement, jamais
-      dans la main. C'est la différence entre une épure et un gribouillage.
-
-   2. UN TRAIT FIN NE SE MESURE PAS EN EM. Sous `vector-effect:
-      non-scaling-stroke`, l'épaisseur est appliquée APRÈS la transformation :
-      le trait fait exactement 1 px du capteur quelle que soit la taille du
-      plan, quel que soit le zoom, quel que soit le DPR. Sans ça, le plan des
-      cercles — qui fait 78vmax — multiplierait son `stroke-width` par 10.
-
-   3. TROIS PLANS, PAS TRENTE ÉLÉMENTS ANIMÉS. Un `<g>` SVG animé fait
-      repeindre tout son SVG à chaque image ; un `<svg>` racine, lui, est un
-      élément remplacé que le compositeur promeut comme un div. Le dessin est
-      donc découpé en trois SVG indépendants, chacun animé en bloc — trois
-      couches composées au total, contre vingt-et-une pour le vitrage.
-
-   Aucun tramage ici : il ne restait plus un seul dégradé à détramer. Le fond
-   est du #FFFAFA plein, et tout le reste est de l'encre. */
-
+   Le `background: #FFFAFA` est un REPLI, pas la couleur du fond : si le
+   composant ne monte pas, la page reste en blanc neige au lieu de tomber sur
+   le blanc pur du navigateur. */
 .snow-bg {
   position: fixed;
-  /* -32px, soit plus que la dérive au pointeur (16 px en x, 10 px en y) :
-     `overflow: hidden` et `contain: paint` clippent sur CETTE boîte, et elle
-     voyage avec la transformée. À `inset: 0`, le décalage découvrirait une
-     bande de #FFFAFA pur à arête franche sur le bord d'attaque. */
-  inset: -32px;
+  inset: 0;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
   contain: layout paint style;
   transform: translate3d(0, 0, 0);  /* promotion — pas besoin de will-change */
   background: #FFFAFA;
-
-  /* La seule molette du dessin : elle multiplie l'opacité des trois plans
-     depuis un seul endroit. Les alphas de trait sont écrits en dur dans le
-     SVG, entre 0,05 et 0,13 ; c'est ce facteur qui les monte ou les descend
-     ensemble. Toute valeur au-dessus de 1,4 demande de remesurer le contraste
-     — voir le bloc CONTRASTE. */
-  --geo: 1;
-}
-
-/* Les trois plans. `overflow: visible` parce qu'une forme peut déborder de sa
-   boîte, et c'est le clip de .snow-bg qui la coupe. */
-.snow-bg > svg {
-  position: absolute;
-  display: block;
-  overflow: visible;
-  pointer-events: none;
-  /* sinusoïdale : dérivée nulle aux deux bouts. En alternate, `linear`
-     produirait une discontinuité de vitesse au demi-tour, que l'œil attrape
-     d'autant mieux ici que les traits sont NETS — sur un dégradé flou, un
-     à-coup passe inaperçu ; sur une hairline, non. */
-  animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-
-  /* LE TRACÉ S'INVERSE AVEC LE FOND. Depuis que le fond va du blanc au noir,
-     une épure à l'encre disparaît dans sa moitié basse. `difference` calcule
-     |fond − trait| : un trait BLANC devient donc noir sur le blanc et blanc
-     sur le noir, et son contraste reste exactement le même aux deux bouts.
-     C'est pour ça que les traits du SVG sont écrits en rgba(255,255,255,α) et
-     non en encre — lus seuls, ils paraissent invisibles ; c'est le mélange qui
-     leur donne leur valeur.
-     Le mélange est confiné : .snow-bg porte `contain: paint`, donc il isole
-     son groupe et le tracé ne se mélange jamais avec le titre, qui vit dans
-     .snow-home, peint après. */
-  mix-blend-mode: difference;
-}
-/* Le sélecteur porte sur TOUS les descendants, et c'est load-bearing.
-   `vector-effect` n'est PAS une propriété héritée : posée sur le <g>, elle n'a
-   aucun effet sur les <path> qu'il contient, et `stroke-width: 1` y redevient
-   1 unité du viewBox — donc 9 px à l'écran sur un plan de 160 unités étalé sur
-   1440. C'est le défaut qui donnait des traits épais et mous au lieu d'une
-   épure. Posée sur les formes elles-mêmes, l'épaisseur repasse en pixels de la
-   fenêtre. */
-.snow-bg > svg * {
-  fill: none;
-  vector-effect: non-scaling-stroke;   /* voir règle 2 */
-  stroke-linecap: butt;
-  stroke-linejoin: miter;
-
-  /* UN PIXEL DU CAPTEUR, ET PAS UN DE PLUS. Sous `non-scaling-stroke`,
-     l'épaisseur est exprimée en px CSS — donc 1px fait DEUX pixels physiques
-     sur un écran retina, et le trait y paraît deux fois plus gros que sur un
-     écran ordinaire. On divise par le DPR : le trait fait alors exactement un
-     pixel du capteur partout, c'est-à-dire le plus fin qu'un écran sache
-     tracer. C'est ce qui permet de monter l'encre à 0,115-0,20 — bien plus
-     visible qu'avant — sans que le tracé s'épaississe. */
-  stroke-width: 1px;
-}
-@media (min-resolution: 2dppx) { .snow-bg > svg * { stroke-width: 0.5px; } }
-@media (min-resolution: 3dppx) { .snow-bg > svg * { stroke-width: 0.34px; } }
-
-
-/* ── CONTRASTE — mesuré, pas déduit ──────────────────────────────────────
-   La borne évidente serait « le trait le plus dense du dessin », soit 0,085
-   d'alpha, ce qui donnerait 15,4:1. Elle est FAUSSE : là où deux traits se
-   croisent, les alphas se composent, et le plan porte en plus une opacité
-   animée. Un croisement triple monte à 0,21 d'alpha effectif.
-
-   Valeurs relevées par scan du pixel rendu, plein écran, à trois instants
-   répartis sur quatorze secondes d'animation, à 1440×900 et 390×844. Le pixel
-   le plus sombre du fond est un croisement à rgb(205, 199, 199) :
-     encre du titre #0F0F0F          11,49:1   (plancher demandé 7:1)
-     encre du chapô rgba(15,15,15,.74) 5,31:1   (plancher 4,5:1)
-   Et ils sont tenus sur un trait d'UN pixel de large : un glyphe ne peut
-   jamais poser plus qu'une fraction de sa surface dessus.
-   Ces chiffres dépendent de --geo (1). Toute hausse demande de refaire la
-   mesure, pas de refaire le calcul. */
-
-
-/* ── 1 · la trame ───────────────────────────────────────────────────────
-   Plein cadre, `preserveAspectRatio="none"` : les verticales restent
-   verticales et les horizontales horizontales, seul leur écartement suit le
-   format. C'est le seul plan qui peut se permettre ce mode — une ellipse ou
-   un triangle y seraient déformés.
-   Elle dérive latéralement, jamais verticalement : une trame qui monte se lit
-   comme un défilement de page. */
-.snow-geo-trame {
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  animation-name: geo-trame;
-  animation-duration: 55s;
-  animation-delay: -21s;
-}
-@keyframes geo-trame {
-  from { transform: translate3d(-14px, 0, 0); opacity: calc(0.82 * var(--geo)); }
-  to   { transform: translate3d( 14px, 0, 0); opacity: calc(1    * var(--geo)); }
-}
-
-/* ── 2 · les cercles ──────────────────────────────────────────────────────
-   Un carré, donc les cercles restent des cercles sans que
-   `preserveAspectRatio` ait son mot à dire. Posés bas et à gauche, et
-   nettement plus petits qu'avant : 38vw au lieu de 58, donc un rayon de
-   148 px à 1440 au lieu de 261. Le tracé se regarde, il ne se subit pas.
-   Ils TOURNENT : c'est le mouvement le plus lisible du lot, parce qu'un
-   cercle qui tourne ne se trahit que par ses intersections, et ce sont
-   précisément elles qu'on regarde. */
-.snow-geo-cercles {
-  left: 33%;
-  top: 74%;
-  width: clamp(300px, 38vw, 580px);
-  height: clamp(300px, 38vw, 580px);
-  margin-left: calc(clamp(300px, 38vw, 580px) / -2);
-  margin-top: calc(clamp(300px, 38vw, 580px) / -2);
-  animation-name: geo-cercles;
-  animation-duration: 80s;
-  animation-delay: -34s;
-}
-@keyframes geo-cercles {
-  from { transform: translate3d(-2.6%,  1.1%, 0) rotate(-5deg); opacity: calc(0.74 * var(--geo)); }
-  to   { transform: translate3d( 2.6%, -1.1%, 0) rotate(5deg);  opacity: calc(1    * var(--geo)); }
-}
-
-/* ── 3 · les angles ───────────────────────────────────────────────────────
-   Un rectangle, un triangle, deux traits de cote. Plein cadre en 16:10, avec
-   `preserveAspectRatio="xMidYMid meet"` : le dessin TIENT dans le cadre au
-   lieu d'être recadré dedans. C'est ça, le dézoom — et sur un écran plus haut
-   que 16:10 il reste des marges blanches en haut et en bas, ce qui est juste :
-   une épure est posée sur une feuille, elle n'en déborde pas. « meet » plutôt
-   que « none » parce que sous `none` un angle de 45° deviendrait 27° sur un
-   téléphone.
-   Rien entre y 34 et 62 : la bande centrale est vide par construction, et
-   c'est elle qui reçoit le titre. C'est la géométrie qui protège la
-   lisibilité, pas un masque ni un réglage d'opacité.
-   Il dérive à contresens de la grille — c'est cet écart de vitesse entre deux
-   plans, et pas la vitesse elle-même, qui donne la profondeur. Pas de rotation
-   ici : un rectangle qui pivote se voit tout de suite, et deux plans qui
-   tournent ensemble se liraient comme un carrousel. */
-.snow-geo-angles {
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  animation-name: geo-angles;
-  animation-duration: 67s;
-  animation-delay: -13s;
-}
-/* Sur un écran étroit, « meet » ajuste le dessin à la LARGEUR : il n'occupe
-   plus qu'une bande de 244 px de haut, centrée — c'est-à-dire pile là où vit
-   le titre. On ancre donc la boîte en bas : le dessin se recentre dans les
-   62 % inférieurs et passe sous le titre au lieu de l'encadrer. Le haut de
-   l'écran ne garde que la trame, ce qui est le bon degré de dépouillement
-   pour un téléphone. */
-@media (max-width: 40rem) {
-  .snow-geo-angles { inset: auto 0 0 0; height: 62%; }
-}
-
-@keyframes geo-angles {
-  from { transform: translate3d( 16px, -6px, 0); opacity: calc(0.66 * var(--geo)); }
-  to   { transform: translate3d(-16px,  6px, 0); opacity: calc(0.96 * var(--geo)); }
 }
 
 
@@ -1257,14 +1078,9 @@
 /* Moins de transparence : la matière devient un solide. On retire le
    backdrop-filter ET les deux pseudo-éléments — garder une réfraction sur un
    fond opaque serait un mensonge visuel — et on rend la limite du contrôle par
-   une vraie bordure. Le fond, qui est une transparence lui aussi, s'assourdit. */
+   une vraie bordure. */
 @media (prefers-reduced-transparency: reduce) {
   .snow { --snow-blur: 0px; }
-  /* Moins de transparence : le dessin s'efface derrière les commandes, et on
-     coupe les animations — l'opacité de groupe aplatit les trois plans dans
-     une seule surface de rendu, qui serait alors redessinée à chaque image. */
-  .snow-bg { --geo: 0.55; }
-  .snow-bg > svg { animation: none; }
   .snow-intro--out { filter: none; }
   .lg {
     background: #FFFFFF;
@@ -1283,9 +1099,6 @@
    le tracé s'efface. #0F0F0F sur #FFFFFF = 19,4:1. */
 @media (prefers-contrast: more) {
   .snow { --snow-blur: 0px; }
-  /* Contraste renforcé : le tracé recule pour que le texte domine. */
-  .snow-bg { --geo: 0.45; }
-  .snow-bg > svg { animation: none; }
   .snow-intro--out { filter: none; }
   .lg {
     background: #FFFFFF;
@@ -1319,15 +1132,7 @@
    `animation-play-state: paused`, parce que la règle globale
    `animation-duration: 0.01ms !important` de @layer base la casserait. */
 @media (prefers-reduced-motion: reduce) {
-  /* Le dessin ne s'efface pas : il se fige sur une pose choisie. Il tient
-     debout figé parce que sa beauté est dans le TRACÉ, qui est statique de
-     toute façon. Pose écrite en dur et non `animation-play-state: paused` :
-     la règle globale `animation-duration: 0.01ms !important` de @layer base
-     la casserait. */
-  .snow-bg > svg { animation: none; }
-  .snow-geo-trame  { transform: translate3d(  6px, 0, 0);                    opacity: calc(0.92 * var(--geo)); }
-  .snow-geo-cercles { transform: translate3d(-1.1%,  0.5%, 0) rotate(-1.8deg); opacity: calc(0.88 * var(--geo)); }
-  .snow-geo-angles  { transform: translate3d(  5px, -2px, 0);                  opacity: calc(0.84 * var(--geo)); }
+  /* Le fond n'a plus rien d'animé : il n'y a rien à figer ici. */
 
   .snow-letter { perspective: none; }
   .snow-letter-i,

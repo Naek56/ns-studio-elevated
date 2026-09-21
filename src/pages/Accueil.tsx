@@ -64,7 +64,6 @@ export default function Accueil() {
 
   const wordRef = useRef<HTMLDivElement | null>(null);
   const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const bgRef = useRef<HTMLDivElement | null>(null);
   const phaseRef = useRef(phase);
   useEffect(() => { phaseRef.current = phase; }, [phase]);
 
@@ -152,75 +151,6 @@ export default function Accueil() {
       window.removeEventListener("keydown", skip);
     };
   }, [reduced]);
-
-  /* La dérive au pointeur : le champ de lumière ne suit pas le curseur, il se
-     PENCHE vers lui. L'autre sens (parallaxe inverse) se lit « je me déplace
-     dans la scène » ; celui-ci se lit « la lumière se tourne vers moi » — plus
-     calme, et c'est lui qui fait que le verre du bouton réfracte quelque chose
-     qui change. La boucle s'arrête d'elle-même dès que l'écart passe sous
-     0,05 px : coût nul au repos. Dépendances vides — il ne doit jamais se
-     remonter, sinon la transformée repart de zéro. */
-  useEffect(() => {
-    const el = bgRef.current;
-    if (!el) return;
-    const mmMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const mmFine = window.matchMedia("(hover: hover) and (pointer: fine)");
-
-    let raf = 0, idle = true, last = 0;
-    let tx = 0, ty = 0, gx = 0, gy = 0;
-    const MAX_X = 16, MAX_Y = 10;   // px — plafond assumé
-    const TAU = 380;                // ms — constante de temps
-
-    const write = () => {
-      el.style.transform = `translate3d(${tx.toFixed(2)}px, ${ty.toFixed(2)}px, 0)`;
-    };
-    const loop = (t: number) => {
-      const dt = last ? Math.min(t - last, 50) : 16;
-      last = t;
-      const k = 1 - Math.exp(-dt / TAU);   // lissage indépendant du frame-rate
-      tx += (gx - tx) * k;
-      ty += (gy - ty) * k;
-      write();
-      if (Math.abs(gx - tx) < 0.05 && Math.abs(gy - ty) < 0.05) {
-        tx = gx; ty = gy; write(); idle = true; raf = 0; last = 0; return;
-      }
-      raf = requestAnimationFrame(loop);
-    };
-    const wake = () => {
-      if (idle) { idle = false; last = 0; raf = requestAnimationFrame(loop); }
-    };
-    const onMove = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse") return;
-      gx = ((e.clientX / window.innerWidth) * 2 - 1) * MAX_X;
-      gy = ((e.clientY / window.innerHeight) * 2 - 1) * MAX_Y;
-      wake();
-    };
-    const onOut = () => { gx = 0; gy = 0; wake(); };
-
-    const unbind = () => {
-      window.removeEventListener("pointermove", onMove);
-      document.removeEventListener("pointerleave", onOut);
-      window.removeEventListener("blur", onOut);
-    };
-    const bind = () => {
-      unbind();
-      if (mmMotion.matches || !mmFine.matches) { gx = 0; gy = 0; wake(); return; }
-      window.addEventListener("pointermove", onMove, { passive: true });
-      document.addEventListener("pointerleave", onOut);
-      window.addEventListener("blur", onOut);
-    };
-
-    bind();
-    mmMotion.addEventListener("change", bind);
-    mmFine.addEventListener("change", bind);
-    return () => {
-      unbind();
-      mmMotion.removeEventListener("change", bind);
-      mmFine.removeEventListener("change", bind);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-
   /* Le décalage qui garde le mot centré pendant qu'il se construit : la moitié
      de ce qui reste caché à droite. Exact quelles que soient l'approche et les
      marges, parce qu'il ne compare que des bords réellement rendus — et
@@ -238,84 +168,23 @@ export default function Accueil() {
     <div className="snow relative min-h-[100svh] overflow-hidden">
       <ContactModal />
 
-      {/* Le calque de construction — trois plans d'épure à l'encre sur le blanc.
-          UNE seule instance, partagée par l'intro et par l'accueil, donc rien ne
-          saute au moment de la passation. Frère de .snow-intro et de .snow-home,
-          jamais un enfant : c'est ce qui le laisse entrer dans le backdrop du
-          bouton en verre.
-
-          Les trois plans sont des enfants DIRECTS : `.snow-bg > svg` leur donne
-          la courbe, l'infini et l'alternance, et les règles `animation: none`
-          des media queries d'accessibilité les couvrent sans toucher un
-          sélecteur. Un conteneur intermédiaire aurait cassé les trois en
-          silence.
-          Ce bloc ne doit JAMAIS être remonté ni conditionné par la phase : les
-          animations à délai négatif repartiraient de leur origine et tout le
-          dessin claquerait à la passation. */}
-      <div className="snow-bg" aria-hidden ref={bgRef}>
+      {/* Le fond : un seul dégradé radial, du blanc neige au cœur à l'encre
+          sur les bords. UNE seule instance, partagée par l'intro et par
+          l'accueil, donc rien ne saute au moment de la passation. Frère de
+          .snow-intro et de .snow-home, jamais un enfant : c'est ce qui le
+          laisse entrer dans le backdrop du bouton en verre.
+          Le repli en blanc neige est passé en className plutôt que laissé au
+          `bg-white` du composant : si le style en ligne ne s'applique pas, la
+          page reste en neige au lieu de tomber sur le blanc pur. */}
+      <div className="snow-bg" aria-hidden>
         {/* Le dégradé, en base du calque. Le violet du composant d'origine est
             remplacé par l'encre du site : une seule valeur de noir sur toute
             la page plutôt qu'un #000 de plus à côté du #0F0F0F. Les autres
             paramètres sont ceux d'origine — cœur à 50 % 10 %, rayon 125 %,
             palier à 40 %.
-            C'est lui qui porte la couleur du fond maintenant : le
-            `background: #FFFAFA` de .snow-bg ne reste que comme repli si le
-            composant ne monte pas. */}
-        <BgGradient gradientFrom="#FFFAFA" gradientTo="#0F0F0F" />
-
-        {/* 1 · LA TRAME. Cinq traits, pas quinze. Plein cadre,
-            preserveAspectRatio="none" : seules des verticales et des
-            horizontales ici, ce sont les deux seules formes que ce mode ne
-            déforme pas. Écartements inégaux (22 / 74 / 131 sur 160), et la
-            verticale centrale S'INTERROMPT sur la bande du titre — une
-            interruption de trait de construction, pas une ligne qui passe
-            derrière un mot.
-            Le segment court à y=6 ne va que de x=101 à x=160 : il passe
-            DERRIÈRE le bouton en verre, sans jamais traverser les onglets.
-            C'est ce qui donne au backdrop-filter une pente à réfracter, et
-            c'est aussi ce qui garantit que les onglets ne se lisent jamais
-            par-dessus un croisement. */}
-        <svg className="snow-geo-trame" viewBox="0 0 160 100" preserveAspectRatio="none">
-          <g stroke="rgba(255,255,255,0.22)">
-            <path d="M22 0 V100" />
-            <path d="M131 0 V100" />
-            <path d="M74 0 V34" />
-            <path d="M74 62 V100" />
-            <path d="M0 18 H160" />
-            <path d="M0 79 H160" />
-            <path d="M101 6 H160" />
-          </g>
-        </svg>
-
-        {/* 2 · LES CERCLES. Un carré, donc un cercle reste un cercle sans que
-            preserveAspectRatio ait son mot à dire. Deux seulement, et petits :
-            le tracé se regarde de loin, il ne se subit pas de près. Rayons
-            INÉGAUX (16 et 13) — deux cercles de même rayon qui se coupent,
-            c'est une vesica piscis, une figure trop reconnaissable pour un
-            fond. */}
-        <svg className="snow-geo-cercles" viewBox="0 0 100 100">
-          <g stroke="rgba(255,255,255,0.36)">
-            <circle cx="42" cy="50" r="27" />
-            <circle cx="61" cy="56" r="22" />
-          </g>
-        </svg>
-
-        {/* 3 · LES ANGLES. Un rectangle, un triangle, deux traits de cote.
-            Quatre formes, c'est tout. En 16:10 et en « meet » : le dessin
-            TIENT dans le cadre au lieu d'être recadré dedans — c'est ça, le
-            dézoom. Sur un écran plus haut que 16:10 il reste des marges
-            blanches en haut et en bas, et c'est juste : une épure est posée
-            sur une feuille, elle n'en déborde pas.
-            Rien entre y 34 et 62 : la bande du titre est vide PAR
-            CONSTRUCTION, pas par un masque ni par un réglage d'opacité. */}
-        <svg className="snow-geo-angles" viewBox="0 0 160 100" preserveAspectRatio="xMidYMid meet">
-          <g stroke="rgba(255,255,255,0.36)">
-            <rect x="103" y="19" width="27" height="18" />
-            <path d="M99 88 L117 64 L135 88 Z" />
-            <path d="M14 29 H44" />
-            <path d="M150 47 V73" />
-          </g>
-        </svg>
+            C'est lui qui porte la couleur du fond : le `background: #FFFAFA`
+            de .snow-bg ne reste que comme second repli. */}
+        <BgGradient className="bg-[#FFFAFA]" gradientFrom="#FFFAFA" gradientTo="#0F0F0F" />
       </div>
 
       {/* ── intro « way » ── */}
