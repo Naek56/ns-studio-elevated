@@ -237,42 +237,96 @@ export default function Accueil() {
     <div className="snow relative min-h-[100svh] overflow-hidden">
       <ContactModal />
 
-      {/* Le vitrage — dix-neuf lames de verre plantées au pied de l'écran, plus
-          deux nappes de lumière. UNE seule instance, partagée par l'intro et par
-          l'accueil, donc rien ne saute au moment de la passation. Frère de
-          .snow-intro et de .snow-home, jamais un enfant : c'est ce qui le laisse
-          entrer dans le backdrop du bouton en verre.
+      {/* Le calque de construction — trois plans d'épure à l'encre sur le blanc.
+          UNE seule instance, partagée par l'intro et par l'accueil, donc rien ne
+          saute au moment de la passation. Frère de .snow-intro et de .snow-home,
+          jamais un enfant : c'est ce qui le laisse entrer dans le backdrop du
+          bouton en verre.
 
-          Les lames sont des enfants DIRECTS : `.snow-bg > i` leur donne la
-          courbe, l'infini et l'alternance, et les règles `animation: none` des
-          media queries d'accessibilité les couvrent sans toucher un sélecteur.
-          Un conteneur intermédiaire aurait cassé les trois en silence.
-          Ce bloc ne doit JAMAIS être remonté ni conditionné par la phase :
-          les dix-neuf animations à délai négatif repartiraient de leur origine
-          et tout le champ claquerait à la passation. */}
+          Les trois plans sont des enfants DIRECTS : `.snow-bg > svg` leur donne
+          la courbe, l'infini et l'alternance, et les règles `animation: none`
+          des media queries d'accessibilité les couvrent sans toucher un
+          sélecteur. Un conteneur intermédiaire aurait cassé les trois en
+          silence.
+          Ce bloc ne doit JAMAIS être remonté ni conditionné par la phase : les
+          animations à délai négatif repartiraient de leur origine et tout le
+          dessin claquerait à la passation. */}
       <div className="snow-bg" aria-hidden ref={bgRef}>
-        <i className="snow-bg-lueur" />
-        <i className="snow-bg-nappe" />
+        {/* 1 · LA GRILLE. Plein cadre, preserveAspectRatio="none" : seules des
+            verticales et des horizontales ici, ce sont les deux seules formes
+            que ce mode ne déforme pas. Écartements volontairement inégaux, et
+            la moitié des traits s'arrêtent avant le bord — c'est ça qui fait
+            lire une épure plutôt qu'un papier millimétré.
+            Les horizontales à 4,5 et 11 passent DERRIÈRE la nav : sans elles,
+            le backdrop-filter du bouton en verre n'aurait qu'un blanc plein à
+            ré-échantillonner et la pilule redeviendrait un aplat. */}
+        <svg className="snow-geo-grille" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <g stroke="rgba(15,15,15,0.085)" strokeWidth="1">
+            <path d="M18 0 V100" />
+            <path d="M52.5 0 V100" />
+            <path d="M81 0 V100" />
+            <path d="M0 24.5 H100" />
+            <path d="M0 71 H100" />
+          </g>
+          <g stroke="rgba(15,15,15,0.045)" strokeWidth="1">
+            <path d="M6.5 0 V63" />
+            <path d="M23.5 17 V100" />
+            <path d="M37 0 V41" />
+            <path d="M61 29 V100" />
+            <path d="M74.5 0 V56" />
+            <path d="M93 34 V100" />
+            <path d="M0 4.5 H100" />
+            <path d="M0 11 H68" />
+            <path d="M22 33 H100" />
+            <path d="M31 84.5 H100" />
+          </g>
+        </svg>
 
-        <i className="snow-lame snow-lame-01" />
-        <i className="snow-lame snow-lame--fil snow-lame-02" />
-        <i className="snow-lame snow-lame-03" />
-        <i className="snow-lame snow-lame--fil snow-lame-04" />
-        <i className="snow-lame snow-lame--fil snow-lame-05" />
-        <i className="snow-lame snow-lame-06" />
-        <i className="snow-lame snow-lame--fil snow-lame-07" />
-        <i className="snow-lame snow-lame-08" />
-        <i className="snow-lame snow-lame--fil snow-lame-09" />
-        <i className="snow-lame snow-lame-10" />
-        <i className="snow-lame snow-lame--fil snow-lame-11" />
-        <i className="snow-lame snow-lame-12" />
-        <i className="snow-lame snow-lame--fil snow-lame-13" />
-        <i className="snow-lame snow-lame-14" />
-        <i className="snow-lame snow-lame-15" />
-        <i className="snow-lame snow-lame--fil snow-lame-16" />
-        <i className="snow-lame snow-lame-17" />
-        <i className="snow-lame snow-lame--fil snow-lame-18" />
-        <i className="snow-lame snow-lame-19" />
+        {/* 2 · LES CERCLES. Un carré, donc un cercle reste un cercle sans que
+            preserveAspectRatio ait son mot à dire. Deux grands qui se coupent —
+            le geste exact de la seconde référence — et un petit, décentré, qui
+            empêche la paire de devenir un symbole. Les rayons sont INÉGAUX
+            (30 et 26,5) : deux cercles de même rayon qui se coupent, c'est une
+            vesica piscis, une figure trop reconnaissable pour un fond. */}
+        <svg className="snow-geo-cercles" viewBox="0 0 100 100">
+          <g stroke="rgba(15,15,15,0.085)" strokeWidth="1">
+            <circle cx="41" cy="50" r="30" />
+            <circle cx="63.5" cy="53" r="26.5" />
+          </g>
+        </svg>
+
+        {/* 3 · LES ANGLES. Rectangles, triangles et obliques, en 16:10 et en
+            « slice » pour que les angles restent des angles sur tous les
+            formats. Tout est repoussé sur les bords : la bande centrale
+            (y de 30 à 60, x de 40 à 120) est vide PAR CONSTRUCTION, c'est
+            elle qui reçoit le titre et le chapô.
+            Le rectangle bas est incliné de 9° — une seule forme désalignée
+            suffit à dire « tracé à la main sur une table », trois feraient
+            désordre. */}
+        <svg className="snow-geo-angles" viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice">
+          <g stroke="rgba(15,15,15,0.075)" strokeWidth="1">
+            <rect x="9" y="10" width="26" height="17" />
+            <circle cx="141" cy="15" r="8.5" />
+            <path d="M118 8 L134 30 L102 30 Z" />
+            <rect x="112" y="68" width="31" height="24" transform="rotate(-9 127.5 80)" />
+            <path d="M14 96 L36 62 L58 96 Z" />
+            {/* Ces deux-là sont au MILIEU du tracé, pas sur ses bords, et
+                c'est voulu : en « slice » sur un téléphone, seul le tiers
+                central de la largeur reste visible. Sans elles, le mobile
+                n'aurait plus que des traits et aurait perdu les rectangles et
+                les triangles. Elles restent hors de la bande y 34-62, qui est
+                celle du titre. */}
+            <rect x="60" y="20" width="20" height="12" />
+            <path d="M74 96 L90 70 L106 96 Z" />
+          </g>
+          <g stroke="rgba(15,15,15,0.045)" strokeWidth="1">
+            <path d="M0 40 L22 30" />
+            <path d="M146 44 L160 37" />
+            <path d="M64 92 L92 78" />
+            <path d="M3 56 L3 76" />
+            <path d="M156 60 L156 84" />
+          </g>
+        </svg>
       </div>
 
       {/* ── intro « way » ── */}
@@ -359,7 +413,7 @@ export default function Accueil() {
           id="top"
           className="snow-rise snow-fade relative flex min-h-[100svh] flex-col items-center justify-center px-6 pb-[clamp(1rem,4svh,3rem)] text-center"
         >
-          <h1 className="snow-display">Créer. Échouer. Évoluer.</h1>
+          <h1 className="snow-display">find your way</h1>
 
           <p className="snow-lede">
             Studio créatif à Strasbourg. Des sites qu'on refait jusqu'à ce qu'ils soient justes.
