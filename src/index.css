@@ -34,6 +34,11 @@
     --ring: 0 0% 80%;
 
     --radius: 0.75rem;
+
+    /* Le remplissage d'une tuile au survol. Le composant <Tiles> le lit en
+       `var(--tile)` et ne le définit nulle part : sans cette ligne, le survol
+       anime la couleur vers une valeur invalide et ne fait donc rien. */
+    --tile: rgba(15, 15, 15, 0.07);
   }
 }
 
@@ -599,26 +604,24 @@
 
 
 /* ── Le fond ──────────────────────────────────────────────────────────────
-   Un seul dégradé radial, et rien d'autre : plus de trame, plus de cercles,
-   plus d'angles, plus rien d'animé. Le calque ne porte donc plus qu'un enfant,
-   <BgGradient>, qui peint le blanc neige au cœur et l'encre sur les bords.
+   Une grille de tuiles, et rien d'autre : chaque case s'allume au survol.
+   Le calque ne porte qu'un enfant, <Tiles>.
 
-   `inset: 0` et non plus -32px : cette marge n'existait que pour que la dérive
-   au pointeur ne découvre jamais de bande blanche sur le bord d'attaque. La
-   dérive est retirée avec le reste du mouvement, la marge n'a plus d'objet.
+   `position: fixed` : le fond ne doit pas défiler. `contain: layout paint
+   style` isole le calque — rien de ce qui est peint ici ne peut déborder sur
+   l'accueil. `overflow: hidden` coupe le surplus de la grille, qui est
+   volontairement plus large que l'écran et centrée par le composant.
 
-   `position: fixed` reste : le fond ne doit pas défiler. `contain: layout
-   paint style` reste aussi — il isole le calque, ce qui garantit que rien de
-   ce qui est peint ici ne peut déborder sur l'accueil.
-
-   Le `background: #FFFAFA` est un REPLI, pas la couleur du fond : si le
-   composant ne monte pas, la page reste en blanc neige au lieu de tomber sur
-   le blanc pur du navigateur. */
+   `background: #FFFAFA` n'est plus un repli : c'est LA couleur du fond. La
+   grille ne peint que ses filets, et le blanc neige est ce qu'on voit entre
+   eux. */
 .snow-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
-  pointer-events: none;
+  /* `auto`, et c'est nouveau : la grille réagit au survol, donc elle a besoin
+     du pointeur. Le fond était inerte tant qu'il n'était qu'un dégradé. */
+  pointer-events: auto;
   overflow: hidden;
   contain: layout paint style;
   transform: translate3d(0, 0, 0);  /* promotion — pas besoin de will-change */
@@ -790,7 +793,14 @@
    rectangle laiteux, en permanence. Le code précédent avait exactement ce
    bug. Corollaire : pas de transform non plus, sinon le <header> en
    position: fixed se retrouve contenu par ce conteneur. */
-.snow-home { position: relative; z-index: 1; }
+/* L'accueil est un calque plein écran posé SUR la grille. S'il prenait le
+   pointeur, aucune tuile ne pourrait jamais être survolée : le survol
+   s'arrêterait sur un <main> vide. Il le laisse donc traverser, et seuls les
+   éléments qui ont quelque chose à en faire le reprennent — la barre de nav
+   (donc ses liens et son bouton) et le titre, pour qu'il reste sélectionnable. */
+.snow-home { position: relative; z-index: 1; pointer-events: none; }
+.snow-home header,
+.snow-home h1 { pointer-events: auto; }
 
 /* Le fondu est porté par les ENFANTS, jamais par le conteneur. Une opacité
    < 1 est, avec `filter`, le déclencheur n°1 de « backdrop root » : sur un
