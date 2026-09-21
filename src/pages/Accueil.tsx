@@ -252,79 +252,57 @@ export default function Accueil() {
           animations à délai négatif repartiraient de leur origine et tout le
           dessin claquerait à la passation. */}
       <div className="snow-bg" aria-hidden ref={bgRef}>
-        {/* 1 · LA GRILLE. Plein cadre, preserveAspectRatio="none" : seules des
-            verticales et des horizontales ici, ce sont les deux seules formes
-            que ce mode ne déforme pas. Écartements volontairement inégaux, et
-            la moitié des traits s'arrêtent avant le bord — c'est ça qui fait
-            lire une épure plutôt qu'un papier millimétré.
-            Les horizontales à 4,5 et 11 passent DERRIÈRE la nav : sans elles,
-            le backdrop-filter du bouton en verre n'aurait qu'un blanc plein à
-            ré-échantillonner et la pilule redeviendrait un aplat. */}
-        <svg className="snow-geo-grille" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <g stroke="rgba(15,15,15,0.085)" strokeWidth="1">
-            <path d="M18 0 V100" />
-            <path d="M52.5 0 V100" />
-            <path d="M81 0 V100" />
-            <path d="M0 24.5 H100" />
-            <path d="M0 71 H100" />
-          </g>
-          <g stroke="rgba(15,15,15,0.045)" strokeWidth="1">
-            <path d="M6.5 0 V63" />
-            <path d="M23.5 17 V100" />
-            <path d="M37 0 V41" />
-            <path d="M61 29 V100" />
-            <path d="M74.5 0 V56" />
-            <path d="M93 34 V100" />
-            <path d="M0 4.5 H100" />
-            <path d="M0 11 H68" />
-            <path d="M22 33 H100" />
-            <path d="M31 84.5 H100" />
+        {/* 1 · LA TRAME. Cinq traits, pas quinze. Plein cadre,
+            preserveAspectRatio="none" : seules des verticales et des
+            horizontales ici, ce sont les deux seules formes que ce mode ne
+            déforme pas. Écartements inégaux (22 / 74 / 131 sur 160), et la
+            verticale centrale S'INTERROMPT sur la bande du titre — une
+            interruption de trait de construction, pas une ligne qui passe
+            derrière un mot.
+            Le segment court à y=6 ne va que de x=101 à x=160 : il passe
+            DERRIÈRE le bouton en verre, sans jamais traverser les onglets.
+            C'est ce qui donne au backdrop-filter une pente à réfracter, et
+            c'est aussi ce qui garantit que les onglets ne se lisent jamais
+            par-dessus un croisement. */}
+        <svg className="snow-geo-trame" viewBox="0 0 160 100" preserveAspectRatio="none">
+          <g stroke="rgba(15,15,15,0.22)">
+            <path d="M22 0 V100" />
+            <path d="M131 0 V100" />
+            <path d="M74 0 V34" />
+            <path d="M74 62 V100" />
+            <path d="M0 18 H160" />
+            <path d="M0 79 H160" />
+            <path d="M101 6 H160" />
           </g>
         </svg>
 
         {/* 2 · LES CERCLES. Un carré, donc un cercle reste un cercle sans que
-            preserveAspectRatio ait son mot à dire. Deux grands qui se coupent —
-            le geste exact de la seconde référence — et un petit, décentré, qui
-            empêche la paire de devenir un symbole. Les rayons sont INÉGAUX
-            (30 et 26,5) : deux cercles de même rayon qui se coupent, c'est une
-            vesica piscis, une figure trop reconnaissable pour un fond. */}
+            preserveAspectRatio ait son mot à dire. Deux seulement, et petits :
+            le tracé se regarde de loin, il ne se subit pas de près. Rayons
+            INÉGAUX (16 et 13) — deux cercles de même rayon qui se coupent,
+            c'est une vesica piscis, une figure trop reconnaissable pour un
+            fond. */}
         <svg className="snow-geo-cercles" viewBox="0 0 100 100">
-          <g stroke="rgba(15,15,15,0.085)" strokeWidth="1">
-            <circle cx="41" cy="50" r="30" />
-            <circle cx="63.5" cy="53" r="26.5" />
+          <g stroke="rgba(15,15,15,0.36)">
+            <circle cx="42" cy="50" r="27" />
+            <circle cx="61" cy="56" r="22" />
           </g>
         </svg>
 
-        {/* 3 · LES ANGLES. Rectangles, triangles et obliques, en 16:10 et en
-            « slice » pour que les angles restent des angles sur tous les
-            formats. Tout est repoussé sur les bords : la bande centrale
-            (y de 30 à 60, x de 40 à 120) est vide PAR CONSTRUCTION, c'est
-            elle qui reçoit le titre et le chapô.
-            Le rectangle bas est incliné de 9° — une seule forme désalignée
-            suffit à dire « tracé à la main sur une table », trois feraient
-            désordre. */}
-        <svg className="snow-geo-angles" viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice">
-          <g stroke="rgba(15,15,15,0.075)" strokeWidth="1">
-            <rect x="9" y="10" width="26" height="17" />
-            <circle cx="141" cy="15" r="8.5" />
-            <path d="M118 8 L134 30 L102 30 Z" />
-            <rect x="112" y="68" width="31" height="24" transform="rotate(-9 127.5 80)" />
-            <path d="M14 96 L36 62 L58 96 Z" />
-            {/* Ces deux-là sont au MILIEU du tracé, pas sur ses bords, et
-                c'est voulu : en « slice » sur un téléphone, seul le tiers
-                central de la largeur reste visible. Sans elles, le mobile
-                n'aurait plus que des traits et aurait perdu les rectangles et
-                les triangles. Elles restent hors de la bande y 34-62, qui est
-                celle du titre. */}
-            <rect x="60" y="20" width="20" height="12" />
-            <path d="M74 96 L90 70 L106 96 Z" />
-          </g>
-          <g stroke="rgba(15,15,15,0.045)" strokeWidth="1">
-            <path d="M0 40 L22 30" />
-            <path d="M146 44 L160 37" />
-            <path d="M64 92 L92 78" />
-            <path d="M3 56 L3 76" />
-            <path d="M156 60 L156 84" />
+        {/* 3 · LES ANGLES. Un rectangle, un triangle, deux traits de cote.
+            Quatre formes, c'est tout. En 16:10 et en « meet » : le dessin
+            TIENT dans le cadre au lieu d'être recadré dedans — c'est ça, le
+            dézoom. Sur un écran plus haut que 16:10 il reste des marges
+            blanches en haut et en bas, et c'est juste : une épure est posée
+            sur une feuille, elle n'en déborde pas.
+            Rien entre y 34 et 62 : la bande du titre est vide PAR
+            CONSTRUCTION, pas par un masque ni par un réglage d'opacité. */}
+        <svg className="snow-geo-angles" viewBox="0 0 160 100" preserveAspectRatio="xMidYMid meet">
+          <g stroke="rgba(15,15,15,0.36)">
+            <rect x="103" y="19" width="27" height="18" />
+            <path d="M99 88 L117 64 L135 88 Z" />
+            <path d="M14 29 H44" />
+            <path d="M150 47 V73" />
           </g>
         </svg>
       </div>
@@ -405,19 +383,16 @@ export default function Accueil() {
           </nav>
         </header>
 
-        {/* Le padding bas remonte le bloc d'environ 3 % de la hauteur d'écran :
-            un bloc centré mathématiquement dans un plein écran se lit toujours
-            trop bas. C'est la seule asymétrie volontaire de la page, et c'est
-            elle qui la fait paraître symétrique. */}
+        {/* Le héros ne contient plus que le titre. Le padding bas le remonte
+            d'environ 3 % de la hauteur d'écran : un bloc centré
+            mathématiquement dans un plein écran se lit toujours trop bas.
+            C'est la seule asymétrie volontaire de la page, et c'est elle qui
+            la fait paraître symétrique. */}
         <main
           id="top"
           className="snow-rise snow-fade relative flex min-h-[100svh] flex-col items-center justify-center px-6 pb-[clamp(1rem,4svh,3rem)] text-center"
         >
           <h1 className="snow-display">find your way</h1>
-
-          <p className="snow-lede">
-            Studio créatif à Strasbourg. Des sites qu'on refait jusqu'à ce qu'ils soient justes.
-          </p>
         </main>
       </div>
     </div>
