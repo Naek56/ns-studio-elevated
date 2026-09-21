@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ContactModal, { openContact } from "@/components/site/ContactModal";
+import { Component as BgGradient } from "@/components/ui/bg-gradient";
 
 /* Accueil « neige » — fond #FFFAFA, encre #0F0F0F.
 
@@ -252,6 +253,16 @@ export default function Accueil() {
           animations à délai négatif repartiraient de leur origine et tout le
           dessin claquerait à la passation. */}
       <div className="snow-bg" aria-hidden ref={bgRef}>
+        {/* Le dégradé, en base du calque. Le violet du composant d'origine est
+            remplacé par l'encre du site : une seule valeur de noir sur toute
+            la page plutôt qu'un #000 de plus à côté du #0F0F0F. Les autres
+            paramètres sont ceux d'origine — cœur à 50 % 10 %, rayon 125 %,
+            palier à 40 %.
+            C'est lui qui porte la couleur du fond maintenant : le
+            `background: #FFFAFA` de .snow-bg ne reste que comme repli si le
+            composant ne monte pas. */}
+        <BgGradient gradientFrom="#FFFAFA" gradientTo="#0F0F0F" />
+
         {/* 1 · LA TRAME. Cinq traits, pas quinze. Plein cadre,
             preserveAspectRatio="none" : seules des verticales et des
             horizontales ici, ce sont les deux seules formes que ce mode ne
@@ -265,7 +276,7 @@ export default function Accueil() {
             c'est aussi ce qui garantit que les onglets ne se lisent jamais
             par-dessus un croisement. */}
         <svg className="snow-geo-trame" viewBox="0 0 160 100" preserveAspectRatio="none">
-          <g stroke="rgba(15,15,15,0.22)">
+          <g stroke="rgba(255,255,255,0.22)">
             <path d="M22 0 V100" />
             <path d="M131 0 V100" />
             <path d="M74 0 V34" />
@@ -283,7 +294,7 @@ export default function Accueil() {
             c'est une vesica piscis, une figure trop reconnaissable pour un
             fond. */}
         <svg className="snow-geo-cercles" viewBox="0 0 100 100">
-          <g stroke="rgba(15,15,15,0.36)">
+          <g stroke="rgba(255,255,255,0.36)">
             <circle cx="42" cy="50" r="27" />
             <circle cx="61" cy="56" r="22" />
           </g>
@@ -298,7 +309,7 @@ export default function Accueil() {
             Rien entre y 34 et 62 : la bande du titre est vide PAR
             CONSTRUCTION, pas par un masque ni par un réglage d'opacité. */}
         <svg className="snow-geo-angles" viewBox="0 0 160 100" preserveAspectRatio="xMidYMid meet">
-          <g stroke="rgba(15,15,15,0.36)">
+          <g stroke="rgba(255,255,255,0.36)">
             <rect x="103" y="19" width="27" height="18" />
             <path d="M99 88 L117 64 L135 88 Z" />
             <path d="M14 29 H44" />
