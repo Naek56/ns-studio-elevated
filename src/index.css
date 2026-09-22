@@ -654,64 +654,51 @@
       rgba(255, 255, 255, 0)   58%);
 }
 
-/* ── Le mot de fond ──────────────────────────────────────────────────────
-   « CREATE » en très grand, coupé par les deux bords de l'écran.
+/* ── Les lames ────────────────────────────────────────────────────────────
+   Une bordure ne peut pas être un dégradé. Les verticales sont donc peintes
+   DANS la case, en `background-image`, et les bordures du composant sont
+   coupées (`border-0` côté markup).
 
-   LE CORPS EST EN vw, PAS EN rem. Le mot doit déborder de la MÊME proportion
-   à toutes les largeurs : en rem, il tiendrait entier sur un grand écran et
-   déborderait de moitié sur un téléphone. À 33vw il mesure 1,22 fois la
-   largeur de l'écran, donc il dépasse de 11 % de chaque côté quel que soit
-   l'écran — mesuré 54/54 px à 1440, 72/72 à 1920, 15/15 à 390. C'est
-   `overflow: hidden` du calque qui le coupe, et le recadrage est symétrique
-   au centième de pixel parce que le mot est centré, pas positionné.
+   LE PROFIL EST CELUI D'UNE LAME VUE PAR LA TRANCHE, et c'est lui qui fait la
+   différence entre une rayure et du verre : rien sur la moitié gauche (la face
+   de la lame, qu'on traverse), puis une montée très progressive sur 50 % de la
+   case (l'épaisseur qui se referme), et enfin l'arête, nette, sur le dernier
+   pour-cent. Un trait symétrique n'encode aucune direction de lumière et l'œil
+   le lit comme une marque POSÉE SUR la page ; un profil asymétrique encode une
+   source et une épaisseur, et l'œil le résout comme un objet DEBOUT dans la
+   scène.
 
-   IL EST CENTRÉ SUR L'AXE DU HÉROS, padding-bottom compris. Le <main> remonte
-   son contenu de clamp(1rem, 4svh, 3rem) — une correction optique, un bloc
-   centré mathématiquement se lisant toujours trop bas. Si le mot ne reprenait
-   pas la même valeur, le titre se poserait quelques pixels au-dessus de son
-   milieu, et ça se verrait à ce corps-là.
+   Les arrêts sont en POUR-CENT et non en pixels : la case fait 56 px sur
+   téléphone et 80 px au-delà de 768 px, et le profil doit garder les mêmes
+   proportions dans les deux cas.
 
-   `user-select: none` : un mot de décor qui s'attrape au double-clic et passe
-   en surbrillance bleue est un accident, pas une fonctionnalité. */
-.snow-word {
-  position: absolute;
-  inset: 0;
-  /* SOUS la grille, et c'est le point qui fait toute la différence. Posé
-     par-dessus, le mot et les filets se lisent comme deux affiches empilées ;
-     posé dessous, les verticales le traversent et l'ensemble redevient UN
-     champ. C'est aussi ce que fait la référence. -1 le place sous le `z-0` du
-     composant Tiles sans sortir du calque : .snow-bg porte `contain: paint`,
-     donc il isole, et un z-index négatif ne peut pas passer derrière son
-     propre fond. */
-  z-index: -1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-bottom: clamp(1rem, 4svh, 3rem);
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-select: none;
-
-  font-family: Inter, "Instrument Sans Fallback", ui-sans-serif, system-ui, sans-serif;
-  font-weight: 800;
-  font-size: 30vw;
-  line-height: 0.78;
-  letter-spacing: -0.038em;   /* le plancher de craft est à -0,04 em */
-  white-space: nowrap;
-  color: #4C82F7;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+   Le sélecteur descend à deux niveaux — `> div > div` — pour ne viser QUE les
+   cases. Le conteneur de colonne est un `> div` : lui donner la même lame
+   dessinerait une seconde arête sur les 80 premiers pixels de l'écran. */
+.snow-tiles > div > div {
+  background-image: linear-gradient(90deg,
+    rgba(15, 15, 15, 0)      0%,
+    rgba(15, 15, 15, 0)     44%,
+    rgba(15, 15, 15, 0.014) 70%,
+    rgba(15, 15, 15, 0.034) 89%,
+    rgba(15, 15, 15, 0.080) 96.5%,
+    rgba(15, 15, 15, 0.260) 99.1%,
+    rgba(15, 15, 15, 0.260) 100%);
 }
 
 /* ── La grille ────────────────────────────────────────────────────────────
-   Le « gradient » demandé porte sur les lignes elles-mêmes : un masque les
-   fait émerger du blanc en haut et s'y éteindre en bas, au lieu de buter
-   franchement sur le bord de l'écran. Un filet qui se termine net se lit
-   comme une bordure ; un filet qui se dissout se lit comme l'arête d'une
-   plaque qu'on ne voit pas en entier.
-   Le masque est appliqué à la grille et PAS au voile ci-dessus : ce sont deux
-   gradients qui font deux choses, et les superposer sur un seul élément les
-   rendrait impossibles à régler séparément. */
+   Le masque fait émerger les lames du blanc en haut et les y éteint en bas :
+   une lame qui se termine net se lit comme une bordure, une lame qui se
+   dissout se lit comme l'arête d'une plaque qu'on ne voit pas en entier.
+
+   ELLE DÉRIVE. 44 px de course en 41 s, soit un peu plus d'1 px/s : on la voit
+   bouger en la regardant trois secondes, sans qu'elle devienne un défilement.
+   La dérive porte sur la grille ENTIÈRE, donc les cases de survol bougent avec
+   leurs lames — une grille de survol immobile sous des lignes qui glissent se
+   verrait au premier passage de souris.
+   `alternate` avec une courbe sinusoïdale : en `linear`, le demi-tour
+   produirait une discontinuité de vitesse, et sur une arête NETTE l'œil
+   l'attrape — beaucoup mieux que sur un dégradé flou. */
 .snow-tiles {
   -webkit-mask-image: linear-gradient(to bottom,
     rgba(0, 0, 0, 0)    0%,
@@ -727,6 +714,50 @@
     rgba(0, 0, 0, 1)    64%,
     rgba(0, 0, 0, 0.5)  85%,
     rgba(0, 0, 0, 0)   100%);
+  animation: snow-derive 41s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+  will-change: transform;
+}
+@keyframes snow-derive {
+  from { transform: translate3d(-22px, 0, 0); }
+  to   { transform: translate3d( 22px, 0, 0); }
+}
+
+/* ── La lumière ───────────────────────────────────────────────────────────
+   Une bande qui traverse le champ de gauche à droite en 34 s, soit environ
+   64 px/s à 1440 : lent, mais jamais immobile.
+
+   SUR UNE PAGE DÉJÀ BLANCHE, UN REFLET NE PEUT PAS ÊTRE « PLUS CLAIR » : il
+   n'y a pas de marge au-dessus du blanc, et un blanc posé sur du blanc ne fait
+   rien. La bande se lit donc par ses FLANCS : deux ombres très légères qui
+   encadrent un cœur blanc. Au passage, les flancs renforcent les lames juste
+   avant et juste après, et le cœur les délave — c'est exactement ce que fait
+   une lumière rasante sur une rangée de vitres, et c'est ce qui la fait lire
+   comme un reflet plutôt que comme une tache.
+
+   La boîte est décalée à gauche et la course l'amène entièrement hors du cadre
+   à droite : la reprise de boucle est donc invisible, et on peut garder
+   `linear` sans demi-tour à cacher. */
+.snow-sweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -62%;
+  width: 62%;
+  pointer-events: none;
+  background: linear-gradient(101deg,
+    rgba(15, 15, 15, 0)      0%,
+    rgba(15, 15, 15, 0.026) 27%,
+    rgba(15, 15, 15, 0)     42%,
+    rgba(255, 255, 255, 0.62) 50%,
+    rgba(15, 15, 15, 0)     58%,
+    rgba(15, 15, 15, 0.026) 73%,
+    rgba(15, 15, 15, 0)    100%);
+  animation: snow-lumiere 34s linear infinite;
+  will-change: transform;
+}
+@keyframes snow-lumiere {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(261%, 0, 0); }   /* 62 % × 261 % = 162 % d'écran */
 }
 
 
@@ -1223,15 +1254,7 @@
 
 /* Mode couleurs forcées (Windows High Contrast) : on laisse le système
    décider, en s'assurant que la limite du bouton reste dessinée. */
-/* Le mot de fond est un DÉCOR : dès qu'on demande du contraste, il doit
-   reculer pour que le titre domine, et en couleurs forcées il disparaît —
-   le système y impose sa palette, et un aplat plein écran y deviendrait un
-   bloc opaque sous le texte. */
-@media (prefers-contrast: more) {
-  .snow-word { color: #A9C4FB; }
-}
 @media (forced-colors: active) {
-  .snow-word { display: none; }
   .lg {
     border: 1px solid ButtonBorder;
     background: ButtonFace;
@@ -1251,7 +1274,14 @@
    `animation-play-state: paused`, parce que la règle globale
    `animation-duration: 0.01ms !important` de @layer base la casserait. */
 @media (prefers-reduced-motion: reduce) {
-  /* Le fond n'a plus rien d'animé : il n'y a rien à figer ici. */
+  /* Le champ ne s'efface pas : il se fige sur une pose choisie. La dérive
+     s'arrête au milieu de sa course, et la lumière se pose aux deux tiers de
+     l'écran — pas au centre, une pose parfaitement centrée se lisant comme
+     l'état par défaut plutôt que comme un choix.
+     Pose écrite en dur et non `animation-play-state: paused` : la règle globale
+     `animation-duration: 0.01ms !important` de @layer base la casserait. */
+  .snow-tiles { animation: none; transform: translate3d(6px, 0, 0); will-change: auto; }
+  .snow-sweep { animation: none; transform: translate3d(198%, 0, 0); will-change: auto; }
 
   .snow-letter { perspective: none; }
   .snow-letter-i,
