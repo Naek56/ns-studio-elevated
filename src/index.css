@@ -38,7 +38,7 @@
     /* Le remplissage d'une tuile au survol. Le composant <Tiles> le lit en
        `var(--tile)` et ne le définit nulle part : sans cette ligne, le survol
        anime la couleur vers une valeur invalide et ne fait donc rien. */
-    --tile: rgba(15, 15, 15, 0.07);
+    --tile: rgba(15, 15, 15, 0.055);
   }
 }
 
@@ -626,6 +626,58 @@
   contain: layout paint style;
   transform: translate3d(0, 0, 0);  /* promotion — pas besoin de will-change */
   background: #FFFAFA;
+}
+
+/* ── Le voile de verre ────────────────────────────────────────────────────
+   Sur une page déjà blanche, un reflet ne peut pas être « plus clair » : il
+   n'y a pas de marge au-dessus du blanc. La matière se dit donc par l'AUTRE
+   bout — la lumière entre par le haut, où la page reste au blanc pur, et la
+   plaque s'assombrit très légèrement en descendant et sur les bords, comme le
+   ferait une vitre vue de face. Deux dégradés, trois points de bascule, rien
+   de plus : la demande était « un peu ».
+
+   `pointer-events: none` est load-bearing : ce voile couvre tout l'écran, et
+   sans ça il intercepterait chaque survol avant qu'il n'atteigne une case. */
+.snow-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0)   26%,
+      rgba(15, 15, 15, 0.018)  74%,
+      rgba(15, 15, 15, 0.055) 100%),
+    radial-gradient(130% 78% at 50% 0%,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0)   58%);
+}
+
+/* ── La grille ────────────────────────────────────────────────────────────
+   Le « gradient » demandé porte sur les lignes elles-mêmes : un masque les
+   fait émerger du blanc en haut et s'y éteindre en bas, au lieu de buter
+   franchement sur le bord de l'écran. Un filet qui se termine net se lit
+   comme une bordure ; un filet qui se dissout se lit comme l'arête d'une
+   plaque qu'on ne voit pas en entier.
+   Le masque est appliqué à la grille et PAS au voile ci-dessus : ce sont deux
+   gradients qui font deux choses, et les superposer sur un seul élément les
+   rendrait impossibles à régler séparément. */
+.snow-tiles {
+  -webkit-mask-image: linear-gradient(to bottom,
+    rgba(0, 0, 0, 0)    0%,
+    rgba(0, 0, 0, 0.55) 11%,
+    rgba(0, 0, 0, 1)    30%,
+    rgba(0, 0, 0, 1)    64%,
+    rgba(0, 0, 0, 0.5)  85%,
+    rgba(0, 0, 0, 0)   100%);
+          mask-image: linear-gradient(to bottom,
+    rgba(0, 0, 0, 0)    0%,
+    rgba(0, 0, 0, 0.55) 11%,
+    rgba(0, 0, 0, 1)    30%,
+    rgba(0, 0, 0, 1)    64%,
+    rgba(0, 0, 0, 0.5)  85%,
+    rgba(0, 0, 0, 0)   100%);
 }
 
 
