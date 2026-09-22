@@ -168,21 +168,40 @@ export default function Accueil() {
     <div className="snow relative min-h-[100svh] overflow-hidden">
       <ContactModal />
 
-      {/* Le fond : la grille de tuiles. UNE seule instance, partagée par
-          l'intro et par l'accueil, donc rien ne saute au moment de la
-          passation. Frère de .snow-intro et de .snow-home, jamais un enfant :
-          c'est ce qui le laisse entrer dans le backdrop du bouton en verre.
+      {/* Le fond : la grille. UNE seule instance, partagée par l'intro et par
+          l'accueil, donc rien ne saute au moment de la passation. Frère de
+          .snow-intro et de .snow-home, jamais un enfant : c'est ce qui le
+          laisse entrer dans le backdrop du bouton en verre.
 
           ATTENTION AUX NOMS DE PROPS : ils sont inversés par rapport à ce
           qu'on voit. `rows` compte les éléments du conteneur flex, qui se
           posent HORIZONTALEMENT — c'est donc le nombre de colonnes à l'écran.
           `cols` compte leurs enfants, empilés verticalement : c'est le nombre
-          de lignes. 46 × 26 tuiles couvrent 2208 × 1248 px en 48 px (au-delà
-          de 768 px de large) et 1656 × 936 px en 36 px en dessous — donc tout
-          écran jusqu'à 2208 px, le surplus étant centré puis coupé par le
-          clip de .snow-bg. */}
+          de lignes.
+
+          TROIS RÉGLAGES PASSENT PAR tileClassName, ET AUCUN NE TOUCHE AU
+          COMPOSANT. `cn` est bâti sur twMerge, donc la dernière classe gagne
+          sur une même propriété — on peut écraser la taille et les bordures
+          par l'extérieur :
+            · w-14/md:w-20 remplace le module de 36/48 px par 56/80 px ;
+            · border-t-0 efface les filets HORIZONTAUX, et border-l-0 efface
+              le `border-l` du conteneur de colonne. Ce dernier compte : la
+              colonne ne fait qu'UNE case de haut (ses enfants débordent), donc
+              son bord gauche ne dessinait qu'un moignon de 80 px en haut de
+              l'écran. La verticale pleine hauteur, c'est le `border-r` des
+              cases empilées — celui-là reste ;
+            · border-neutral-300 remonte le filet d'un cran, parce qu'à 80 px
+              d'écart un trait de #e5e5e5 se perd.
+          Les cases restent des cases : invisibles, mais toujours survolables.
+          C'est ce qui fait qu'un rectangle s'allume entre deux verticales. */}
       <div className="snow-bg" aria-hidden>
-        <Tiles rows={46} cols={26} tileSize="md" />
+        <Tiles
+          rows={30}
+          cols={18}
+          tileSize="md"
+          className="snow-tiles"
+          tileClassName="w-14 h-14 md:w-20 md:h-20 border-t-0 border-l-0 border-neutral-300"
+        />
       </div>
 
       {/* ── intro « way » ── */}
