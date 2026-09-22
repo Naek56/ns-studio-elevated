@@ -202,6 +202,16 @@ export default function Accueil() {
           className="snow-tiles"
           tileClassName="w-14 h-14 md:w-20 md:h-20 border-t-0 border-l-0 border-neutral-300"
         />
+
+        {/* Le mot en arrière-plan. Il est DÉCORATIF : la page dit déjà « find
+            your way » dans son <h1>, et un lecteur d'écran qui annoncerait
+            « CREATE » en plus ne gagnerait rien. Il vit donc dans le calque
+            aria-hidden, et il ne prend pas le pointeur — sans quoi il couvrirait
+            le tiers central de l'écran et y tuerait le survol des cases.
+            Il est centré sur le MÊME axe que le héros, padding-bottom compris :
+            c'est ce qui fait que le titre se pose exactement au milieu du mot
+            plutôt qu'un peu au-dessus. */}
+        <div className="snow-word">CREATE</div>
       </div>
 
       {/* ── intro « way » ── */}
