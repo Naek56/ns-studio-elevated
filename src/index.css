@@ -654,6 +654,55 @@
       rgba(255, 255, 255, 0)   58%);
 }
 
+/* ── Le mot de fond ──────────────────────────────────────────────────────
+   « CREATE » en très grand, coupé par les deux bords de l'écran.
+
+   LE CORPS EST EN vw, PAS EN rem. Le mot doit déborder de la MÊME proportion
+   à toutes les largeurs : en rem, il tiendrait entier sur un grand écran et
+   déborderait de moitié sur un téléphone. À 33vw il mesure 1,22 fois la
+   largeur de l'écran, donc il dépasse de 11 % de chaque côté quel que soit
+   l'écran — mesuré 54/54 px à 1440, 72/72 à 1920, 15/15 à 390. C'est
+   `overflow: hidden` du calque qui le coupe, et le recadrage est symétrique
+   au centième de pixel parce que le mot est centré, pas positionné.
+
+   IL EST CENTRÉ SUR L'AXE DU HÉROS, padding-bottom compris. Le <main> remonte
+   son contenu de clamp(1rem, 4svh, 3rem) — une correction optique, un bloc
+   centré mathématiquement se lisant toujours trop bas. Si le mot ne reprenait
+   pas la même valeur, le titre se poserait quelques pixels au-dessus de son
+   milieu, et ça se verrait à ce corps-là.
+
+   `user-select: none` : un mot de décor qui s'attrape au double-clic et passe
+   en surbrillance bleue est un accident, pas une fonctionnalité. */
+.snow-word {
+  position: absolute;
+  inset: 0;
+  /* SOUS la grille, et c'est le point qui fait toute la différence. Posé
+     par-dessus, le mot et les filets se lisent comme deux affiches empilées ;
+     posé dessous, les verticales le traversent et l'ensemble redevient UN
+     champ. C'est aussi ce que fait la référence. -1 le place sous le `z-0` du
+     composant Tiles sans sortir du calque : .snow-bg porte `contain: paint`,
+     donc il isole, et un z-index négatif ne peut pas passer derrière son
+     propre fond. */
+  z-index: -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: clamp(1rem, 4svh, 3rem);
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+
+  font-family: Inter, "Instrument Sans Fallback", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 30vw;
+  line-height: 0.78;
+  letter-spacing: -0.038em;   /* le plancher de craft est à -0,04 em */
+  white-space: nowrap;
+  color: #4C82F7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 /* ── La grille ────────────────────────────────────────────────────────────
    Le « gradient » demandé porte sur les lignes elles-mêmes : un masque les
    fait émerger du blanc en haut et s'y éteindre en bas, au lieu de buter
@@ -1174,7 +1223,15 @@
 
 /* Mode couleurs forcées (Windows High Contrast) : on laisse le système
    décider, en s'assurant que la limite du bouton reste dessinée. */
+/* Le mot de fond est un DÉCOR : dès qu'on demande du contraste, il doit
+   reculer pour que le titre domine, et en couleurs forcées il disparaît —
+   le système y impose sa palette, et un aplat plein écran y deviendrait un
+   bloc opaque sous le texte. */
+@media (prefers-contrast: more) {
+  .snow-word { color: #A9C4FB; }
+}
 @media (forced-colors: active) {
+  .snow-word { display: none; }
   .lg {
     border: 1px solid ButtonBorder;
     background: ButtonFace;
