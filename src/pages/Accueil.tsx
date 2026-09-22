@@ -184,34 +184,30 @@ export default function Accueil() {
           sur une même propriété — on peut écraser la taille et les bordures
           par l'extérieur :
             · w-14/md:w-20 remplace le module de 36/48 px par 56/80 px ;
-            · border-t-0 efface les filets HORIZONTAUX, et border-l-0 efface
-              le `border-l` du conteneur de colonne. Ce dernier compte : la
-              colonne ne fait qu'UNE case de haut (ses enfants débordent), donc
-              son bord gauche ne dessinait qu'un moignon de 80 px en haut de
-              l'écran. La verticale pleine hauteur, c'est le `border-r` des
-              cases empilées — celui-là reste ;
-            · border-neutral-300 remonte le filet d'un cran, parce qu'à 80 px
-              d'écart un trait de #e5e5e5 se perd.
+            · border-0 efface TOUTES les bordures. La verticale n'est plus un
+              filet plat : c'est un dégradé peint dans la case elle-même, par
+              `.snow-tiles > div > div` dans la feuille de style. Une bordure ne
+              peut pas être un dégradé, et c'est le dégradé qui fait la lame.
           Les cases restent des cases : invisibles, mais toujours survolables.
-          C'est ce qui fait qu'un rectangle s'allume entre deux verticales. */}
+          C'est ce qui fait qu'un rectangle s'allume entre deux lames — et
+          comme la lame est peinte DANS la case, elle dérive avec elle. Une
+          grille de survol immobile sous des lignes qui bougent se verrait au
+          premier passage de souris. */}
       <div className="snow-bg" aria-hidden>
         <Tiles
           rows={30}
           cols={18}
           tileSize="md"
           className="snow-tiles"
-          tileClassName="w-14 h-14 md:w-20 md:h-20 border-t-0 border-l-0 border-neutral-300"
+          tileClassName="w-14 h-14 md:w-20 md:h-20 border-0"
         />
 
-        {/* Le mot en arrière-plan. Il est DÉCORATIF : la page dit déjà « find
-            your way » dans son <h1>, et un lecteur d'écran qui annoncerait
-            « CREATE » en plus ne gagnerait rien. Il vit donc dans le calque
-            aria-hidden, et il ne prend pas le pointeur — sans quoi il couvrirait
-            le tiers central de l'écran et y tuerait le survol des cases.
-            Il est centré sur le MÊME axe que le héros, padding-bottom compris :
-            c'est ce qui fait que le titre se pose exactement au milieu du mot
-            plutôt qu'un peu au-dessus. */}
-        <div className="snow-word">CREATE</div>
+        {/* La lumière qui traverse le champ. Une bande large, à cœur blanc et
+            à flancs sombres : sur une page déjà blanche un reflet ne peut pas
+            être « plus clair », il n'y a pas de marge au-dessus du blanc. Elle
+            se lit donc par le contraste avec ses propres flancs, qui renforcent
+            les lames juste avant et juste après de les délaver. */}
+        <div className="snow-sweep" />
       </div>
 
       {/* ── intro « way » ── */}
