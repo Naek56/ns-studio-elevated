@@ -17,30 +17,34 @@ import { Tiles } from "@/components/ui/tiles";
 
 const LETTERS = ["w", "a", "y"] as const;
 
-/* Rythme de l'intro (ms). 2,82 s du chargement à l'accueil posé.
+/* Rythme de l'intro (ms). 3,38 s du chargement à l'accueil posé.
    Le premier jet mettait ~7 s : beaucoup trop. Le deuxième est tombé à 1,80 s :
-   l'arrivée des lettres devenait un clignement, on ne la lisait plus. On
-   reprend l'écart entre les deux — le rythme est ralenti de 90 %, pas les
-   courbes :
-     220  départ « w »
-     580  départ « a »
-     940  départ « y »
-    1500  « y » perçue posée
-    2100  fin de la respiration, la passation démarre
-    2820  accueil posé, intro démontée
-   La passation reste calée sur l'atterrissage PERÇU (560 ms) et non sur la fin
-   nominale de la transition (1150 ms). Sous --snow-land, cubic-bezier(0.23, 1,
-   0.32, 1), la lettre a fait 95 % de sa course en 48,8 % du temps : les 590 ms
+   l'arrivée des lettres devenait un clignement, on ne la lisait plus. On a
+   repris l'écart entre les deux (2,82 s), et ce réglage-ci le ralentit encore
+   d'un cinquième — la demande était « un peu plus lent », donc un facteur, pas
+   une refonte : TOUTES les durées sont multipliées par 1,22, celles du script
+   comme celles des transitions CSS. Un rythme se ralentit en entier ou pas du
+   tout ; n'allonger que les attentes, en laissant les courbes à leur vitesse,
+   donnerait trois lettres qui claquent séparées par des blancs.
+     260  départ « w »
+     700  départ « a »
+    1140  départ « y »
+    1820  « y » perçue posée
+    2560  fin de la respiration, la passation démarre
+    3380  accueil posé, intro démontée
+   La passation reste calée sur l'atterrissage PERÇU (680 ms) et non sur la fin
+   nominale de la transition (1400 ms). Sous --snow-land, cubic-bezier(0.23, 1,
+   0.32, 1), la lettre a fait 95 % de sa course en 48,8 % du temps : les 720 ms
    qui restent sont un tassement sub-pixel, et les caler dans le temps d'écran
    serait de l'écran mort. Ils se terminent SOUS la sortie, invisibles.
    Pour régler au feeling, ne toucher que STEP_MS (± 40 ms) : c'est lui qui
    porte le rythme. */
-const FIRST_MS = 220;      // avant la première lettre — couvre le premier paint
-const STEP_MS = 360;       // écart entre deux DÉPARTS de lettre
-const LETTER_MS = 1150;    // = transition transform de .snow-letter-i
-const PERCEIVED_MS = 560;  // atterrissage PERÇU (cf. ci-dessus)
-const HOLD_MS = 600;       // le mot complet respire
-const HANDOFF_MS = 720;    // = la plus longue transition de la passation
+const FIRST_MS = 260;      // avant la première lettre — couvre le premier paint
+const STEP_MS = 440;       // écart entre deux DÉPARTS de lettre
+const LETTER_MS = 1400;    // = transition transform de .snow-letter-i
+const PERCEIVED_MS = 680;  // atterrissage PERÇU (cf. ci-dessus)
+const HOLD_MS = 740;       // le mot complet respire
+const HANDOFF_MS = 820;    // = la plus longue transition de la passation
 const SETTLE_PAD_MS = 50;  // marge avant de retirer le calque d'une lettre posée
 
 const NAV = [
@@ -194,6 +198,19 @@ export default function Accueil() {
           grille de survol immobile sous des lignes qui bougent se verrait au
           premier passage de souris. */}
       <div className="snow-bg" aria-hidden>
+        {/* LES MOTIFS — quatre champs de rubans en dégradé, portés par deux
+            calques, qui traversent lentement la page et battent entre eux.
+            Ils remplacent les cinq taches rondes qui dérivaient : une tache
+            ronde floue qui se promène est le fond animé par défaut du web, et
+            ça se lit comme tel quelle que soit la couleur.
+
+            L'ORDRE DANS LE DOM EST LE PROPOS. Ce calque-ci est AVANT <Tiles>,
+            donc SOUS les lames : c'est une lumière qui vient du fond et que le
+            verre filtre. Son jumeau est après, donc DESSUS : c'est un reflet
+            posé sur la surface. Les deux à la même place donneraient deux fois
+            la même chose et la page resterait plate. */}
+        <i className="snow-motif snow-motif-a" />
+
         <Tiles
           rows={30}
           cols={18}
@@ -202,23 +219,15 @@ export default function Accueil() {
           tileClassName="w-14 h-14 md:w-20 md:h-20 border-0"
         />
 
-        {/* LE JEU DE LUMIÈRE. Sur un fond #FFFAFA il ne reste que cinq niveaux
-            avant le blanc pur : une lumière BLANCHE sur une page blanche ne
-            peut rien faire, et c'est exactement pourquoi la version précédente
-            ne se voyait pas. Restent deux directions — le sombre, qui se lit
-            comme une ombre et jamais comme une lumière, ou la COULEUR. Le jeu
-            est donc chromatique, ce qui est aussi juste physiquement : une lame
-            de verre disperse. */}
-        {/* Les cinq foyers colorés. Ils passent PAR-DESSUS les lames : une
-            lumière qui n'éclaire pas ce qu'elle traverse n'est pas une
-            lumière. Posés dessous, ils n'auraient teinté que les intervalles
-            blancs et les arêtes seraient restées grises au milieu de la
-            couleur. */}
-        <i className="snow-glow snow-glow-a" />
-        <i className="snow-glow snow-glow-b" />
-        <i className="snow-glow snow-glow-c" />
-        <i className="snow-glow snow-glow-d" />
-        <i className="snow-glow snow-glow-e" />
+        {/* Le second champ, par-dessus les lames — il les teinte au passage.
+            Un motif qui n'atteint pas ce qu'il traverse n'est pas une lumière :
+            posé uniquement dessous, il n'aurait coloré que les intervalles
+            blancs et les arêtes seraient restées grises au milieu du champ. */}
+        <i className="snow-motif snow-motif-b" />
+
+        {/* Le reflet rasant, seul rescapé de l'ancien jeu de lumière : c'est
+            lui qui prouve l'épaisseur des arêtes. Deux fois plus discret
+            qu'avant — désormais c'est le motif qui bouge, pas lui. */}
         <div className="snow-sweep" />
       </div>
 
