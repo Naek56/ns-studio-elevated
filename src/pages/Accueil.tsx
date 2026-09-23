@@ -209,7 +209,7 @@ export default function Accueil() {
             comme une ombre et jamais comme une lumière, ou la COULEUR. Le jeu
             est donc chromatique, ce qui est aussi juste physiquement : une lame
             de verre disperse. */}
-        {/* Les trois foyers colorés. Ils passent PAR-DESSUS les lames : une
+        {/* Les cinq foyers colorés. Ils passent PAR-DESSUS les lames : une
             lumière qui n'éclaire pas ce qu'elle traverse n'est pas une
             lumière. Posés dessous, ils n'auraient teinté que les intervalles
             blancs et les arêtes seraient restées grises au milieu de la
@@ -217,6 +217,8 @@ export default function Accueil() {
         <i className="snow-glow snow-glow-a" />
         <i className="snow-glow snow-glow-b" />
         <i className="snow-glow snow-glow-c" />
+        <i className="snow-glow snow-glow-d" />
+        <i className="snow-glow snow-glow-e" />
         <div className="snow-sweep" />
       </div>
 

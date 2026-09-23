@@ -649,7 +649,17 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* LE TRAMAGE, en tête des couches parce qu'il doit être AU-DESSUS de tout
+     ce qu'il détrame. Sur 8 bits par canal, une rampe d'alpha étalée sur
+     plusieurs centaines de pixels ne dispose que d'une soixantaine de valeurs :
+     les paliers sont arithmétiquement inévitables, et sur un aplat l'œil les
+     lit comme des contours. Un damier d'un pixel à ±3 niveaux rend le pas de
+     quantification aléatoire à l'échelle du pixel, et les anneaux disparaissent.
+     Deux pas décorrélés — PPCM(2, 5) = 10 — pour qu'aucune période ne puisse
+     s'accrocher à l'échelle des marches et produire un moiré. */
   background:
+    repeating-conic-gradient(rgba(15, 15, 15, 0.011) 0% 25%, rgba(255, 255, 255, 0.011) 0% 50%),
+    repeating-conic-gradient(rgba(15, 15, 15, 0.008) 0% 25%, rgba(255, 255, 255, 0.008) 0% 50%),
     linear-gradient(180deg,
       rgba(255, 255, 255, 0.85) 0%,
       rgba(255, 255, 255, 0)   26%,
@@ -658,6 +668,25 @@
     radial-gradient(130% 78% at 50% 0%,
       rgba(255, 255, 255, 0.55) 0%,
       rgba(255, 255, 255, 0)   58%);
+  background-size: 2px 2px, 5px 5px, auto, auto;
+  background-position: 0 0, 1px 2px, 0 0, 0 0;
+}
+/* Le tramage doit valoir 2 et 5 pixels PHYSIQUES, pas 2 et 5 px CSS : sur un
+   écran retina, un damier de 2 px CSS fait 4 px physiques et cesse d'être un
+   tramage pour devenir un tissage qu'on voit. On divise les pas par le DPR
+   pour retrouver la même grille à l'échelle du capteur — et c'est là que le
+   tramage opère, puisque c'est là que la quantification a lieu. */
+@media (min-resolution: 2dppx) {
+  .snow-bg::after {
+    background-size: 1px 1px, 2.5px 2.5px, auto, auto;
+    background-position: 0 0, 0.5px 1px, 0 0, 0 0;
+  }
+}
+@media (min-resolution: 3dppx) {
+  .snow-bg::after {
+    background-size: 0.667px 0.667px, 1.667px 1.667px, auto, auto;
+    background-position: 0 0, 0.333px 0.667px, 0 0, 0 0;
+  }
 }
 
 /* ── Les lames ────────────────────────────────────────────────────────────
@@ -729,49 +758,56 @@
 }
 
 /* ── Le jeu de lumière ────────────────────────────────────────────────────
-   LE PROBLÈME, D'ABORD, PARCE QU'IL DICTE TOUT LE RESTE. Le fond est du
-   #FFFAFA : il reste CINQ niveaux avant le blanc pur. Une lumière blanche sur
-   une page blanche ne peut donc rien faire — la version précédente ne modulait
-   que 11 niveaux de luminance sur 255, soit 4 %, et c'est exactement pour ça
-   qu'elle ne se voyait pas.
+   LE DÉFAUT CORRIGÉ ICI : on voyait la démarcation des foyers. Ce n'était pas
+   un bord, c'était du BANDING, et la mesure le dit sans ambiguïté — sur une
+   ligne de 1440 px traversant le champ, le canal bleu ne prenait que QUATORZE
+   valeurs distinctes, avec des paliers allant jusqu'à 25 px de large. Une
+   marche d'un niveau tous les 25 px, sur un aplat, l'œil la lit comme un
+   contour.
 
-   Il n'y a que deux directions possibles : vers le sombre, mais une tache
-   sombre sur du blanc se lit comme une OMBRE et jamais comme une lumière ; ou
-   vers la COULEUR. C'est la seule qui reste, et c'est aussi la bonne
-   physiquement : une lame de verre disperse. Le jeu de lumière est donc
-   chromatique, pas lumineux.
+   Deux causes, deux corrections :
 
-   TROIS FOYERS, TROIS TEMPÉRATURES, TROIS PÉRIODES PREMIÈRES ENTRE ELLES
-   (29 / 43 / 61 s) : le bleu du site, un bleu-violet plus froid, et un ambre
-   très pâle. Le chaud est ce qui fait qu'on lit un JEU de lumière plutôt qu'un
-   voile bleu : sans lui, les deux foyers froids se confondent et le champ n'a
-   qu'une couleur. Il est deux fois moins dense que les autres — un ambre à la
-   même force virerait au sépia.
+   1. LE PROFIL ÉTAIT FAIT DE QUATRE SEGMENTS DROITS. Entre deux arrêts, un
+      dégradé CSS interpole linéairement ; à chaque arrêt, la pente change d'un
+      coup. Trois ruptures de pente sur un foyer, et chacune se lit comme un
+      anneau. Le profil est maintenant une cloche échantillonnée en DIX arrêts
+      sur exp(-3x²) — la pente ne saute plus nulle part, elle varie
+      continûment, et il n'y a plus d'anneau à voir.
 
-   Ils passent PAR-DESSUS les lames et non dessous. Une lumière qui n'éclaire
-   pas ce qu'elle traverse n'est pas une lumière : posés dessous, les foyers
-   n'auraient teinté que les intervalles blancs, et les arêtes seraient restées
-   grises au milieu de la couleur.
+   2. IL N'Y AVAIT PLUS DE TRAMAGE. Sur 8 bits par canal, une rampe d'alpha de
+      0,23 étalée sur 500 px ne dispose que d'une soixantaine de valeurs :
+      les paliers sont arithmétiquement inévitables, quelle que soit la forme
+      du profil. Le tramage est réintroduit sur le voile (voir plus haut) :
+      un damier d'UN pixel du capteur rend le pas de quantification aléatoire
+      à l'échelle du pixel, et les anneaux disparaissent.
 
-   Seuls transform et opacity sont animés : le compositeur les lit sans repasser
-   par le style, le layout ou la peinture. Aucun filter, aucun blur — la douceur
-   est écrite dans les arrêts des dégradés, qui sont déjà continus. */
+   CINQ FOYERS AU LIEU DE TROIS, cinq périodes premières distinctes
+   (29 / 37 / 43 / 53 / 61 s), dont aucune n'égale celle de la dérive des lames
+   (41 s) ni celle du reflet (34 s) : le champ ne se répète jamais.
+   Les deux nouveaux sont les plus faibles — un cyan et un second ambre. Ils
+   n'ajoutent pas de la densité, ils ajoutent des CROISEMENTS : c'est là que la
+   couleur se compose et que le champ cesse d'être trois taches.
+
+   LES CINQ BOÎTES SONT PLUS PETITES QUE LES TROIS D'AVANT, et c'est une
+   contrainte de composition, pas de dessin. Mesuré : à cinq foyers pleine
+   taille, 3 à 16 images perdues sur 179 selon la passe, contre 0 à 5 à trois.
+   Le coût suit l'AIRE COMPOSÉE, pas le nombre de couches : les boîtes sont
+   donc réduites de 18 % par côté, ce qui ramène le total de 1,80 à 1,21
+   aire-écran — exactement le niveau du réglage qui mesurait propre — et
+   l'alpha remonte de 20 % pour rendre la surface perdue. Avec un
+   `closest-side`, une boîte plus petite donne un foyer plus petit, jamais un
+   foyer coupé.
+
+   NI `will-change`, NI `scale()`, et ce sont deux décisions mesurées. Les
+   foyers coûtaient 11 images perdues sur 180 ; sans eux, zéro. Un `scale` sur
+   une couche promue force une re-rastérisation à l'échelle MAXIMALE de
+   l'animation, et `will-change` épingle la couche en mémoire alors qu'une
+   animation composée de transform/opacity promeut déjà d'elle-même, le temps
+   qu'il faut. Il ne reste que translate et opacity. */
 .snow-glow {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
-  /* NI `will-change`, NI `scale()` dans les keyframes, et ce sont deux
-     décisions mesurées. Les trois foyers coûtaient 11 images perdues sur 180
-     (médiane 17,3 ms, pointe 27,2) ; sans eux, zéro et 16,7 ms de médiane.
-     Deux causes : un `scale` sur une couche promue force une re-rastérisation
-     à l'échelle MAXIMALE de l'animation — 1,22 ici, soit 1,49 fois l'aire — et
-     `will-change` épingle en plus la couche en mémoire alors qu'une animation
-     composée de transform/opacity promeut déjà d'elle-même, le temps qu'il
-     faut. Il ne reste que translate et opacity : le compositeur les lit sans
-     repasser par le style, le layout ni la peinture.
-     Les boîtes sont aussi réduites d'un tiers. Avec un `closest-side`, l'alpha
-     atteint zéro au bord de la boîte : une boîte plus petite donne un foyer
-     plus petit, pas un foyer coupé, et la densité est rendue par l'alpha. */
   animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
   animation-iteration-count: infinite;
   animation-direction: alternate;
@@ -779,13 +815,19 @@
 
 /* 1 · le foyer bleu — le plus dense, celui qui porte la couleur du site */
 .snow-glow-a {
-  left: -12%; top: -18%;
-  width: 62%; height: 78%;
+  left: -8%; top: -12%;
+  width: 51%; height: 64%;
   background: radial-gradient(closest-side at 50% 50%,
-    rgba(66, 126, 245, 0.230)  0%,
-    rgba(86, 142, 248, 0.130) 42%,
-    rgba(120, 168, 252, 0.042) 72%,
-    rgba(150, 190, 255, 0)   100%);
+    rgba(66, 126, 245, 0.2760)   0%,
+    rgba(70, 129, 245, 0.2640)  11%,
+    rgba(78, 135, 246, 0.2316)  22%,
+    rgba(88, 143, 247, 0.1860)  33%,
+    rgba(100, 152, 249, 0.1356) 44%,
+    rgba(112, 161, 250, 0.0900) 55%,
+    rgba(126, 172, 251, 0.0540) 66%,
+    rgba(140, 182, 253, 0.0276) 77%,
+    rgba(154, 192, 254, 0.0108) 88%,
+    rgba(168, 202, 255, 0)    100%);
   animation-name: glow-a;
   animation-duration: 29s;
   animation-delay: -11s;
@@ -797,13 +839,19 @@
 
 /* 2 · le foyer froid — il croise le premier en sens inverse */
 .snow-glow-b {
-  right: -14%; top: 8%;
-  width: 56%; height: 70%;
+  right: -10%; top: 12%;
+  width: 46%; height: 57%;
   background: radial-gradient(closest-side at 50% 50%,
-    rgba(112, 108, 250, 0.180)  0%,
-    rgba(128, 132, 251, 0.098) 44%,
-    rgba(160, 172, 253, 0.032) 74%,
-    rgba(185, 195, 255, 0)   100%);
+    rgba(112, 108, 250, 0.2160)   0%,
+    rgba(115, 112, 250, 0.2064)  11%,
+    rgba(122, 121, 250, 0.1812)  22%,
+    rgba(131, 133, 251, 0.1452)  33%,
+    rgba(142, 146, 251, 0.1068)  44%,
+    rgba(153, 159, 252, 0.0708)  55%,
+    rgba(165, 173, 253, 0.0420)  66%,
+    rgba(177, 186, 253, 0.0216)  77%,
+    rgba(189, 198, 254, 0.0084)  88%,
+    rgba(200, 209, 255, 0)     100%);
   animation-name: glow-b;
   animation-duration: 43s;
   animation-delay: -27s;
@@ -813,16 +861,23 @@
   to   { transform: translate3d(-118%, -22%, 0); opacity: 0.56; }
 }
 
-/* 3 · le contre-jour chaud — deux fois moins dense, et c'est lui qui fait le
-   JEU : sans une seule température opposée, les deux bleus se confondent. */
+/* 3 · le contre-jour chaud — c'est lui qui fait le JEU : sans une seule
+   température opposée, les foyers froids se confondent et le champ n'a qu'une
+   couleur. Moitié moins dense — un ambre à la même force virerait au sépia. */
 .snow-glow-c {
-  left: 26%; bottom: -22%;
-  width: 54%; height: 66%;
+  left: 30%; bottom: -16%;
+  width: 44%; height: 54%;
   background: radial-gradient(closest-side at 50% 50%,
-    rgba(255, 176, 122, 0.110)  0%,
-    rgba(255, 196, 152, 0.058) 46%,
-    rgba(255, 216, 186, 0.018) 76%,
-    rgba(255, 232, 214, 0)   100%);
+    rgba(255, 176, 122, 0.1320)   0%,
+    rgba(255, 179, 127, 0.1260)  11%,
+    rgba(255, 185, 136, 0.1104)  22%,
+    rgba(255, 192, 147, 0.0888)  33%,
+    rgba(255, 199, 159, 0.0648)  44%,
+    rgba(255, 207, 172, 0.0432)  55%,
+    rgba(255, 214, 184, 0.0264)  66%,
+    rgba(255, 222, 197, 0.0132)  77%,
+    rgba(255, 229, 209, 0.0048)  88%,
+    rgba(255, 236, 221, 0)     100%);
   animation-name: glow-c;
   animation-duration: 61s;
   animation-delay: -19s;
@@ -832,10 +887,62 @@
   to   { transform: translate3d( 58%, -30%, 0); opacity: 0.98; }
 }
 
-/* 4 · le reflet spéculaire qui balaie les lames. Il reste — c'est lui qui
-   donne le GESTE, le passage d'une lumière rasante — mais il ne porte plus
-   seul l'effet, et ses flancs sont doublés : le cœur délave les arêtes, les
-   flancs les renforcent juste avant et juste après.
+/* 4 · le cyan — le plus faible des cinq. Il n'apporte pas de la densité, il
+   apporte des CROISEMENTS : posé entre le bleu et l'ambre, il donne au champ
+   une troisième couleur là où les deux autres se recouvrent. */
+.snow-glow-d {
+  left: 38%; top: -20%;
+  width: 38%; height: 48%;
+  background: radial-gradient(closest-side at 50% 50%,
+    rgba(96, 192, 226, 0.1140)   0%,
+    rgba(100, 195, 228, 0.1092) 11%,
+    rgba(110, 200, 230, 0.0960) 22%,
+    rgba(122, 206, 233, 0.0768) 33%,
+    rgba(136, 213, 236, 0.0564) 44%,
+    rgba(150, 220, 239, 0.0372) 55%,
+    rgba(165, 227, 242, 0.0228) 66%,
+    rgba(180, 234, 246, 0.0108) 77%,
+    rgba(195, 241, 249, 0.0048) 88%,
+    rgba(210, 247, 252, 0)    100%);
+  animation-name: glow-d;
+  animation-duration: 37s;
+  animation-delay: -23s;
+}
+@keyframes glow-d {
+  from { transform: translate3d(-88%, -8%, 0); opacity: 0.44; }
+  to   { transform: translate3d( 72%, 34%, 0); opacity: 0.92; }
+}
+
+/* 5 · le second chaud, en bas à droite. Il équilibre le premier : un seul
+   foyer chaud faisait pencher tout le champ du même côté. */
+.snow-glow-e {
+  right: -5%; bottom: -24%;
+  width: 41%; height: 49%;
+  background: radial-gradient(closest-side at 50% 50%,
+    rgba(252, 196, 150, 0.1020)   0%,
+    rgba(252, 199, 155, 0.0972)  11%,
+    rgba(253, 204, 163, 0.0852)  22%,
+    rgba(253, 210, 173, 0.0684)  33%,
+    rgba(254, 216, 184, 0.0504)  44%,
+    rgba(254, 222, 195, 0.0336)  55%,
+    rgba(254, 228, 206, 0.0204)  66%,
+    rgba(255, 234, 216, 0.0096)  77%,
+    rgba(255, 240, 227, 0.0036)  88%,
+    rgba(255, 246, 238, 0)     100%);
+  animation-name: glow-e;
+  animation-duration: 53s;
+  animation-delay: -37s;
+}
+@keyframes glow-e {
+  from { transform: translate3d(  22%, -12%, 0); opacity: 0.90; }
+  to   { transform: translate3d(-104%,  20%, 0); opacity: 0.46; }
+}
+
+/* 6 · le reflet spéculaire qui balaie les lames. Il donne le GESTE — le
+   passage d'une lumière rasante — quand les foyers donnent la couleur.
+   Ses flancs sont eux aussi passés en cloche : quatre arrêts droits y
+   dessinaient deux anneaux verticaux, exactement le même défaut que sur les
+   foyers, en plus visible parce que la bande est étroite.
    La boîte part hors cadre à gauche et sort entièrement à droite : la reprise
    de boucle est invisible, donc `linear` suffit, sans demi-tour à cacher. */
 .snow-sweep {
@@ -846,13 +953,23 @@
   width: 62%;
   pointer-events: none;
   background: linear-gradient(101deg,
-    rgba(15, 15, 15, 0)       0%,
-    rgba(15, 15, 15, 0.052)  27%,
-    rgba(15, 15, 15, 0)      42%,
+    rgba(15, 15, 15, 0)        0%,
+    rgba(15, 15, 15, 0.012)   11%,
+    rgba(15, 15, 15, 0.034)   19%,
+    rgba(15, 15, 15, 0.052)   27%,
+    rgba(15, 15, 15, 0.038)   33%,
+    rgba(15, 15, 15, 0.014)   38%,
+    rgba(120, 120, 120, 0.05) 43%,
+    rgba(255, 255, 255, 0.58) 46%,
     rgba(255, 255, 255, 0.92) 50%,
-    rgba(15, 15, 15, 0)      58%,
-    rgba(15, 15, 15, 0.052)  73%,
-    rgba(15, 15, 15, 0)     100%);
+    rgba(255, 255, 255, 0.58) 54%,
+    rgba(120, 120, 120, 0.05) 57%,
+    rgba(15, 15, 15, 0.014)   62%,
+    rgba(15, 15, 15, 0.038)   67%,
+    rgba(15, 15, 15, 0.052)   73%,
+    rgba(15, 15, 15, 0.034)   81%,
+    rgba(15, 15, 15, 0.012)   89%,
+    rgba(15, 15, 15, 0)      100%);
   animation: snow-lumiere 34s linear infinite;
   will-change: transform;
 }
@@ -1387,6 +1504,8 @@
   .snow-glow-a { transform: translate3d(  62%,   8%, 0); opacity: 0.86; }
   .snow-glow-b { transform: translate3d( -58%, -4%, 0); opacity: 0.80; }
   .snow-glow-c { transform: translate3d(  -8%, -6%, 0); opacity: 0.78; }
+  .snow-glow-d { transform: translate3d( -12%, 14%, 0); opacity: 0.70; }
+  .snow-glow-e { transform: translate3d( -44%,  6%, 0); opacity: 0.72; }
 
   .snow-letter { perspective: none; }
   .snow-letter-i,
