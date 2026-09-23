@@ -202,11 +202,21 @@ export default function Accueil() {
           tileClassName="w-14 h-14 md:w-20 md:h-20 border-0"
         />
 
-        {/* La lumière qui traverse le champ. Une bande large, à cœur blanc et
-            à flancs sombres : sur une page déjà blanche un reflet ne peut pas
-            être « plus clair », il n'y a pas de marge au-dessus du blanc. Elle
-            se lit donc par le contraste avec ses propres flancs, qui renforcent
-            les lames juste avant et juste après de les délaver. */}
+        {/* LE JEU DE LUMIÈRE. Sur un fond #FFFAFA il ne reste que cinq niveaux
+            avant le blanc pur : une lumière BLANCHE sur une page blanche ne
+            peut rien faire, et c'est exactement pourquoi la version précédente
+            ne se voyait pas. Restent deux directions — le sombre, qui se lit
+            comme une ombre et jamais comme une lumière, ou la COULEUR. Le jeu
+            est donc chromatique, ce qui est aussi juste physiquement : une lame
+            de verre disperse. */}
+        {/* Les trois foyers colorés. Ils passent PAR-DESSUS les lames : une
+            lumière qui n'éclaire pas ce qu'elle traverse n'est pas une
+            lumière. Posés dessous, ils n'auraient teinté que les intervalles
+            blancs et les arêtes seraient restées grises au milieu de la
+            couleur. */}
+        <i className="snow-glow snow-glow-a" />
+        <i className="snow-glow snow-glow-b" />
+        <i className="snow-glow snow-glow-c" />
         <div className="snow-sweep" />
       </div>
 
