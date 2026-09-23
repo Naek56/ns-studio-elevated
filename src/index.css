@@ -697,11 +697,25 @@
    LE PROFIL EST CELUI D'UNE LAME VUE PAR LA TRANCHE, et c'est lui qui fait la
    différence entre une rayure et du verre : rien sur la moitié gauche (la face
    de la lame, qu'on traverse), puis une montée très progressive sur 50 % de la
-   case (l'épaisseur qui se referme), et enfin l'arête, nette, sur le dernier
-   pour-cent. Un trait symétrique n'encode aucune direction de lumière et l'œil
-   le lit comme une marque POSÉE SUR la page ; un profil asymétrique encode une
-   source et une épaisseur, et l'œil le résout comme un objet DEBOUT dans la
-   scène.
+   case (l'épaisseur qui se referme), et l'arête au bord. Un trait symétrique
+   n'encode aucune direction de lumière et l'œil le lit comme une marque POSÉE
+   SUR la page ; un profil asymétrique encode une source et une épaisseur, et
+   l'œil le résout comme un objet DEBOUT dans la scène.
+
+   CE QUI CHANGE ICI : l'arête n'est plus un aplat. Le profil se terminait par
+   `0.260` de 99,1 % à 100 % — un palier constant de 0,7 px suivi d'une chute
+   à zéro au bord de la case. C'était, littéralement, la seule partie du fond
+   qui ne soit PAS un dégradé : un filet plein, à valeur unique, coupé net. À
+   l'écran ça se lit comme un trait tracé, pas comme une arête éclairée, et
+   c'est ce qu'on voyait encore.
+
+   Le sommet est maintenant posé SUR la frontière entre deux cases, et il
+   retombe des DEUX côtés — la fin du profil (100 %) et son début (0 %) valent
+   exactement la même chose, 0,186, donc la jonction est invisible et la case
+   suivante porte le flanc droit de l'arête précédente. Plus aucun palier,
+   plus aucune marche : de 0 % à 100 % la valeur varie en continu. L'arête
+   descend aussi de 0,260 à 0,186 — un sommet étalé sur ~6 px pèse plus lourd
+   à l'œil qu'une ligne de 1 px, il fallait rendre ce que l'étalement ajoute.
 
    Les arrêts sont en POUR-CENT et non en pixels : la case fait 56 px sur
    téléphone et 80 px au-delà de 768 px, et le profil doit garder les mêmes
@@ -712,13 +726,26 @@
    dessinerait une seconde arête sur les 80 premiers pixels de l'écran. */
 .snow-tiles > div > div {
   background-image: linear-gradient(90deg,
-    rgba(15, 15, 15, 0)      0%,
-    rgba(15, 15, 15, 0)     44%,
-    rgba(15, 15, 15, 0.014) 70%,
-    rgba(15, 15, 15, 0.034) 89%,
-    rgba(15, 15, 15, 0.080) 96.5%,
-    rgba(15, 15, 15, 0.260) 99.1%,
-    rgba(15, 15, 15, 0.260) 100%);
+    /* le flanc droit de l'arête précédente, qui déborde dans cette case */
+    rgba(15, 15, 15, 0.186)   0%,
+    rgba(15, 15, 15, 0.150)   0.9%,
+    rgba(15, 15, 15, 0.104)   2.0%,
+    rgba(15, 15, 15, 0.062)   3.3%,
+    rgba(15, 15, 15, 0.032)   4.8%,
+    rgba(15, 15, 15, 0.013)   6.6%,
+    rgba(15, 15, 15, 0.004)   8.6%,
+    rgba(15, 15, 15, 0)      11%,
+    /* la face de la lame : on la traverse, elle ne se voit pas */
+    rgba(15, 15, 15, 0)      46%,
+    /* l'épaisseur qui se referme, puis l'arête */
+    rgba(15, 15, 15, 0.006)  60%,
+    rgba(15, 15, 15, 0.016)  72%,
+    rgba(15, 15, 15, 0.030)  82%,
+    rgba(15, 15, 15, 0.048)  89%,
+    rgba(15, 15, 15, 0.072)  94%,
+    rgba(15, 15, 15, 0.104)  97%,
+    rgba(15, 15, 15, 0.142)  98.9%,
+    rgba(15, 15, 15, 0.186) 100%);
 }
 
 /* ── La grille ────────────────────────────────────────────────────────────
@@ -757,194 +784,179 @@
   to   { transform: translate3d( 22px, 0, 0); }
 }
 
-/* ── Le jeu de lumière ────────────────────────────────────────────────────
-   LE DÉFAUT CORRIGÉ ICI : on voyait la démarcation des foyers. Ce n'était pas
-   un bord, c'était du BANDING, et la mesure le dit sans ambiguïté — sur une
-   ligne de 1440 px traversant le champ, le canal bleu ne prenait que QUATORZE
-   valeurs distinctes, avec des paliers allant jusqu'à 25 px de large. Une
-   marche d'un niveau tous les 25 px, sur un aplat, l'œil la lit comme un
-   contour.
+/* ── Les motifs ─────────────────────────────────────────────────
+   CE QUI REMPLACE QUOI. Il y avait ici cinq taches rondes en dégradé radial
+   qui se promenaient. C'est le geste par défaut de tous les fonds « animés »
+   du web, et ça se voit : quelle que soit la couleur, une tache ronde floue
+   qui dérive reste une tache ronde floue qui dérive. Elles sont retirées.
 
-   Deux causes, deux corrections :
+   CE QUI LES REMPLACE EST UN MOTIF, au sens propre : quelque chose qui a une
+   maille, qui se répète, et qu'on peut suivre du regard quand il traverse la
+   page. Quatre champs de rubans parallèles, chacun à son angle et à son pas
+   (24° / 268 px, 69° / 198 px, −33° / 224 px, 128° / 234 px). Aucun d'eux
+   n'est lisible seul — ils pèsent entre 0,034 et 0,070 d'alpha, quinze fois
+   moins qu'un trait. Ce qu'on voit est leur SUPERPOSITION : quatre mailles proches
+   à des angles différents battent entre elles et dessinent un réseau de nœuds
+   à grande échelle, qui n'a plus ni période ni forme apparentes. C'est le
+   principe du moiré, et c'est ce qui fait qu'un motif régulier peut produire
+   une image qui, à l'œil, ne se répète pas.
 
-   1. LE PROFIL ÉTAIT FAIT DE QUATRE SEGMENTS DROITS. Entre deux arrêts, un
-      dégradé CSS interpole linéairement ; à chaque arrêt, la pente change d'un
-      coup. Trois ruptures de pente sur un foyer, et chacune se lit comme un
-      anneau. Le profil est maintenant une cloche échantillonnée en DIX arrêts
-      sur exp(-3x²) — la pente ne saute plus nulle part, elle varie
-      continûment, et il n'y a plus d'anneau à voir.
+   TOUT EST DÉGRADÉ, sans une seule valeur constante : le profil d'un ruban est
+   une gaussienne échantillonnée en dix-sept arrêts, e^−((t−½)/0,15)². Elle
+   retombe à un millième de son sommet aux deux bouts de la période — la
+   jonction d'une période à la suivante est donc plate des deux côtés, et le
+   motif se raccorde sans la marche qu'un `repeating-linear-gradient` à deux
+   arrêts produirait. Aucun palier, aucune rupture de pente, rien de net.
 
-   2. IL N'Y AVAIT PLUS DE TRAMAGE. Sur 8 bits par canal, une rampe d'alpha de
-      0,23 étalée sur 500 px ne dispose que d'une soixantaine de valeurs :
-      les paliers sont arithmétiquement inévitables, quelle que soit la forme
-      du profil. Le tramage est réintroduit sur le voile (voir plus haut) :
-      un damier d'UN pixel du capteur rend le pas de quantification aléatoire
-      à l'échelle du pixel, et les anneaux disparaissent.
+   LA BOUCLE EST INVISIBLE, ET C'EST CE QUI PERMET `linear`. Un motif périodique
+   translaté d'exactement UNE période redonne la même image au pixel près : les
+   deux déplacements valent donc une période entière sur la normale de CHACUN
+   des champs qu'ils portent —
+     (120, −240) vaut 268 px sur la normale à 24° et 198 px sur celle à 69° ;
+     (−180, −150) vaut 224 px sur celle à −33° et 234 px sur celle à 128°.
+   Le retour à zéro de l'animation ne change donc rien à l'écran. Pas de
+   demi-tour à cacher, pas de `alternate`, pas de ralenti aux extrémités : une
+   dérive constante, de bout en bout.
 
-   CINQ FOYERS AU LIEU DE TROIS, cinq périodes premières distinctes
-   (29 / 37 / 43 / 53 / 61 s), dont aucune n'égale celle de la dérive des lames
-   (41 s) ni celle du reflet (34 s) : le champ ne se répète jamais.
-   Les deux nouveaux sont les plus faibles — un cyan et un second ambre. Ils
-   n'ajoutent pas de la densité, ils ajoutent des CROISEMENTS : c'est là que la
-   couleur se compose et que le champ cesse d'être trois taches.
+   DEUX ÉLÉMENTS POUR QUATRE CHAMPS, et c'est une décision de coût. Le prix
+   d'une couche animée suit son AIRE composée, pas son nombre de dégradés :
+   quatre éléments plein écran coûteraient le double de deux. Deux champs posés
+   sur le même élément partagent son déplacement — mais un champ de rubans est
+   invariant LE LONG de ses rubans, donc seule la composante NORMALE de ce
+   déplacement se voit. Deux angles différents sur un même vecteur donnent
+   ainsi deux vitesses apparentes différentes (6,9 px/s et 5,1 px/s sur le
+   premier élément) : quatre mouvements distincts pour deux calques.
 
-   LES CINQ BOÎTES SONT PLUS PETITES QUE LES TROIS D'AVANT, et c'est une
-   contrainte de composition, pas de dessin. Mesuré : à cinq foyers pleine
-   taille, 3 à 16 images perdues sur 179 selon la passe, contre 0 à 5 à trois.
-   Le coût suit l'AIRE COMPOSÉE, pas le nombre de couches : les boîtes sont
-   donc réduites de 18 % par côté, ce qui ramène le total de 1,80 à 1,21
-   aire-écran — exactement le niveau du réglage qui mesurait propre — et
-   l'alpha remonte de 20 % pour rendre la surface perdue. Avec un
-   `closest-side`, une boîte plus petite donne un foyer plus petit, jamais un
-   foyer coupé.
-
-   NI `will-change`, NI `scale()`, et ce sont deux décisions mesurées. Les
-   foyers coûtaient 11 images perdues sur 180 ; sans eux, zéro. Un `scale` sur
-   une couche promue force une re-rastérisation à l'échelle MAXIMALE de
-   l'animation, et `will-change` épingle la couche en mémoire alors qu'une
-   animation composée de transform/opacity promeut déjà d'elle-même, le temps
-   qu'il faut. Il ne reste que translate et opacity. */
-.snow-glow {
+   L'UN PASSE DERRIÈRE LES LAMES, L'AUTRE DEVANT — l'ordre dans le DOM le dit.
+   Derrière, le motif est une lumière qui vient du fond et que le verre filtre ;
+   devant, c'est un reflet posé sur la surface. Les deux ensemble donnent
+   l'épaisseur : avec le seul calque du dessous, la page redevient plate. */
+.snow-motif {
   position: absolute;
-  border-radius: 50%;
   pointer-events: none;
-  animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  animation-timing-function: linear;
   animation-iteration-count: infinite;
-  animation-direction: alternate;
 }
 
-/* 1 · le foyer bleu — le plus dense, celui qui porte la couleur du site */
-.snow-glow-a {
-  left: -8%; top: -12%;
-  width: 51%; height: 64%;
-  background: radial-gradient(closest-side at 50% 50%,
-    rgba(66, 126, 245, 0.2760)   0%,
-    rgba(70, 129, 245, 0.2640)  11%,
-    rgba(78, 135, 246, 0.2316)  22%,
-    rgba(88, 143, 247, 0.1860)  33%,
-    rgba(100, 152, 249, 0.1356) 44%,
-    rgba(112, 161, 250, 0.0900) 55%,
-    rgba(126, 172, 251, 0.0540) 66%,
-    rgba(140, 182, 253, 0.0276) 77%,
-    rgba(154, 192, 254, 0.0108) 88%,
-    rgba(168, 202, 255, 0)    100%);
-  animation-name: glow-a;
-  animation-duration: 29s;
-  animation-delay: -11s;
+/* Le calque du dessous. Il n'est pas débordé « par confort » mais du côté que
+   la dérive découvre, et de la distance exacte qu'elle parcourt : il monte et
+   part à droite, donc il déborde en bas de 240 px et à gauche de 120 px. Un
+   `inset: -50%` doublerait l'aire composée sans jamais rien montrer de plus. */
+.snow-motif-a {
+  inset: 0 0 -240px -120px;
+  background-image:
+  /* A · le bleu — le plus large, le plus dense, celui qui porte la teinte */
+  repeating-linear-gradient(24deg,
+    rgba(74, 128, 242, 0) 0px,
+    rgba(74, 128, 242, 0) 32.2px,
+    rgba(74, 128, 242, 0.0013) 53.6px,
+    rgba(74, 128, 242, 0.0054) 69.7px,
+    rgba(74, 128, 242, 0.0141) 83.1px,
+    rgba(74, 128, 242, 0.0293) 96.5px,
+    rgba(74, 128, 242, 0.0488) 109.9px,
+    rgba(74, 128, 242, 0.064) 121.9px,
+    rgba(74, 128, 242, 0.07) 134px,
+    rgba(74, 128, 242, 0.064) 146.1px,
+    rgba(74, 128, 242, 0.0488) 158.1px,
+    rgba(74, 128, 242, 0.0293) 171.5px,
+    rgba(74, 128, 242, 0.0141) 184.9px,
+    rgba(74, 128, 242, 0.0054) 198.3px,
+    rgba(74, 128, 242, 0.0013) 214.4px,
+    rgba(74, 128, 242, 0) 235.8px,
+    rgba(74, 128, 242, 0) 268px),
+  /* C · le cyan — presque debout, il croise A à 45 degrés */
+  repeating-linear-gradient(69deg,
+    rgba(96, 196, 228, 0) 0px,
+    rgba(96, 196, 228, 0) 23.8px,
+    rgba(96, 196, 228, 0.0006) 39.6px,
+    rgba(96, 196, 228, 0.0026) 51.5px,
+    rgba(96, 196, 228, 0.0068) 61.4px,
+    rgba(96, 196, 228, 0.0142) 71.3px,
+    rgba(96, 196, 228, 0.0237) 81.2px,
+    rgba(96, 196, 228, 0.0311) 90.1px,
+    rgba(96, 196, 228, 0.034) 99px,
+    rgba(96, 196, 228, 0.0311) 107.9px,
+    rgba(96, 196, 228, 0.0237) 116.8px,
+    rgba(96, 196, 228, 0.0142) 126.7px,
+    rgba(96, 196, 228, 0.0068) 136.6px,
+    rgba(96, 196, 228, 0.0026) 146.5px,
+    rgba(96, 196, 228, 0.0006) 158.4px,
+    rgba(96, 196, 228, 0) 174.2px,
+    rgba(96, 196, 228, 0) 198px);
+  animation-name: motif-a;
+  animation-duration: 39s;
 }
-@keyframes glow-a {
-  from { transform: translate3d(-10%, -14%, 0); opacity: 0.62; }
-  to   { transform: translate3d(126%,  26%, 0); opacity: 1;    }
-}
-
-/* 2 · le foyer froid — il croise le premier en sens inverse */
-.snow-glow-b {
-  right: -10%; top: 12%;
-  width: 46%; height: 57%;
-  background: radial-gradient(closest-side at 50% 50%,
-    rgba(112, 108, 250, 0.2160)   0%,
-    rgba(115, 112, 250, 0.2064)  11%,
-    rgba(122, 121, 250, 0.1812)  22%,
-    rgba(131, 133, 251, 0.1452)  33%,
-    rgba(142, 146, 251, 0.1068)  44%,
-    rgba(153, 159, 252, 0.0708)  55%,
-    rgba(165, 173, 253, 0.0420)  66%,
-    rgba(177, 186, 253, 0.0216)  77%,
-    rgba(189, 198, 254, 0.0084)  88%,
-    rgba(200, 209, 255, 0)     100%);
-  animation-name: glow-b;
-  animation-duration: 43s;
-  animation-delay: -27s;
-}
-@keyframes glow-b {
-  from { transform: translate3d(  14%,  18%, 0); opacity: 1;    }
-  to   { transform: translate3d(-118%, -22%, 0); opacity: 0.56; }
-}
-
-/* 3 · le contre-jour chaud — c'est lui qui fait le JEU : sans une seule
-   température opposée, les foyers froids se confondent et le champ n'a qu'une
-   couleur. Moitié moins dense — un ambre à la même force virerait au sépia. */
-.snow-glow-c {
-  left: 30%; bottom: -16%;
-  width: 44%; height: 54%;
-  background: radial-gradient(closest-side at 50% 50%,
-    rgba(255, 176, 122, 0.1320)   0%,
-    rgba(255, 179, 127, 0.1260)  11%,
-    rgba(255, 185, 136, 0.1104)  22%,
-    rgba(255, 192, 147, 0.0888)  33%,
-    rgba(255, 199, 159, 0.0648)  44%,
-    rgba(255, 207, 172, 0.0432)  55%,
-    rgba(255, 214, 184, 0.0264)  66%,
-    rgba(255, 222, 197, 0.0132)  77%,
-    rgba(255, 229, 209, 0.0048)  88%,
-    rgba(255, 236, 221, 0)     100%);
-  animation-name: glow-c;
-  animation-duration: 61s;
-  animation-delay: -19s;
-}
-@keyframes glow-c {
-  from { transform: translate3d(-64%,  14%, 0); opacity: 0.50; }
-  to   { transform: translate3d( 58%, -30%, 0); opacity: 0.98; }
+@keyframes motif-a {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(120px, -240px, 0); }
 }
 
-/* 4 · le cyan — le plus faible des cinq. Il n'apporte pas de la densité, il
-   apporte des CROISEMENTS : posé entre le bleu et l'ambre, il donne au champ
-   une troisième couleur là où les deux autres se recouvrent. */
-.snow-glow-d {
-  left: 38%; top: -20%;
-  width: 38%; height: 48%;
-  background: radial-gradient(closest-side at 50% 50%,
-    rgba(96, 192, 226, 0.1140)   0%,
-    rgba(100, 195, 228, 0.1092) 11%,
-    rgba(110, 200, 230, 0.0960) 22%,
-    rgba(122, 206, 233, 0.0768) 33%,
-    rgba(136, 213, 236, 0.0564) 44%,
-    rgba(150, 220, 239, 0.0372) 55%,
-    rgba(165, 227, 242, 0.0228) 66%,
-    rgba(180, 234, 246, 0.0108) 77%,
-    rgba(195, 241, 249, 0.0048) 88%,
-    rgba(210, 247, 252, 0)    100%);
-  animation-name: glow-d;
-  animation-duration: 37s;
-  animation-delay: -23s;
+/* Le calque du dessus. Il part dans l'autre sens et nettement moins vite :
+   deux couches qui dérivent du même côté à la même allure se lisent comme une
+   seule, et le battement entre les deux disparait. */
+.snow-motif-b {
+  inset: 0 -180px -150px 0;
+  background-image:
+  /* B · le violet — à contre-sens du bleu */
+  repeating-linear-gradient(-33deg,
+    rgba(120, 116, 250, 0) 0px,
+    rgba(120, 116, 250, 0) 26.9px,
+    rgba(120, 116, 250, 0.0009) 44.8px,
+    rgba(120, 116, 250, 0.0039) 58.2px,
+    rgba(120, 116, 250, 0.0101) 69.4px,
+    rgba(120, 116, 250, 0.0209) 80.6px,
+    rgba(120, 116, 250, 0.0349) 91.8px,
+    rgba(120, 116, 250, 0.0457) 101.9px,
+    rgba(120, 116, 250, 0.05) 112px,
+    rgba(120, 116, 250, 0.0457) 122.1px,
+    rgba(120, 116, 250, 0.0349) 132.2px,
+    rgba(120, 116, 250, 0.0209) 143.4px,
+    rgba(120, 116, 250, 0.0101) 154.6px,
+    rgba(120, 116, 250, 0.0039) 165.8px,
+    rgba(120, 116, 250, 0.0009) 179.2px,
+    rgba(120, 116, 250, 0) 197.1px,
+    rgba(120, 116, 250, 0) 224px),
+  /* D · l'ambre — la seule température chaude du champ */
+  repeating-linear-gradient(128deg,
+    rgba(255, 186, 138, 0) 0px,
+    rgba(255, 186, 138, 0) 28.1px,
+    rgba(255, 186, 138, 0.0007) 46.8px,
+    rgba(255, 186, 138, 0.0031) 60.8px,
+    rgba(255, 186, 138, 0.008) 72.5px,
+    rgba(255, 186, 138, 0.0167) 84.2px,
+    rgba(255, 186, 138, 0.0279) 95.9px,
+    rgba(255, 186, 138, 0.0366) 106.5px,
+    rgba(255, 186, 138, 0.04) 117px,
+    rgba(255, 186, 138, 0.0366) 127.5px,
+    rgba(255, 186, 138, 0.0279) 138.1px,
+    rgba(255, 186, 138, 0.0167) 149.8px,
+    rgba(255, 186, 138, 0.008) 161.5px,
+    rgba(255, 186, 138, 0.0031) 173.2px,
+    rgba(255, 186, 138, 0.0007) 187.2px,
+    rgba(255, 186, 138, 0) 205.9px,
+    rgba(255, 186, 138, 0) 234px);
+  animation-name: motif-b;
+  animation-duration: 57s;
 }
-@keyframes glow-d {
-  from { transform: translate3d(-88%, -8%, 0); opacity: 0.44; }
-  to   { transform: translate3d( 72%, 34%, 0); opacity: 0.92; }
+@keyframes motif-b {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-180px, -150px, 0); }
 }
 
-/* 5 · le second chaud, en bas à droite. Il équilibre le premier : un seul
-   foyer chaud faisait pencher tout le champ du même côté. */
-.snow-glow-e {
-  right: -5%; bottom: -24%;
-  width: 41%; height: 49%;
-  background: radial-gradient(closest-side at 50% 50%,
-    rgba(252, 196, 150, 0.1020)   0%,
-    rgba(252, 199, 155, 0.0972)  11%,
-    rgba(253, 204, 163, 0.0852)  22%,
-    rgba(253, 210, 173, 0.0684)  33%,
-    rgba(254, 216, 184, 0.0504)  44%,
-    rgba(254, 222, 195, 0.0336)  55%,
-    rgba(254, 228, 206, 0.0204)  66%,
-    rgba(255, 234, 216, 0.0096)  77%,
-    rgba(255, 240, 227, 0.0036)  88%,
-    rgba(255, 246, 238, 0)     100%);
-  animation-name: glow-e;
-  animation-duration: 53s;
-  animation-delay: -37s;
-}
-@keyframes glow-e {
-  from { transform: translate3d(  22%, -12%, 0); opacity: 0.90; }
-  to   { transform: translate3d(-104%,  20%, 0); opacity: 0.46; }
-}
+/* ── Le reflet ──────────────────────────────────────────────────
+   La seule chose qui reste de l'ancien jeu de lumière, et la seule qui le
+   méritait : c'est elle qui dit que les lames sont en verre, parce qu'une
+   arête ne prouve son épaisseur qu'en attrapant une lumière rasante qui passe.
 
-/* 6 · le reflet spéculaire qui balaie les lames. Il donne le GESTE — le
-   passage d'une lumière rasante — quand les foyers donnent la couleur.
-   Ses flancs sont eux aussi passés en cloche : quatre arrêts droits y
-   dessinaient deux anneaux verticaux, exactement le même défaut que sur les
-   foyers, en plus visible parce que la bande est étroite.
-   La boîte part hors cadre à gauche et sort entièrement à droite : la reprise
-   de boucle est invisible, donc `linear` suffit, sans demi-tour à cacher. */
+   ELLE EST DEUX FOIS PLUS DISCRèTE QU'AVANT. Son cœur était à 0,92 de blanc :
+   sur une page déjà blanche, ce n'est pas un reflet, c'est une gomme — elle
+   effaçait les lames sur toute sa largeur en passant. À 0,50 elle les éclaire
+   au lieu de les couvrir. Et 46 s au lieu de 34 : le motif est désormais ce
+   qui bouge, le reflet n'est plus qu'un passage.
+
+   Ses flancs sont en cloche comme le reste : quatre arrêts droits y dessinaient
+   deux anneaux verticaux. La boîte part hors cadre à gauche et sort entièrement
+   à droite, donc la reprise de boucle est invisible et `linear` suffit. */
 .snow-sweep {
   position: absolute;
   top: 0;
@@ -954,23 +966,23 @@
   pointer-events: none;
   background: linear-gradient(101deg,
     rgba(15, 15, 15, 0)        0%,
-    rgba(15, 15, 15, 0.012)   11%,
-    rgba(15, 15, 15, 0.034)   19%,
-    rgba(15, 15, 15, 0.052)   27%,
-    rgba(15, 15, 15, 0.038)   33%,
-    rgba(15, 15, 15, 0.014)   38%,
-    rgba(120, 120, 120, 0.05) 43%,
-    rgba(255, 255, 255, 0.58) 46%,
-    rgba(255, 255, 255, 0.92) 50%,
-    rgba(255, 255, 255, 0.58) 54%,
-    rgba(120, 120, 120, 0.05) 57%,
-    rgba(15, 15, 15, 0.014)   62%,
-    rgba(15, 15, 15, 0.038)   67%,
-    rgba(15, 15, 15, 0.052)   73%,
-    rgba(15, 15, 15, 0.034)   81%,
-    rgba(15, 15, 15, 0.012)   89%,
+    rgba(15, 15, 15, 0.006)   11%,
+    rgba(15, 15, 15, 0.017)   19%,
+    rgba(15, 15, 15, 0.026)   27%,
+    rgba(15, 15, 15, 0.019)   33%,
+    rgba(15, 15, 15, 0.007)   38%,
+    rgba(150, 150, 150, 0.03) 43%,
+    rgba(255, 255, 255, 0.31) 46%,
+    rgba(255, 255, 255, 0.50) 50%,
+    rgba(255, 255, 255, 0.31) 54%,
+    rgba(150, 150, 150, 0.03) 57%,
+    rgba(15, 15, 15, 0.007)   62%,
+    rgba(15, 15, 15, 0.019)   67%,
+    rgba(15, 15, 15, 0.026)   73%,
+    rgba(15, 15, 15, 0.017)   81%,
+    rgba(15, 15, 15, 0.006)   89%,
     rgba(15, 15, 15, 0)      100%);
-  animation: snow-lumiere 34s linear infinite;
+  animation: snow-lumiere 46s linear infinite;
   will-change: transform;
 }
 @keyframes snow-lumiere {
@@ -1057,7 +1069,7 @@
   translate: 0 -0.196em;
 
   transform: translate3d(0, 0, 0);
-  transition: transform 640ms var(--snow-land);
+  transition: transform 780ms var(--snow-land);
   will-change: transform;
 }
 
@@ -1100,9 +1112,9 @@
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transition:
-    opacity   450ms var(--snow-ease),
-    filter    640ms var(--snow-ease),
-    transform 1150ms var(--snow-land);
+    opacity   550ms var(--snow-ease),
+    filter    780ms var(--snow-ease),
+    transform 1400ms var(--snow-land);
   will-change: transform, filter, opacity;
 }
 .snow-letter--in > .snow-letter-i {
@@ -1124,16 +1136,16 @@
 /* ── La passation ────────────────────────────────────────────────────────
    Un seul mouvement de caméra, pas deux animations juxtaposées : la caméra
    avance, traverse le mot (qui grossit, se défocalise et disparaît) et se
-   pose sur l'accueil. On sort toujours plus vite qu'on entre — 720 ms contre
-   1150 ms. */
+   pose sur l'accueil. On sort toujours plus vite qu'on entre — 820 ms contre
+   1400 ms. */
 .snow-intro--out {
   opacity: 0;
   filter: blur(10px);
   transform: scale(1.12);
   transition:
-    opacity   500ms var(--snow-ease),
-    filter    620ms var(--snow-ease),
-    transform 720ms var(--snow-leave);
+    opacity   570ms var(--snow-ease),
+    filter    700ms var(--snow-ease),
+    transform 820ms var(--snow-leave);
 }
 
 /* .snow-home ne porte QUE de l'opacité. Non négociable : un `filter` ou un
@@ -1159,7 +1171,7 @@
    toute la passation. Le bouton porte donc sa propre opacité — sur l'élément
    qui PORTE le backdrop-filter, c'est sans danger : il n'est backdrop root que
    pour ses descendants. */
-.snow-fade { opacity: 0; transition: opacity 620ms var(--snow-ease); }
+.snow-fade { opacity: 0; transition: opacity 700ms var(--snow-ease); }
 .snow-home--in .snow-fade { opacity: 1; }
 /* `opacity: 0` ne retire ni le hit-testing ni l'ordre de tabulation : sans
    ça, un clic pendant l'intro atteint le bouton invisible et ouvre la modale
@@ -1171,7 +1183,7 @@
 .snow-rise {
   transform: translate3d(0, 10px, 0) scale(0.988);
   transform-origin: 50% 50%;
-  transition: transform 720ms var(--snow-land);
+  transition: transform 820ms var(--snow-land);
   will-change: transform;
 }
 .snow-home--in .snow-rise { transform: translate3d(0, 0, 0) scale(1); }
@@ -1500,12 +1512,12 @@
      `animation-duration: 0.01ms !important` de @layer base la casserait. */
   .snow-tiles { animation: none; transform: translate3d(6px, 0, 0); will-change: auto; }
   .snow-sweep { animation: none; transform: translate3d(198%, 0, 0); will-change: auto; }
-  .snow-glow  { animation: none; will-change: auto; }
-  .snow-glow-a { transform: translate3d(  62%,   8%, 0); opacity: 0.86; }
-  .snow-glow-b { transform: translate3d( -58%, -4%, 0); opacity: 0.80; }
-  .snow-glow-c { transform: translate3d(  -8%, -6%, 0); opacity: 0.78; }
-  .snow-glow-d { transform: translate3d( -12%, 14%, 0); opacity: 0.70; }
-  .snow-glow-e { transform: translate3d( -44%,  6%, 0); opacity: 0.72; }
+  /* Les motifs restent, figés à une pose quelconque de leur course : ils ne
+     sont animés que par une translation, et une translation arrêtée ne laisse
+     aucune trace — le champ reste exactement le champ, il ne dérive plus. */
+  .snow-motif   { animation: none; }
+  .snow-motif-a { transform: translate3d( 74px,  -148px, 0); }
+  .snow-motif-b { transform: translate3d(-96px,   -80px, 0); }
 
   .snow-letter { perspective: none; }
   .snow-letter-i,
