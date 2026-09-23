@@ -198,17 +198,19 @@ export default function Accueil() {
           grille de survol immobile sous des lignes qui bougent se verrait au
           premier passage de souris. */}
       <div className="snow-bg" aria-hidden>
-        {/* LES MOTIFS — quatre champs de rubans en dégradé, portés par deux
+        {/* LES MOTIFS — six champs de rubans en dégradé, portés par deux
             calques, qui traversent lentement la page et battent entre eux.
-            Ils remplacent les cinq taches rondes qui dérivaient : une tache
-            ronde floue qui se promène est le fond animé par défaut du web, et
-            ça se lit comme tel quelle que soit la couleur.
+            Une période ne contient plus un ruban mais une phrase — un large
+            puis un fin, une onde seule, un doublet serré suivi d'un halo
+            lointain — et chaque calque respire sa propre opacité sur une
+            période longue qui n'est celle d'aucune autre. Des champs
+            s'éteignent, d'autres reviennent, jamais dans le même ordre.
 
             L'ORDRE DANS LE DOM EST LE PROPOS. Ce calque-ci est AVANT <Tiles>,
-            donc SOUS les lames : c'est une lumière qui vient du fond et que le
-            verre filtre. Son jumeau est après, donc DESSUS : c'est un reflet
-            posé sur la surface. Les deux à la même place donneraient deux fois
-            la même chose et la page resterait plate. */}
+            donc SOUS les lames : une lumière qui vient du fond et que le verre
+            filtre. L'autre est après, donc DESSUS : un reflet posé sur la
+            surface. Les deux à la même place donneraient deux fois la même
+            chose et la page resterait plate. */}
         <i className="snow-motif snow-motif-a" />
 
         <Tiles
@@ -219,16 +221,11 @@ export default function Accueil() {
           tileClassName="w-14 h-14 md:w-20 md:h-20 border-0"
         />
 
-        {/* Le second champ, par-dessus les lames — il les teinte au passage.
+        {/* Le second calque, par-dessus les lames — il les teinte au passage.
             Un motif qui n'atteint pas ce qu'il traverse n'est pas une lumière :
             posé uniquement dessous, il n'aurait coloré que les intervalles
             blancs et les arêtes seraient restées grises au milieu du champ. */}
         <i className="snow-motif snow-motif-b" />
-
-        {/* Le reflet rasant, seul rescapé de l'ancien jeu de lumière : c'est
-            lui qui prouve l'épaisseur des arêtes. Deux fois plus discret
-            qu'avant — désormais c'est le motif qui bouge, pas lui. */}
-        <div className="snow-sweep" />
       </div>
 
       {/* ── intro « way » ── */}
