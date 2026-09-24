@@ -265,18 +265,29 @@ export default function Accueil() {
         {/* Le fondu de la passation est porté par les enfants (.snow-fade) et
             jamais par ce conteneur : une opacité < 1 sur un ancêtre du bouton
             en verre le priverait de son backdrop-filter le temps de la
-            passation. Nav sans fond : le verre est réservé au bouton, là où il attire
-            l'œil — deux surfaces translucides superposées tueraient la
-            lisibilité. Grille 1fr/auto/1fr avec la première colonne vide
-            depuis le retrait du logo : c'est elle qui garantit que le groupe
-            d'onglets reste centré sur l'axe de la page quelle que soit la
-            largeur du bouton. Le header reste HORS de .snow-rise, pour que son
-            position: fixed ne soit pas contenu par un ancêtre transformé. */}
-        <header className="fixed inset-x-0 top-5 z-40 flex justify-center px-5">
-          <nav className="grid w-full max-w-[880px] items-center" style={{ gridTemplateColumns: "1fr auto 1fr" }}>
-            <div aria-hidden style={{ gridColumn: 1 }} />
+            passation. Nav sans fond : le verre est réservé au bouton, là où il
+            attire l'œil — deux surfaces translucides superposées tueraient la
+            lisibilité. Le header reste HORS de .snow-rise, pour que son
+            position: fixed ne soit pas contenu par un ancêtre transformé.
 
-            <div data-nav-links className="snow-fade hidden items-center justify-self-center md:flex" style={{ gridColumn: 2 }}>
+            CE QUI EST ALIGNÉ, ET AVEC QUOI. La version précédente était une
+            grille 1fr/auto/1fr large de 880 px : les onglets tombaient pile sur
+            l'axe de la page, donc sur celui du titre — mais le bouton était
+            seul à droite, la première colonne vide, et la BARRE, elle, n'était
+            pas centrée du tout. Son encre allait du premier onglet au bord du
+            bouton, soit un bloc décalé de 140 px à droite de l'axe. On alignait
+            une moitié de la barre et on laissait l'autre partir.
+
+            Les onglets et le bouton ne font donc plus qu'un seul groupe, centré
+            d'un bloc : c'est la barre ENTIÈRE qui partage l'axe du titre. Et le
+            centrage porte sur l'ENCRE, pas sur la boîte — à gauche le premier
+            onglet commence par 14 px de padding invisible, à droite la pilule
+            s'arrête net sur son bord. Centrée par sa boîte, la barre paraîtrait
+            décalée à droite ; la compensation est mesurée sur le rendu et
+            portée par .snow-nav. */}
+        <header className="fixed inset-x-0 top-5 z-40 flex justify-center px-5">
+          <nav className="snow-nav flex max-w-full items-center gap-2">
+            <div data-nav-links className="snow-fade hidden items-center md:flex">
               {NAV.map((n) => (
                 <a
                   key={n.label}
@@ -295,8 +306,7 @@ export default function Accueil() {
             <button
               type="button"
               onClick={() => openContact()}
-              className="lg lg-press snow-fade justify-self-end whitespace-nowrap rounded-full px-5 py-2.5 text-[14px]"
-              style={{ gridColumn: 3 }}
+              className="lg lg-press snow-fade whitespace-nowrap rounded-full px-5 py-2.5 text-[14px]"
             >
               <span className="lg-label sm:hidden">Rendez-vous</span>
               <span className="lg-label hidden sm:inline">Prendre rendez-vous</span>
