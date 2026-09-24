@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ContactModal, { openContact } from "@/components/site/ContactModal";
 import { Tiles } from "@/components/ui/tiles";
+import WayMark from "@/components/site/WayMark";
 
 /* Accueil « neige » — fond #FFFAFA, encre #0F0F0F.
 
@@ -270,37 +271,43 @@ export default function Accueil() {
             lisibilité. Le header reste HORS de .snow-rise, pour que son
             position: fixed ne soit pas contenu par un ancêtre transformé.
 
-            CE QUI EST ALIGNÉ, ET AVEC QUOI. La version précédente était une
-            grille 1fr/auto/1fr large de 880 px : les onglets tombaient pile sur
-            l'axe de la page, donc sur celui du titre — mais le bouton était
-            seul à droite, la première colonne vide, et la BARRE, elle, n'était
-            pas centrée du tout. Son encre allait du premier onglet au bord du
-            bouton, soit un bloc décalé de 140 px à droite de l'axe. On alignait
-            une moitié de la barre et on laissait l'autre partir.
+            CE QUI EST ALIGNÉ, ET AVEC QUOI. La barre est une boîte de 880 px
+            centrée sur l'axe de la page, donc sur celui du titre, et elle est
+            désormais TENUE À SES DEUX BOUTS : la marque et les onglets à
+            gauche, le CTA à droite. C'est ce qui règle d'un coup les deux
+            défauts d'avant — le bouton collé aux onglets (8 px les séparaient),
+            et une barre dont l'encre s'arrêtait au milieu parce que le côté
+            gauche était vide. Ici l'encre commence au premier pixel de la
+            mascotte et finit au bord de la pilule : les deux sont des bords
+            pleins, donc centrer la boîte revient à centrer l'encre, sans la
+            compensation optique que réclamait la version précédente.
 
-            Les onglets et le bouton ne font donc plus qu'un seul groupe, centré
-            d'un bloc : c'est la barre ENTIÈRE qui partage l'axe du titre. Et le
-            centrage porte sur l'ENCRE, pas sur la boîte — à gauche le premier
-            onglet commence par 14 px de padding invisible, à droite la pilule
-            s'arrête net sur son bord. Centrée par sa boîte, la barre paraîtrait
-            décalée à droite ; la compensation est mesurée sur le rendu et
-            portée par .snow-nav. */}
+            La mascotte porte un lien vers le haut de page ; le mot « way » est
+            composé dans la police du site plutôt que vectorisé, pour rester net
+            à toutes les tailles et suivre la graisse du reste de l'interface. */}
         <header className="fixed inset-x-0 top-5 z-40 flex justify-center px-5">
-          <nav className="snow-nav flex max-w-full items-center gap-2">
-            <div data-nav-links className="snow-fade hidden items-center md:flex">
-              {NAV.map((n) => (
-                <a
-                  key={n.label}
-                  href={n.href}
-                  aria-current={n.current ? "page" : undefined}
-                  className="snow-tab snow-ui rounded-full px-3.5 py-2 text-[14px] transition-colors"
-                  style={{ color: n.current ? "#0F0F0F" : "rgba(15,15,15,0.68)" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "#0F0F0F")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = n.current ? "#0F0F0F" : "rgba(15,15,15,0.68)")}
-                >
-                  {n.label}
-                </a>
-              ))}
+          <nav className="snow-nav flex w-full max-w-[880px] items-center justify-between gap-4">
+            <div className="flex items-center gap-3 md:gap-4">
+              <a href="#top" aria-label="WAY Agency — retour en haut" className="snow-mark snow-fade">
+                <WayMark className="snow-mark-signe" />
+                <span className="snow-mark-mot">way</span>
+              </a>
+
+              <div data-nav-links className="snow-fade hidden items-center md:flex">
+                {NAV.map((n) => (
+                  <a
+                    key={n.label}
+                    href={n.href}
+                    aria-current={n.current ? "page" : undefined}
+                    className="snow-tab snow-ui rounded-full px-3.5 py-2 text-[14px] transition-colors"
+                    style={{ color: n.current ? "#0F0F0F" : "rgba(15,15,15,0.68)" }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = "#0F0F0F")}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = n.current ? "#0F0F0F" : "rgba(15,15,15,0.68)")}
+                  >
+                    {n.label}
+                  </a>
+                ))}
+              </div>
             </div>
 
             <button
