@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Check } from "lucide-react";
-import { sfxTap, sfxWhoosh, sfxSend } from "@/lib/sfx";
+import { sfxTap, sfxSend } from "@/lib/sfx";
 
 /*
   Prise de rendez-vous : le visiteur laisse son e-mail, choisit une date et un
@@ -61,7 +61,11 @@ export default function ContactModal() {
     root.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
     lenis?.stop();
-    sfxWhoosh();
+    /* Pas de son à l'ouverture. Un whoosh se déclenchait ici à chaque arrivée
+       sur la prise de rendez-vous : un son qu'on n'a pas demandé, sur un écran
+       qu'on vient d'ouvrir, et qui se répète à chaque aller-retour. Les sons
+       qui restent sont tous des RÉPONSES à un geste — un tap sur un choix, le
+       carillon d'un envoi réussi — jamais une annonce. */
     root.classList.add("modal-open"); // curseur natif visible sur le formulaire
     // masque la bannière cookies tant que la fiche est ouverte (elle la couvrait)
     window.dispatchEvent(new CustomEvent("way:modal", { detail: true }));

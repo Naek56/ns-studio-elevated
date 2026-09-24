@@ -1517,29 +1517,58 @@
 
 
 
-/* ── Le centrage optique de la barre ─────────────────────────────
-   Même problème que sur le titre, même méthode : on centre ce qu'on VOIT, pas
-   la boîte. À gauche, le premier onglet ouvre sur son padding — 14 px de vide,
-   plus l'approche gauche du « A ». À droite, la pilule s'arrête sur son bord,
-   qui est de l'encre pleine. La boîte est donc plus longue à gauche que ce
-   qu'on en perçoit, et une barre centrée par sa boîte se lit décalée à droite.
+/* ── La marque ──────────────────────────────────────────────────
+   LA COMPENSATION OPTIQUE DE LA BARRE A DISPARU AVEC SA CAUSE. Tant que le
+   côté gauche était vide, l'encre de la barre commençait par les 14 px de
+   padding invisible du premier onglet pendant qu'à droite la pilule s'arrêtait
+   net : centrée par sa boîte, la barre se lisait décalée, et .snow-nav portait
+   15 px de rattrapage mesuré. La marque occupe maintenant ce bord — et son
+   premier pixel est de l'encre pleine, comme le bord de la pilule à l'autre
+   bout. Les deux extrémités sont symétriques, donc centrer la boîte centre
+   l'encre, et le rattrapage n'a plus lieu d'être. Une correction optique se
+   retire quand l'asymétrie qu'elle corrigeait disparaît ; laissée en place,
+   elle deviendrait le défaut.
 
-   La valeur est MESURÉE sur le pixel rendu — balayage des colonnes sombres de
-   la capture, à DPR 2 — et pas estimée. Un padding à droite décale le contenu
-   d'un conteneur centré de la MOITIÉ de sa valeur : ce nombre vaut donc le
-   double du décalage à rattraper : l'encre tombait à +7,50 px de l'axe, la
-   compensation vaut donc 15 px. À remesurer si le libellé du bouton, le padding
-   des onglets ou la police changent.
-
-   ELLE EST SOUS MEDIA QUERY, et ce n'est pas un détail : sous 768 px les
-   onglets sont masqués et la barre n'est plus que la pilule, dont l'encre est
-   déjà symétrique — la même compensation la décalerait de 7,5 px À GAUCHE.
-   Une correction optique corrige une asymétrie précise ; quand l'asymétrie
-   disparaît, la correction doit disparaître avec elle. */
-@media (min-width: 768px) {
-  .snow-nav { padding-inline-end: 15px; }
+   LE SIGNE ET LE MOT NE SE CENTRENT PAS PAREIL. La mascotte est une silhouette
+   pleine : son centre vertical est son centre géométrique. Le mot, lui, se lit
+   sur sa hauteur d'x — les jambages de « y » descendent sous la ligne de pied
+   et ne comptent pas pour l'œil. Alignés par leurs boîtes, le mot paraît
+   remonter. Le décalage est donc porté explicitement, en em, pour qu'il suive
+   le corps si celui-ci change. */
+.snow-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #0F0F0F;
+  text-decoration: none;
+}
+.snow-mark-signe {
+  display: block;
+  height: 25px;
+  width: auto;
+  flex: none;
+}
+.snow-mark-mot {
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.022em;
+  /* l'approche négative s'applique aussi après le « y » : on la rend, sinon le
+     mot est optiquement collé à ce qui suit */
+  margin-inline-end: 0.022em;
+  /* mesuré : le milieu de la hauteur d'x tombait 2,75 px SOUS le centre
+     d'encre de la mascotte. 2,75 px à 22 px de corps = 0,125 em, moins les
+     0,035 em de départ = 0,090 em à remonter. */
+  translate: 0 -0.09em;
 }
 
+/* Le survol ne touche ni à la couleur ni à la taille : sur une marque, les
+   deux se lisent comme un changement d'état de la marque elle-même. Un léger
+   retrait d'opacité dit « c'est cliquable » sans rien affirmer d'autre. */
+.snow-mark { transition: opacity 220ms var(--snow-ease); }
+@media (hover: hover) and (pointer: fine) {
+  .snow-mark:hover { opacity: 0.66; }
+}
 
 /* ── L'onglet actif : le trait pousse depuis le centre ───────────────────*/
 .snow-tab { position: relative; }
