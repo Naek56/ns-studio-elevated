@@ -1283,58 +1283,82 @@
 }
 
 
-/* ── Liquid glass ────────────────────────────────────────────────────────
+/* ── Liquid glass ────────────────────────────────────────────
    Un seul élément en verre sur toute la page — le bouton « Prendre
    rendez-vous ». Il porte seul la promesse, donc tout est ici.
 
-   Il est CLAIR et réellement transparent : 0,34 de blanc au sommet, 0,14 au
-   pied. Sur un fond blanc neige, une pilule d'encre sombre — même à 0,66
-   d'alpha, le plancher qu'impose du texte blanc lisible — se lit comme un
-   aplat gris, pas comme du verre. Avec de l'encre foncée sur du verre clair,
-   l'alpha peut descendre où on veut : le label est à 17:1, et ce qui passe
-   au travers se voit enfin. C'est la seule configuration qui tient à la fois
-   « vraiment transparent » et le contraste.
+   IL EST NOIR, ET IL EST QUAND MÊME TRANSPARENT. Ces deux-là se contredisent
+   naïvement : sur une page blanche, pour qu'un label blanc tienne son
+   contraste sur une pilule d'encre, il faut monter l'alpha jusqu'à 0,85 — et
+   à 0,85 on ne voit plus rien au travers, c'est un aplat noir à qui on a
+   collé un `backdrop-filter` décoratif qui ne sert à rien.
+
+   La sortie n'est pas dans le remplissage, elle est dans le FILTRE. Un verre
+   teinté ne bouche pas la lumière, il l'ASSOMBRIT en la laissant passer :
+   `brightness(0.26)` dans le backdrop-filter fait exactement ça. L'alpha du
+   remplissage peut alors rester à 0,70 au sommet et 0,84 au pied : 30 % puis
+   16 % de ce qu'il y a derrière traverse encore, flou, saturé et assombri.
+
+   MESURÉ SUR LE RENDU, et pas calculé — les fonctions de `filter` opèrent en
+   lumière linéaire, donc l'arithmétique naïve en sRGB se trompe d'un tiers.
+   L'intérieur de la pilule va de 68 à 46 sur 255, moyenne 60 : noir à l'œil.
+   Label blanc à 9,74:1, au-dessus du plancher AAA de 7:1 pour du texte normal.
+
+   ET LE VERRE EST VIVANT, ce qui se prouve plutôt que se décrète : une sonde
+   rouge glissée derrière la pilule donne un intérieur à [61, 19, 11], une
+   sonde cyan à [11, 50, 61]. Ce n'est pas un aplat noir à qui on aurait collé
+   un `backdrop-filter` décoratif : ce qui passe derrière teinte réellement.
+
+   Le dégradé va du plus clair en haut au plus sombre en bas, et c'est le sens
+   physique : la lumière entre par le sommet, l'épaisseur de verre traversée
+   augmente vers le pied.
 
    La transparence ne suffit pas à faire lire « verre ». Il faut les quatre
    indices optiques :
      · une arête spéculaire nette au sommet, là où la lumière entre ;
-     · une arête sombre au PIED, et au pied seulement — le dessous d'une
-       lentille ne renvoie pas de lumière, il en mange. Elle donne l'épaisseur
-       et elle dessine la limite du contrôle : rgba(15,15,15,0.52) sur #FFFAFA
-       donne 3,5:1, au-dessus du plancher de 3:1 qu'exige WCAG 1.4.11. Assombrir
-       toute la moitié basse, en revanche, donnerait un biseau de plastique ;
+     · une reprise de lumière au PIED — sur fond clair, un objet sombre reçoit
+       le rebond de la page par en dessous. C'est l'inverse exact de la version
+       claire, où le pied était la seule zone sombre ;
      · un anneau conique dont la luminosité tourne avec le périmètre ;
-     · une bande de bord qui porte son PROPRE backdrop-filter — le bord ne
-       montre pas la même image que le centre : c'est ça, la réfraction. */
+     · un balayage qui passe sur la face.
+   Et la limite du contrôle (WCAG 1.4.11, plancher 3:1) n'est plus portée par
+   un filet mais par le remplissage lui-même : 56 sur 255 contre le blanc neige
+   de la page, c'est 9,4:1. */
 .lg {
   position: relative;
   isolation: isolate;
   border-radius: 9999px;
-  color: #0F0F0F;
+  color: #FFFFFF;
 
   /* blur 16 : assez pour que le fond devienne une nappe de couleur et non une
      image reconnaissable — la signature du verre dépoli.
-     saturate 200 : le flou délave la couleur, on la rend, sinon le bleu du
-     fond vire au gris et la pilule redevient un aplat. */
-  backdrop-filter: blur(16px) saturate(200%);
-  -webkit-backdrop-filter: blur(16px) saturate(200%);
+     saturate 220 : le flou délave la couleur et brightness l'éteint ; sans cette
+     reprise, ce qui traverse vire au gris et la pilule redevient un aplat.
+     Sur une pilule aussi sombre c'est LE témoin de transparence qui reste : la
+     teinte du motif derrière se lit encore dans le noir, et elle change quand
+     il dérive.
+     brightness 0.48 : le verre est TEINTÉ. C'est cette ligne qui permet au
+     remplissage de rester sous 0,8 d'alpha, donc à la pilule de rester
+     transparente tout en lisant noir. */
+  backdrop-filter: blur(16px) saturate(220%) brightness(0.26);
+  -webkit-backdrop-filter: blur(16px) saturate(220%) brightness(0.26);
 
-  /* La matière : du blanc à 0,26 au sommet, 0,08 au pied. Assez pour donner
-     un corps à la lentille, assez peu pour qu'on voie au travers. */
   background: linear-gradient(180deg,
-    rgba(255, 255, 255, 0.26)   0%,
-    rgba(255, 255, 255, 0.15)  54%,
-    rgba(255, 255, 255, 0.08) 100%);
+    rgba(15, 15, 15, 0.70)   0%,
+    rgba(15, 15, 15, 0.77)  54%,
+    rgba(15, 15, 15, 0.84) 100%);
 
-  /* Des FILETS, pas un biseau. Deux ombres internes larges — une claire en
-     haut, une sombre en bas — donneraient un bouton de plastique bombé : le
-     réflexe exact qu'il faut tuer ici. Le verre se dit avec un trait clair
-     d'un pixel au sommet, l'arête sombre du pied (portée par ::before) et une
-     ombre portée courte qui le décolle du papier. Rien d'autre. */
+  /* Des FILETS, pas un biseau. Deux ombres internes larges donneraient un
+     bouton de plastique bombé : le réflexe exact qu'il faut tuer ici. Le verre
+     se dit avec un trait clair d'un pixel au sommet, un second, deux fois plus
+     faible, au pied (le rebond de la page), et une ombre portée qui le décolle
+     du papier — plus franche que sur la version claire, parce qu'un objet
+     sombre posé sur du blanc qui ne porte pas d'ombre flotte. */
   box-shadow:
-    inset 0 1px 0.5px rgba(255, 255, 255, 0.85),
-    0 1px 2px -1px  rgba(15, 15, 15, 0.16),
-    0 6px 14px -8px rgba(15, 15, 15, 0.22);
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.52),
+    inset 0 -1px 0.5px rgba(255, 255, 255, 0.16),
+    0 2px 4px -2px   rgba(15, 15, 15, 0.26),
+    0 12px 24px -12px rgba(15, 15, 15, 0.42);
 }
 
 /* ── L'arête ─────────────────────────────────────────────────────────────
@@ -1357,11 +1381,13 @@
 
    Les angles ne sont pas décoratifs : sur une pilule de ~180 × 41 px, le coin
    haut-droit tombe à 77°, le cap droit à 90°, le coin bas-droit à 103°. D'où
-   le spéculaire au sommet, la compression du blanc de la page aux deux caps,
-   et l'arête sombre au pied — et au pied SEULEMENT, parce qu'assombrir toute
-   la moitié basse ferait un biseau. C'est elle qui dessine la limite du
-   contrôle : rgba(15,15,15,0.52) sur #FFFAFA donne 3,5:1, au-dessus du
-   plancher de 3:1 qu'exige WCAG 1.4.11. */
+   le spéculaire au sommet et la compression du blanc de la page aux deux caps.
+   L'anneau est entièrement CLAIR depuis que la pilule est sombre — un filet
+   d'encre sur de l'encre ne se verrait pas, et il n'a plus à porter la limite
+   du contrôle, que le remplissage assure déjà à 9,4:1. Il garde deux reprises
+   inégales : 0,92 au sommet (la lumière entre), 0,44 au pied (le rebond de la
+   page sous l'objet). Égales, elles feraient un tube ; c'est l'inégalité qui
+   dit d'où vient la lumière. */
 .lg::before {
   content: "";
   position: absolute;
@@ -1386,15 +1412,15 @@
       rgba(255, 255, 255, 0)    78deg,
       rgba(255, 255, 255, 0)   360deg),
     conic-gradient(from 0deg at 50% 50%,
-      rgba(255, 255, 255, 0.95)   0deg,
-      rgba(255, 255, 255, 0.55)  70deg,
-      rgba(15, 15, 15, 0.08)     96deg,
-      rgba(15, 15, 15, 0.42)    150deg,
-      rgba(15, 15, 15, 0.52)    180deg,
-      rgba(15, 15, 15, 0.42)    210deg,
-      rgba(15, 15, 15, 0.08)    264deg,
-      rgba(255, 255, 255, 0.55) 290deg,
-      rgba(255, 255, 255, 0.95) 360deg);
+      rgba(255, 255, 255, 0.92)   0deg,
+      rgba(255, 255, 255, 0.52)  70deg,
+      rgba(255, 255, 255, 0.22)  96deg,
+      rgba(255, 255, 255, 0.28) 150deg,
+      rgba(255, 255, 255, 0.44) 180deg,
+      rgba(255, 255, 255, 0.28) 210deg,
+      rgba(255, 255, 255, 0.22) 264deg,
+      rgba(255, 255, 255, 0.52) 290deg,
+      rgba(255, 255, 255, 0.92) 360deg);
 
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -1407,10 +1433,10 @@
 }
 
 
-/* Le reflet qui balaie la face : un voile, pic à 0,30 d'alpha de blanc. Sur du
-   verre clair il éclaircit au lieu d'assombrir, donc il ne coûte rien au
-   contraste de l'encre — le plafond dur qui bridait la version sombre n'existe
-   plus ici.
+/* Le reflet qui balaie la face : un voile, pic à 0,22 d'alpha de blanc. Sur du
+   verre sombre il éclaircit la surface sous un label BLANC, donc il coûte du
+   contraste : à 0,30 il faisait tomber le label à 8,6:1 au passage. À 0,22 le
+   creux est à 9,7:1, et le geste se voit toujours.
    Pas d'overflow: hidden sur le parent — dans WebKit, il casse le clipping des
    backdrop-filter enfants. On anime background-position, et le fond est déjà
    clippé au rayon. */
@@ -1423,7 +1449,7 @@
   z-index: 0;
   background-image: linear-gradient(105deg,
     rgba(255, 255, 255, 0)    40%,
-    rgba(255, 255, 255, 0.30) 50%,
+    rgba(255, 255, 255, 0.22) 50%,
     rgba(255, 255, 255, 0)    60%);
   background-size: 260% 100%;
   background-position: 100% 0;   /* hors champ, à gauche */
@@ -1438,9 +1464,10 @@
   .lg:hover::before { --lg-sweep: 360deg; }
   .lg:hover {
     box-shadow:
-      inset 0 1px 0.5px rgba(255, 255, 255, 1),
-      0 1px 2px -1px    rgba(15, 15, 15, 0.18),
-      0 10px 20px -10px rgba(15, 15, 15, 0.26);
+      inset 0 1px 0.5px  rgba(255, 255, 255, 0.72),
+      inset 0 -1px 0.5px rgba(255, 255, 255, 0.20),
+      0 2px 4px -2px     rgba(15, 15, 15, 0.28),
+      0 16px 30px -14px  rgba(15, 15, 15, 0.48);
   }
   .lg:hover::after { background-position: 0% 0; }
 }
@@ -1488,6 +1515,30 @@
   transition-duration: 110ms, 110ms;
 }
 
+
+
+/* ── Le centrage optique de la barre ─────────────────────────────
+   Même problème que sur le titre, même méthode : on centre ce qu'on VOIT, pas
+   la boîte. À gauche, le premier onglet ouvre sur son padding — 14 px de vide,
+   plus l'approche gauche du « A ». À droite, la pilule s'arrête sur son bord,
+   qui est de l'encre pleine. La boîte est donc plus longue à gauche que ce
+   qu'on en perçoit, et une barre centrée par sa boîte se lit décalée à droite.
+
+   La valeur est MESURÉE sur le pixel rendu — balayage des colonnes sombres de
+   la capture, à DPR 2 — et pas estimée. Un padding à droite décale le contenu
+   d'un conteneur centré de la MOITIÉ de sa valeur : ce nombre vaut donc le
+   double du décalage à rattraper : l'encre tombait à +7,50 px de l'axe, la
+   compensation vaut donc 15 px. À remesurer si le libellé du bouton, le padding
+   des onglets ou la police changent.
+
+   ELLE EST SOUS MEDIA QUERY, et ce n'est pas un détail : sous 768 px les
+   onglets sont masqués et la barre n'est plus que la pilule, dont l'encre est
+   déjà symétrique — la même compensation la décalerait de 7,5 px À GAUCHE.
+   Une correction optique corrige une asymétrie précise ; quand l'asymétrie
+   disparaît, la correction doit disparaître avec elle. */
+@media (min-width: 768px) {
+  .snow-nav { padding-inline-end: 15px; }
+}
 
 
 /* ── L'onglet actif : le trait pousse depuis le centre ───────────────────*/
