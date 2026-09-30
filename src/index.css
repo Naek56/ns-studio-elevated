@@ -1518,57 +1518,45 @@
 
 
 /* ── La marque ──────────────────────────────────────────────────
-   LA COMPENSATION OPTIQUE DE LA BARRE A DISPARU AVEC SA CAUSE. Tant que le
-   côté gauche était vide, l'encre de la barre commençait par les 14 px de
-   padding invisible du premier onglet pendant qu'à droite la pilule s'arrêtait
-   net : centrée par sa boîte, la barre se lisait décalée, et .snow-nav portait
-   15 px de rattrapage mesuré. La marque occupe maintenant ce bord — et son
-   premier pixel est de l'encre pleine, comme le bord de la pilule à l'autre
-   bout. Les deux extrémités sont symétriques, donc centrer la boîte centre
-   l'encre, et le rattrapage n'a plus lieu d'être. Une correction optique se
-   retire quand l'asymétrie qu'elle corrigeait disparaît ; laissée en place,
-   elle deviendrait le défaut.
+   Le logo de l'agence, tracé depuis public/logo way agency.png (voir
+   WayLogo.tsx pour le comment et la fidélité mesurée).
 
-   LE SIGNE ET LE MOT NE SE CENTRENT PAS PAREIL. La mascotte est une silhouette
-   pleine : son centre vertical est son centre géométrique. Le mot, lui, se lit
-   sur sa hauteur d'x — les jambages de « y » descendent sous la ligne de pied
-   et ne comptent pas pour l'œil. Alignés par leurs boîtes, le mot paraît
-   remonter. Le décalage est donc porté explicitement, en em, pour qu'il suive
-   le corps si celui-ci change. */
+   IL FAIT LA HAUTEUR DE LA PILULE, 41 px, et ce n'est pas un hasard de
+   taille : l'encre du logo va du haut de l'oreille au bas des pieds — et au
+   bas du jambage du « y », qui tombe exactement à la même ligne. Sa boîte EST
+   donc son encre, comme celle de la pilule. À même hauteur et centrés sur la
+   même ligne, les deux bouts de la barre partagent un haut et un bas : ils se
+   lisent comme des serre-livres.
+
+   41 px, c'est aussi le plancher pour « Agency ». Sa hauteur d'x vaut 15,6 %
+   de celle du logo : 6,4 px ici, l'équivalent d'un texte de 12 px. En dessous
+   de 36 px de logo, le mot tomberait sous l'équivalent de 11 px et ne se
+   lirait plus — il deviendrait une rayure grise sous « way ».
+
+   La compensation optique de la barre reste inutile : le premier pixel du logo
+   est de l'encre pleine, comme le bord de la pilule à l'autre bout. */
 .snow-mark {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  flex: none;
   color: #0F0F0F;
   text-decoration: none;
+  border-radius: 6px;
 }
-.snow-mark-signe {
+.snow-logo {
   display: block;
-  height: 25px;
+  height: 41px;
   width: auto;
-  flex: none;
-}
-.snow-mark-mot {
-  font-weight: 700;
-  font-size: 22px;
-  line-height: 1;
-  letter-spacing: -0.022em;
-  /* l'approche négative s'applique aussi après le « y » : on la rend, sinon le
-     mot est optiquement collé à ce qui suit */
-  margin-inline-end: 0.022em;
-  /* mesuré : le milieu de la hauteur d'x tombait 2,75 px SOUS le centre
-     d'encre de la mascotte. 2,75 px à 22 px de corps = 0,125 em, moins les
-     0,035 em de départ = 0,090 em à remonter. */
-  translate: 0 -0.09em;
 }
 
-/* Le survol ne touche ni à la couleur ni à la taille : sur une marque, les
-   deux se lisent comme un changement d'état de la marque elle-même. Un léger
-   retrait d'opacité dit « c'est cliquable » sans rien affirmer d'autre. */
+/* Le survol ne touche ni à la couleur ni à la taille : sur un logo, les deux
+   se lisent comme un changement de l'identité elle-même. Un léger retrait
+   d'opacité dit « c'est cliquable » sans rien affirmer d'autre. */
 .snow-mark { transition: opacity 220ms var(--snow-ease); }
 @media (hover: hover) and (pointer: fine) {
   .snow-mark:hover { opacity: 0.66; }
 }
+.snow-mark:focus-visible { outline: 2px solid #0F0F0F; outline-offset: 4px; }
 
 /* ── L'onglet actif : le trait pousse depuis le centre ───────────────────*/
 .snow-tab { position: relative; }

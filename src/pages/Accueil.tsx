@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ContactModal, { openContact } from "@/components/site/ContactModal";
 import { Tiles } from "@/components/ui/tiles";
-import WayMark from "@/components/site/WayMark";
+import WayLogo from "@/components/site/WayLogo";
 
 /* Accueil « neige » — fond #FFFAFA, encre #0F0F0F.
 
@@ -282,15 +282,15 @@ export default function Accueil() {
             pleins, donc centrer la boîte revient à centrer l'encre, sans la
             compensation optique que réclamait la version précédente.
 
-            La mascotte porte un lien vers le haut de page ; le mot « way » est
-            composé dans la police du site plutôt que vectorisé, pour rester net
-            à toutes les tailles et suivre la graisse du reste de l'interface. */}
+            Le logo est celui de l'agence, tracé depuis le fichier fourni, et il
+            fait EXACTEMENT la hauteur de la pilule : les deux bouts de la barre
+            ont le même haut et le même bas, ce qui se lit comme deux serre-livres
+            plutôt que comme deux objets posés au hasard. */}
         <header className="fixed inset-x-0 top-5 z-40 flex justify-center px-5">
           <nav className="snow-nav flex w-full max-w-[880px] items-center justify-between gap-4">
-            <div className="flex items-center gap-3 md:gap-4">
+            <div className="flex items-center gap-4 md:gap-5">
               <a href="#top" aria-label="WAY Agency — retour en haut" className="snow-mark snow-fade">
-                <WayMark className="snow-mark-signe" />
-                <span className="snow-mark-mot">way</span>
+                <WayLogo className="snow-logo" />
               </a>
 
               <div data-nav-links className="snow-fade hidden items-center md:flex">
