@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ContactModal, { openContact } from "@/components/site/ContactModal";
 import { Tiles } from "@/components/ui/tiles";
-import WayLogo from "@/components/site/WayLogo";
+import WayLogo, { WayMascotte } from "@/components/site/WayLogo";
 
 /* Accueil « neige » — fond #FFFAFA, encre #0F0F0F.
 
@@ -18,7 +18,7 @@ import WayLogo from "@/components/site/WayLogo";
 
 const LETTERS = ["w", "a", "y"] as const;
 
-/* Rythme de l'intro (ms). 3,38 s du chargement à l'accueil posé.
+/* Rythme de l'intro (ms). 3,82 s du chargement à l'accueil posé.
    Le premier jet mettait ~7 s : beaucoup trop. Le deuxième est tombé à 1,80 s :
    l'arrivée des lettres devenait un clignement, on ne la lisait plus. On a
    repris l'écart entre les deux (2,82 s), et ce réglage-ci le ralentit encore
@@ -27,12 +27,23 @@ const LETTERS = ["w", "a", "y"] as const;
    comme celles des transitions CSS. Un rythme se ralentit en entier ou pas du
    tout ; n'allonger que les attentes, en laissant les courbes à leur vitesse,
    donnerait trois lettres qui claquent séparées par des blancs.
-     260  départ « w »
-     700  départ « a »
-    1140  départ « y »
-    1820  « y » perçue posée
-    2560  fin de la respiration, la passation démarre
-    3380  accueil posé, intro démontée
+     260  départ de la mascotte
+     700  départ « w »
+    1140  départ « a »
+    1580  départ « y »
+    2260  « y » perçue posée
+    3000  fin de la respiration, la passation démarre
+    3820  accueil posé, intro démontée
+
+   LA MASCOTTE EST LE TEMPS ZÉRO DE LA MÊME CADENCE, pas une animation à côté.
+   Elle part à FIRST_MS, les lettres suivent à un STEP_MS d'intervalle comme
+   avant, et elle emprunte LES MÊMES CLASSES que les lettres (.snow-letter /
+   .snow-letter-i) : même profondeur de départ, même perspective, même flou,
+   mêmes trois durées décalées, même courbe d'atterrissage. « Dans la même
+   dynamique » n'est donc pas une ressemblance réglée à l'œil : c'est le même
+   code. Le prix est un temps de plus, 440 ms — l'intro passe de 3,38 s à
+   3,82 s. Le comprimer aurait voulu dire resserrer les lettres, donc changer
+   le rythme qui avait été réglé.
    La passation reste calée sur l'atterrissage PERÇU (680 ms) et non sur la fin
    nominale de la transition (1400 ms). Sous --snow-land, cubic-bezier(0.23, 1,
    0.32, 1), la lettre a fait 95 % de sa course en 48,8 % du temps : les 720 ms
@@ -61,6 +72,8 @@ export default function Accueil() {
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const [step, setStep] = useState(reduced ? LETTERS.length : 0);
+  /* la mascotte : 0 cachée, 1 en vol, 2 posée (calque retiré) */
+  const [signe, setSigne] = useState<0 | 1 | 2>(reduced ? 2 : 0);
   const [landed, setLanded] = useState(reduced ? LETTERS.length : 0);
   /* "intro" → "handoff" (les deux se croisent) → "home" (l'intro sort du DOM) */
   const [phase, setPhase] = useState<"intro" | "handoff" | "home">(reduced ? "home" : "intro");
@@ -120,10 +133,13 @@ export default function Accueil() {
     if (reduced) { reveal(); return; }
 
     const timers: number[] = [];
-    const handoffAt = FIRST_MS + (LETTERS.length - 1) * STEP_MS + PERCEIVED_MS + HOLD_MS;
+    /* la mascotte occupe le temps 0, les lettres les temps 1 à 3 */
+    const handoffAt = FIRST_MS + LETTERS.length * STEP_MS + PERCEIVED_MS + HOLD_MS;
 
+    timers.push(window.setTimeout(() => setSigne(1), FIRST_MS));
+    timers.push(window.setTimeout(() => setSigne(2), FIRST_MS + LETTER_MS + SETTLE_PAD_MS));
     LETTERS.forEach((_, i) => {
-      const at = FIRST_MS + i * STEP_MS;
+      const at = FIRST_MS + (i + 1) * STEP_MS;
       timers.push(window.setTimeout(() => setStep(i + 1), at));
       timers.push(window.setTimeout(() => setLanded(i + 1), at + LETTER_MS + SETTLE_PAD_MS));
     });
@@ -141,6 +157,7 @@ export default function Accueil() {
       window.removeEventListener("pointerdown", skip);
       window.removeEventListener("keydown", skip);
       timers.forEach(window.clearTimeout);
+      setSigne(2);
       setStep(LETTERS.length);
       setLanded(LETTERS.length);
       setPhase("handoff");
@@ -233,6 +250,23 @@ export default function Accueil() {
       {phase !== "home" && (
         <div className="snow-intro" aria-hidden>
           <div className={`snow-intro-stage${phase === "handoff" ? " snow-intro--out" : ""}`}>
+            {/* Mascotte au-dessus, mot en dessous : un logo empilé. Le bloc est
+                centré d'un tenant, optiquement, par .snow-intro-lockup ; la
+                mascotte reste sur l'axe pendant que le mot se recentre sous
+                elle à chaque lettre. Elle n'est PAS dans letterRefs : la mesure
+                des bords ne concerne que les lettres. */}
+            <div className="snow-intro-lockup">
+            <span
+              className={
+                "snow-letter snow-intro-signe" +
+                (signe >= 1 ? " snow-letter--in" : "") +
+                (signe >= 2 ? " snow-letter--landed" : "")
+              }
+            >
+              <span className="snow-letter-i">
+                <WayMascotte className="snow-intro-signe-svg" />
+              </span>
+            </span>
             <div
               ref={wordRef}
               className="snow-intro-word"
@@ -251,6 +285,7 @@ export default function Accueil() {
                   <span className="snow-letter-i">{ch}</span>
                 </span>
               ))}
+            </div>
             </div>
           </div>
         </div>

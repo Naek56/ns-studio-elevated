@@ -1149,12 +1149,57 @@
      trop bas : 24 px à 120 px, mesuré au scan de pixels, pas estimé.
      Porté par `translate` et non par `transform` : une propriété, une
      responsabilité — `transform` reste au recentrage horizontal animé, et les
-     deux se composent au lieu de s'écraser. */
-  translate: 0 -0.196em;
+     deux se composent au lieu de s'écraser.
+     Depuis l'arrivée de la mascotte, cette correction ne vit plus ICI mais
+     sur .snow-intro-lockup : appliquée au seul mot, elle le ferait remonter
+     de 0,196 em vers la mascotte et mangerait l'écart entre les deux. On
+     centre le BLOC, et le mot reste à sa place dans le bloc. */
 
   transform: translate3d(0, 0, 0);
   transition: transform 780ms var(--snow-land);
   will-change: transform;
+}
+
+/* ── Le logo empilé : la mascotte au-dessus du mot ────────────────────────
+   UN SEUL CORPS POUR LES DEUX. Le bloc porte la même taille de police que le
+   mot, et la mascotte se mesure en em : sa hauteur, sa profondeur de départ
+   (translateZ −2,6 em), sa perspective (4,2 em) sont exactement celles d'une
+   lettre. C'est ce qui garantit la même dynamique sur un téléphone et sur un
+   écran de 27 pouces — en pixels, la mascotte arriverait de plus loin que les
+   lettres sur l'un et de plus près sur l'autre.
+
+   CENTRÉ D'UN TENANT, sur l'ENCRE et pas sur les boîtes. L'encre du bloc va
+   du haut de l'oreille au bas du jambage du « y » ; c'est son milieu qui
+   tombe au centre de l'écran. La valeur est mesurée sur le rendu (voir plus
+   bas) — `place-items: center` centrerait les boîtes, et la boîte du mot
+   porte 0,35 em de vide au-dessus de la hauteur d'x. */
+.snow-intro-lockup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: clamp(3.25rem, 10vw, 7.5rem);
+  /* mesuré : le milieu de l'encre du bloc tombait 3,25 px sous le centre de
+     l'écran à 120 px de corps (1,75 px à 52 px) — 0,027 em dans les deux cas,
+     donc une correction en em tient à toutes les tailles. */
+  translate: 0 -0.027em;
+}
+
+/* La mascotte fait 0,9 em : le double de la hauteur d'x de « way » (0,51 em,
+   fixée par font-size-adjust), soit la proportion du logo de l'agence, où la
+   mascotte fait 1,98 fois la hauteur d'x du mot. Plus petite, elle se lirait
+   comme un pictogramme posé sur un titre ; plus grande, le mot deviendrait sa
+   légende.
+   L'écart visible entre ses pieds et le haut des lettres vaut 0,16 em. La
+   marge est négative parce que la boîte du mot commence 0,35 em AU-DESSUS de
+   son encre : 0,16 − 0,35 = −0,19 em. */
+.snow-intro-signe {
+  margin-bottom: -0.19em;
+  color: #0F0F0F;
+}
+.snow-intro-signe-svg {
+  display: block;
+  height: 0.9em;
+  width: auto;
 }
 
 /* Le letter-spacing négatif s'applique AUSSI après la dernière lettre : sans
