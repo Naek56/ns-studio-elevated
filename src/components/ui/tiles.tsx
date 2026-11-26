@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react"
-import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
 interface TilesProps {
@@ -36,7 +35,7 @@ export function Tiles({
       )}
     >
       {rowsArray.map((_, i) => (
-        <motion.div
+        <div
           key={`row-${i}`}
           className={cn(
             tileSizes[tileSize],
@@ -44,15 +43,16 @@ export function Tiles({
             tileClassName
           )}
         >
+          {/* Le survol n'est plus animé ici mais en CSS, sur un pseudo-élément
+              de la case (voir « Le survol d'une case » dans index.css).
+              L'ancienne version passait par framer-motion : l'allumage était
+              instantané, et l'extinction prévue en 2 s ne s'appliquait pas —
+              `animate` ne portait qu'une transition, sans valeur cible, et le
+              retour retombait sur la durée par défaut, ~250 ms. La case
+              clignotait au lieu de s'éteindre, et chaque survol animait une
+              couleur en JavaScript, image par image. */}
           {colsArray.map((_, j) => (
-            <motion.div
-              whileHover={{
-                backgroundColor: `var(--tile)`,
-                transition: { duration: 0 }
-              }}
-              animate={{
-                transition: { duration: 2 }
-              }}
+            <div
               key={`col-${j}`}
               className={cn(
                 tileSizes[tileSize],
@@ -61,7 +61,7 @@ export function Tiles({
               )}
             />
           ))}
-        </motion.div>
+        </div>
       ))}
     </div>
   )
