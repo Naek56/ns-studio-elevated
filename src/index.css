@@ -35,10 +35,6 @@
 
     --radius: 0.75rem;
 
-    /* Le remplissage d'une tuile au survol. Le composant <Tiles> le lit en
-       `var(--tile)` et ne le définit nulle part : sans cette ligne, le survol
-       anime la couleur vers une valeur invalide et ne fait donc rien. */
-    --tile: rgba(15, 15, 15, 0.055);
   }
 }
 
@@ -506,6 +502,16 @@
 }
 /* L'angle du reflet du verre doit être interpolable : sans @property, une
    custom property est une chaîne et ne se transitionne pas. */
+/* L'intensité du survol d'une case, de 0 à 1. Enregistrée pour être
+   interpolable : c'est elle qu'on anime, et pas l'opacité (voir « Le survol
+   d'une case »). Sans @property, un navigateur ancien la bascule d'un coup :
+   la case s'allume et s'éteint sans fondu, rien ne casse. */
+@property --survol {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
 @property --lg-sweep {
   syntax: "<angle>";
   inherits: false;
@@ -746,6 +752,140 @@
     rgba(15, 15, 15, 0.104)  97%,
     rgba(15, 15, 15, 0.142)  98.9%,
     rgba(15, 15, 15, 0.186) 100%);
+}
+
+/* ── Le survol d'une case ──────────────────────────────────────────────────
+   LE MÊME EFFET, RENDU AUTREMENT. La case sous le pointeur s'allume, puis
+   s'éteint quand il la quitte : rien de plus qu'avant. Ce qui change, c'est
+   comment elle s'allume, et quatre défauts mesurés :
+
+   1. UN RECTANGLE À BORDS NETS. La case allumée était un aplat — et son
+      bord haut et son bord bas dessinaient des LIGNES HORIZONTALES dures, sur
+      un fond dont on a justement retiré toutes les horizontales et où tout le
+      reste est en dégradé. Ici le remplissage monte et retombe sur 28 % de la
+      case dans les deux sens, en plateau, avec des rampes échantillonnées sur
+      un smoothstep : la pente part de zéro et revient à zéro, donc aucune
+      rupture ne se lit comme un bord. Le fondu latéral laisse aussi l'arête
+      de la lame intacte : la lumière est DANS le verre, entre deux arêtes,
+      elle ne repeint pas l'arête.
+
+   2. UN GRIS NEUTRE SUR UN FOND PASTEL. rgba(15,15,15,0.055) au milieu des
+      motifs bleus, violets et ambre se lisait comme une tache sale. La teinte
+      est désormais une encre froide, rgba(58,84,150), de la famille des
+      motifs — à l'écart de luminance de l'ancienne au sommet, pour rester
+      aussi visible, pas plus.
+
+   3. UN « POP » À L'ALLUMAGE. 0 ms : la case apparaissait d'une image sur
+      l'autre. 140 ms en ease-out, assez court pour suivre le pointeur, assez
+      long pour ne plus claquer.
+
+   4. UN CLIGNOTEMENT À L'EXTINCTION. Le composant prévoyait 2 s mais ne les
+      appliquait pas : mesuré, la case passait à zéro en 250 ms. Ici 900 ms
+      en ease-out, la courbe d'une lumière qui baisse — vite d'abord, puis une
+      longue fin. Pas les 2 s prévues : à 2 s, la souris laisserait une traînée
+      de cases allumées derrière elle, et ce serait un effet de plus.
+
+   ON ANIME L'INTENSITÉ DU DÉGRADÉ, PAS SON OPACITÉ — et c'est mesuré, pas
+   supposé. La première version animait `opacity` sur le pseudo-élément :
+   la voie « compositeur », celle qu'on recommande d'habitude. Pendant un
+   balayage rapide, elle perdait 83 à 98 images sur 400, contre 9 à 15 pour
+   l'ancienne version et 11 à 12 sans survol du tout. Ni le masque ni la
+   durée n'y étaient pour rien (250 ms : 93 images perdues). C'est le
+   mécanisme : une transition d'opacité PROMEUT chaque case animée sur son
+   propre calque, et pendant un balayage des dizaines de calques naissent et
+   meurent à l'intérieur d'une grille elle-même masquée et en mouvement —
+   chaque naissance relance la composition de tout le sous-arbre.
+   Une propriété enregistrée (--survol, 0 → 1) qui module l'alpha de chaque
+   arrêt ne promeut rien : c'est une repeinte de 80 × 80 px, comme le faisait
+   l'ancienne couleur de fond. Mesuré : 8 et 12 images perdues, au niveau de
+   l'original.
+
+   Sous `(hover: hover) and (pointer: fine)` seulement : sur un écran tactile,
+   :hover reste collé après un tap, et la case touchée resterait allumée
+   jusqu'au tap suivant. framer-motion ignorait déjà le tactile ; on garde ce
+   comportement. */
+@media (hover: hover) and (pointer: fine) {
+  .snow-tiles > div > div::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    --survol: 0;
+    background-image: linear-gradient(180deg,
+    rgb(58 84 150 / calc(var(--survol) * 0)) 0%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0025)) 2.8%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0094)) 5.6%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0194)) 8.4%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0317)) 11.2%,
+    rgb(58 84 150 / calc(var(--survol) * 0.045)) 14%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0583)) 16.8%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0706)) 19.6%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0806)) 22.4%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0875)) 25.2%,
+    rgb(58 84 150 / calc(var(--survol) * 0.09)) 28%,
+    rgb(58 84 150 / calc(var(--survol) * 0.09)) 72%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0875)) 74.8%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0806)) 77.6%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0706)) 80.4%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0583)) 83.2%,
+    rgb(58 84 150 / calc(var(--survol) * 0.045)) 86%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0317)) 88.8%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0194)) 91.6%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0094)) 94.4%,
+    rgb(58 84 150 / calc(var(--survol) * 0.0025)) 97.2%,
+    rgb(58 84 150 / calc(var(--survol) * 0)) 100%);
+    -webkit-mask-image: linear-gradient(90deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.028) 2.8%,
+    rgba(0, 0, 0, 0.104) 5.6%,
+    rgba(0, 0, 0, 0.216) 8.4%,
+    rgba(0, 0, 0, 0.352) 11.2%,
+    rgba(0, 0, 0, 0.5) 14%,
+    rgba(0, 0, 0, 0.648) 16.8%,
+    rgba(0, 0, 0, 0.784) 19.6%,
+    rgba(0, 0, 0, 0.896) 22.4%,
+    rgba(0, 0, 0, 0.972) 25.2%,
+    rgba(0, 0, 0, 1) 28%,
+    rgba(0, 0, 0, 1) 72%,
+    rgba(0, 0, 0, 0.972) 74.8%,
+    rgba(0, 0, 0, 0.896) 77.6%,
+    rgba(0, 0, 0, 0.784) 80.4%,
+    rgba(0, 0, 0, 0.648) 83.2%,
+    rgba(0, 0, 0, 0.5) 86%,
+    rgba(0, 0, 0, 0.352) 88.8%,
+    rgba(0, 0, 0, 0.216) 91.6%,
+    rgba(0, 0, 0, 0.104) 94.4%,
+    rgba(0, 0, 0, 0.028) 97.2%,
+    rgba(0, 0, 0, 0) 100%);
+            mask-image: linear-gradient(90deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.028) 2.8%,
+    rgba(0, 0, 0, 0.104) 5.6%,
+    rgba(0, 0, 0, 0.216) 8.4%,
+    rgba(0, 0, 0, 0.352) 11.2%,
+    rgba(0, 0, 0, 0.5) 14%,
+    rgba(0, 0, 0, 0.648) 16.8%,
+    rgba(0, 0, 0, 0.784) 19.6%,
+    rgba(0, 0, 0, 0.896) 22.4%,
+    rgba(0, 0, 0, 0.972) 25.2%,
+    rgba(0, 0, 0, 1) 28%,
+    rgba(0, 0, 0, 1) 72%,
+    rgba(0, 0, 0, 0.972) 74.8%,
+    rgba(0, 0, 0, 0.896) 77.6%,
+    rgba(0, 0, 0, 0.784) 80.4%,
+    rgba(0, 0, 0, 0.648) 83.2%,
+    rgba(0, 0, 0, 0.5) 86%,
+    rgba(0, 0, 0, 0.352) 88.8%,
+    rgba(0, 0, 0, 0.216) 91.6%,
+    rgba(0, 0, 0, 0.104) 94.4%,
+    rgba(0, 0, 0, 0.028) 97.2%,
+    rgba(0, 0, 0, 0) 100%);
+    transition: --survol 900ms var(--snow-ease);
+  }
+  .snow-tiles > div > div:hover::before {
+    --survol: 1;
+    transition-duration: 140ms;
+  }
 }
 
 /* ── La grille ────────────────────────────────────────────────────────────
@@ -1708,6 +1848,7 @@
      Pose écrite en dur et non `animation-play-state: paused` : la règle globale
      `animation-duration: 0.01ms !important` de @layer base la casserait. */
   .snow-tiles { animation: none; transform: translate3d(6px, 0, 0); will-change: auto; }
+  .snow-tiles > div > div::before { transition: none; }
   /* Les motifs restent, figés à une pose quelconque de leur course et à une
      opacité quelconque de leur souffle : ils ne sont animés que par translate
      et opacity, et ces deux-là arrêtés ne laissent aucune trace — le champ
